@@ -1,3 +1,7 @@
+import java.awt.Frame;
+
+import stickmotion.display.Frame3D;
+
 /**
  * Clase principal de la aplicación
  * 
@@ -13,9 +17,13 @@ public class Main {
    *          argumentos de linea de comandos
    */
   public static void main(String[] args) {
-    if (args.length < 2)
+    if (args.length > 2) // ya se cambiará
       System.out.println("Sintaxis: stickmotion [opciones] [accion]");
     else {
+
+      Frame frame = new Frame3D();
+      frame.setSize(800, 600);
+      frame.setVisible(true);
 
     }
   }
