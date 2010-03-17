@@ -3,8 +3,6 @@
  */
 package stickmotion.display;
 
-import java.awt.event.KeyEvent;
-
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
@@ -14,7 +12,7 @@ import javax.vecmath.Vector3f;
 import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
 
 /**
- *
+ * Clase para
  */
 public class Keybindings extends KeyNavigatorBehavior {
 
@@ -33,18 +31,10 @@ public class Keybindings extends KeyNavigatorBehavior {
     trans.setTransform(T3D);
 
     // Determina los límites de movimiento
-    setSchedulingBounds(new BoundingSphere(new Point3d(), 100.0));
+    setSchedulingBounds(new BoundingSphere(new Point3d(), 1000.0));
 
     // La cámara puede ser bloqueada por obstaculos
     // setCollidable(true);
-  }
-
-  @Override
-  public void keyPressed(KeyEvent e) {
-    if (e.getKeyCode() != KeyEvent.VK_ESCAPE) {
-      System.out.println("Saliendo...");
-      System.exit(0);
-    }
   }
 
 }

@@ -1,5 +1,3 @@
-import java.awt.Frame;
-
 import stickmotion.display.Frame3D;
 
 /**
@@ -19,12 +17,7 @@ public class Main {
   public static void main(String[] args) {
     if (args.length > 2) // ya se cambiará
       System.out.println("Sintaxis: stickmotion [opciones] [accion]");
-    else {
-
-      Frame frame = new Frame3D();
-      frame.setSize(800, 600);
-      frame.setVisible(true);
-
-    }
+    else
+      Frame3D.start();
   }
 }
