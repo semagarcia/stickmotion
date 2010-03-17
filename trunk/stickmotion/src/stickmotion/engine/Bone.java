@@ -3,6 +3,8 @@
  */
 package stickmotion.engine;
 
+import javax.vecmath.Point3f;
+
 /**
  * Clase genérica para la declaración de las secciones del stickman de la que
  * heredarán el resto de extremidades
@@ -40,8 +42,7 @@ public class Bone {
    * @param size
    * @throws WrongSizeException
    */
-  public Bone(double inclinationMax, double azimuthMax, double length)
-      throws WrongSizeException {
+  public Bone(double inclinationMax, double azimuthMax, double length) {
     this.inclinationMax = inclinationMax;
     this.azimuthMax = azimuthMax;
     this.length = length;
@@ -54,7 +55,8 @@ public class Bone {
    *          El valor de inclination a asignar
    */
   public void setColatitud(double inclination) {
-    this.inclination = inclination;
+    if (inclination > inclinationMax)
+      this.inclination = inclination;
   }
 
   /**
@@ -73,7 +75,8 @@ public class Bone {
    *          El valor de azimuth a asignar
    */
   public void setAzimuth(double azimuth) {
-    this.azimuth = azimuth;
+    if (azimuth < azimuthMax)
+      this.azimuth = azimuth;
   }
 
   /**
@@ -83,6 +86,13 @@ public class Bone {
    */
   public double getAzimuth() {
     return azimuth;
+  }
+
+  public Point3f getRelativeCoord() {
+    float x = (float) (length * Math.sin(inclination) * Math.cos(azimuth));
+    float y = (float) (length * Math.sin(inclination) * Math.cos(azimuth));
+    float z = (float) (length * Math.cos(inclination));
+    return new Point3f(x, y, z);
   }
 
 }
