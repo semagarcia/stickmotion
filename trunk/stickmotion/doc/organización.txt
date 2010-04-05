@@ -1,0 +1,26 @@
+
+Organización
+============
+
+1. Expresiones 
+   - aritmeticas: multiplicaciones, sumas, potencias.. 
+   - logicas: OR, AND, NOT...
+   - relacionales: mayor, menor, igual...
+
+2. Variables
+   - almacenamiento
+   - operaciones entre variables
+   
+---
+
+3. Ordenes (usando literales)
+   - primero imprimir en pantalla (para probarlo), luego se pone el código concreto
+
+4. Dividir el código en regiones (zona de declaraciones, zona de acciones, etc)
+
+---
+
+5. Añadidos o extras
+  - comentarios
+  - funciones matemáticas (seno, cos, log..)  
+  - directivas (define, include...)
