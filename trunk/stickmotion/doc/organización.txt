@@ -1,3 +1,5 @@
+Instalación de Java3D en i386 y en amd64
+http://www.ubuntu-es.org/index.php?q=node/55414
 
 Organización
 ============
@@ -24,3 +26,5 @@ Organización
   - comentarios
   - funciones matemáticas (seno, cos, log..)  
   - directivas (define, include...)
+  
+  
