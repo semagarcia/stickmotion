@@ -1,0 +1,12 @@
+var cad="Cadena";
+var int=2;
+var float=3.3;
+var v=V;
+var f=F;
+var vacia;
+var copiaCad=cad;
+
+sup cad;
+
+def funcion(var asd="probando", var int=40, var d) { var cad="ca"; sup asd;};
+
