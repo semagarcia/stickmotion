@@ -12,6 +12,8 @@ public class Procesador {
       String file = "codigo.stk";
       FileInputStream fis = new FileInputStream(file);
       // esto es de david
+      // Segundo cambio de fran.
+
       // Analyzes the characters of the file and makes the corresponding tokens
       Analex analex = new Analex(fis);
 
