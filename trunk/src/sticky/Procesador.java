@@ -12,7 +12,7 @@ public class Procesador {
       String file = "codigo.stk";
       FileInputStream fis = new FileInputStream(file);
       // cambio
-      // cambio II
+      // cambio IIs
       // Analyzes the characters of the file and makes the corresponding tokens
       Analex analex = new Analex(fis);
 
