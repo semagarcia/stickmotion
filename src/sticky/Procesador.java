@@ -11,8 +11,12 @@ public class Procesador {
       // Charges a file
       String file = "codigo.stk";
       FileInputStream fis = new FileInputStream(file);
+<<<<<<< .mine
+      // Cambio de fran.
+=======
       // cambio
       // cambio II
+>>>>>>> .r32
       // Analyzes the characters of the file and makes the corresponding tokens
       Analex analex = new Analex(fis);
 
