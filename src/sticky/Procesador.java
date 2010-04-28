@@ -11,7 +11,7 @@ public class Procesador {
       // Charges a file
       String file = "codigo.stk";
       FileInputStream fis = new FileInputStream(file);
-      // esto es de david
+      // esto es de
       // Segundo cambio de fran.
 
       // Analyzes the characters of the file and makes the corresponding tokens
