@@ -8,6 +8,7 @@ public class Procesador {
   public static void main(String args[]) {
     try {
 
+      // javi
       // Charges a file
       String file = "codigo.stk";
       FileInputStream fis = new FileInputStream(file);
