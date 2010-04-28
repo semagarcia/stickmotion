@@ -50,13 +50,13 @@ public Anasint(ParserSharedInputState state) {
 		
 		try {      // for error handling
 			{
-			_loop374:
+			_loop3:
 			do {
 				if ((LA(1)==VAR||LA(1)==SUP)) {
 					sentencia(vars);
 				}
 				else {
-					break _loop374;
+					break _loop3;
 				}
 				
 			} while (true);
