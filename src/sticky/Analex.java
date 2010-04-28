@@ -266,10 +266,10 @@ tryAgain:
 		int _saveIndex;
 		
 		{
-		boolean synPredMatched384 = false;
+		boolean synPredMatched13 = false;
 		if (((LA(1)=='\r') && (LA(2)=='\n'))) {
-			int _m384 = mark();
-			synPredMatched384 = true;
+			int _m13 = mark();
+			synPredMatched13 = true;
 			inputState.guessing++;
 			try {
 				{
@@ -277,12 +277,12 @@ tryAgain:
 				}
 			}
 			catch (RecognitionException pe) {
-				synPredMatched384 = false;
+				synPredMatched13 = false;
 			}
-			rewind(_m384);
+			rewind(_m13);
 inputState.guessing--;
 		}
-		if ( synPredMatched384 ) {
+		if ( synPredMatched13 ) {
 			match("\r\n");
 		}
 		else if ((LA(1)=='\n')) {
@@ -373,7 +373,7 @@ inputState.guessing--;
 		
 		match("//");
 		{
-		_loop391:
+		_loop20:
 		do {
 			if ((_tokenSet_1.member(LA(1)))) {
 				{
@@ -381,7 +381,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop391;
+				break _loop20;
 			}
 			
 		} while (true);
@@ -401,10 +401,10 @@ inputState.guessing--;
 		
 		match("/*");
 		{
-		_loop395:
+		_loop24:
 		do {
 			// nongreedy exit test
-			if ((LA(1)=='*') && (LA(2)=='/')) break _loop395;
+			if ((LA(1)=='*') && (LA(2)=='/')) break _loop24;
 			if ((_tokenSet_1.member(LA(1))) && ((LA(2) >= '\u0000' && LA(2) <= '\u007f'))) {
 				{
 				match(_tokenSet_1);
@@ -414,7 +414,7 @@ inputState.guessing--;
 				mNL(false);
 			}
 			else {
-				break _loop395;
+				break _loop24;
 			}
 			
 		} while (true);
@@ -871,7 +871,7 @@ inputState.guessing--;
 		}
 		}
 		{
-		_loop427:
+		_loop56:
 		do {
 			switch ( LA(1)) {
 			case 'A':  case 'B':  case 'C':  case 'D':
@@ -905,7 +905,7 @@ inputState.guessing--;
 			}
 			default:
 			{
-				break _loop427;
+				break _loop56;
 			}
 			}
 		} while (true);
@@ -922,60 +922,60 @@ inputState.guessing--;
 		_ttype = NUMERO;
 		int _saveIndex;
 		
-		boolean synPredMatched432 = false;
+		boolean synPredMatched61 = false;
 		if ((((LA(1) >= '0' && LA(1) <= '9')) && (_tokenSet_2.member(LA(2))))) {
-			int _m432 = mark();
-			synPredMatched432 = true;
+			int _m61 = mark();
+			synPredMatched61 = true;
 			inputState.guessing++;
 			try {
 				{
 				{
-				int _cnt431=0;
-				_loop431:
+				int _cnt60=0;
+				_loop60:
 				do {
 					if (((LA(1) >= '0' && LA(1) <= '9'))) {
 						mDIGITO(false);
 					}
 					else {
-						if ( _cnt431>=1 ) { break _loop431; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+						if ( _cnt60>=1 ) { break _loop60; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 					}
 					
-					_cnt431++;
+					_cnt60++;
 				} while (true);
 				}
 				match('.');
 				}
 			}
 			catch (RecognitionException pe) {
-				synPredMatched432 = false;
+				synPredMatched61 = false;
 			}
-			rewind(_m432);
+			rewind(_m61);
 inputState.guessing--;
 		}
-		if ( synPredMatched432 ) {
+		if ( synPredMatched61 ) {
 			{
-			int _cnt434=0;
-			_loop434:
+			int _cnt63=0;
+			_loop63:
 			do {
 				if (((LA(1) >= '0' && LA(1) <= '9'))) {
 					mDIGITO(false);
 				}
 				else {
-					if ( _cnt434>=1 ) { break _loop434; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+					if ( _cnt63>=1 ) { break _loop63; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				
-				_cnt434++;
+				_cnt63++;
 			} while (true);
 			}
 			match('.');
 			{
-			_loop436:
+			_loop65:
 			do {
 				if (((LA(1) >= '0' && LA(1) <= '9'))) {
 					mDIGITO(false);
 				}
 				else {
-					break _loop436;
+					break _loop65;
 				}
 				
 			} while (true);
@@ -986,17 +986,17 @@ inputState.guessing--;
 		}
 		else if (((LA(1) >= '0' && LA(1) <= '9')) && (true)) {
 			{
-			int _cnt438=0;
-			_loop438:
+			int _cnt67=0;
+			_loop67:
 			do {
 				if (((LA(1) >= '0' && LA(1) <= '9'))) {
 					mDIGITO(false);
 				}
 				else {
-					if ( _cnt438>=1 ) { break _loop438; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+					if ( _cnt67>=1 ) { break _loop67; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				
-				_cnt438++;
+				_cnt67++;
 			} while (true);
 			}
 			if ( inputState.guessing==0 ) {
@@ -1021,10 +1021,10 @@ inputState.guessing--;
 		
 		match('"');
 		{
-		_loop442:
+		_loop71:
 		do {
 			// nongreedy exit test
-			if ((LA(1)=='"') && (true)) break _loop442;
+			if ((LA(1)=='"') && (true)) break _loop71;
 			if ((_tokenSet_3.member(LA(1))) && ((LA(2) >= '\u0000' && LA(2) <= '\u007f'))) {
 				{
 				match(_tokenSet_3);
@@ -1034,7 +1034,7 @@ inputState.guessing--;
 				match("\\\"");
 			}
 			else {
-				break _loop442;
+				break _loop71;
 			}
 			
 		} while (true);
