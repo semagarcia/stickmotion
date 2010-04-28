@@ -7,7 +7,7 @@ public class Procesador {
 
   public static void main(String args[]) {
     try {
-      // Charges a file
+      // Carga archivo
       String file = "codigo.stk";
       FileInputStream fis = new FileInputStream(file);
 
