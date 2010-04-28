@@ -7,7 +7,7 @@ public class Procesador {
 
   public static void main(String args[]) {
     try {
-
+      // cambio david
       // javi
       // Charges a file
       String file = "codigo.stk";
