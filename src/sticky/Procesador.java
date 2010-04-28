@@ -10,7 +10,7 @@ public class Procesador {
       // cambio david
       // javi
       // Charges a file
-      hola
+      // cambio
       String file = "codigo.stk";
       FileInputStream fis = new FileInputStream(file);
 
