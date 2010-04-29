@@ -8,9 +8,9 @@ class Anasint extends Parser;
 		k=2;
 	}
 		
-	instrucciones[HashMap vars]: (sentencia[vars])* {System.out.println("Reconocido. HashMap: "+vars);};
+	instrucciones[HashMap vars]: (sentencia[vars])? {System.out.println("Reconocido. HashMap: "+vars);};
 	
-	sentencia[HashMap vars]: (declaracion[vars]|eliminacion[vars]/*|funcion*/) FIN_INSTRUCCION;
+	sentencia[HashMap vars]: (declaracion[vars]|eliminacion[vars]/*|funcion*/) FIN_INSTRUCCION (sentencia[vars]| /* nothing */);
 	
 	//Declaracion de variables
 	declaracion [HashMap vars]: VAR i:IDENT (OP_ASIG (c:CADENA|e:ENTERO|r:REAL|v:VERDADERO|f:FALSO|ii:IDENT))?

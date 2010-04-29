@@ -7,6 +7,5 @@ var vacia;
 var copiaCad=cad;
 
 sup cad;
-
-def funcion(var asd="probando", var int=40, var d) { var cad="ca"; sup asd;};
-
+// def funcion(var asd="probando", var int=40, var d) { var cad="ca"; sup asd;};
+var das;

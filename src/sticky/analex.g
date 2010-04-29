@@ -62,8 +62,8 @@ class Analex extends Lexer;
 	BLANCO: (' '|'\t'|NL) {$setType(Token.SKIP);};
 
 	//Comentarios
-	COMENTARIO: COM_LINEA|COM_BLOQUE ;
-	COM_LINEA: "//" (~('\n'|'\r'))* NL;
+	COMENTARIO: (COM_LINEA|COM_BLOQUE) {$setType(Token.SKIP);};
+	COM_LINEA: "//" (~('\n'|'\r'))*;
 	COM_BLOQUE: "/*" (options {greedy=false;}: ~('\n'|'\r')|NL)* "*/";
 	
 	//Fin de instruccion
