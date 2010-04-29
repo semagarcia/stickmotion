@@ -38,11 +38,11 @@ public class Arm extends SMGroup {
 
     // fore is a SMGroup because of the transformations applied
     fore = new SMGroup();
-    fore.addSMChild(new Cylinder(RADIUS, HEIGHT));
+    fore.addChild(new Cylinder(RADIUS, HEIGHT));
 
     // adds the children to the arm
-    addSMChild(fore);
-    addSMChild(anterior);
+    addChild(fore);
+    addChild(anterior);
 
     updateJoint();
   }

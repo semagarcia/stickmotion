@@ -55,15 +55,15 @@ public class Stickman extends SMGroup {
 
     // the head will be a moveable cube
     head = new SMGroup();
-    head.addSMChild(new Cylinder(HEADSIZE, HEADSIZE));
+    head.addChild(new Cylinder(HEADSIZE, HEADSIZE));
 
     // adds body, limbs and head to the Stickman as children
-    addSMChild(body);
-    addSMChild(rArm);
-    addSMChild(lArm);
-    addSMChild(rLeg);
-    addSMChild(lLeg);
-    addSMChild(head);
+    addChild(body);
+    addChild(rArm);
+    addChild(lArm);
+    addChild(rLeg);
+    addChild(lLeg);
+    addChild(head);
 
     updateJoints();
 
