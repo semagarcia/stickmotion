@@ -58,12 +58,12 @@ public class Stickman extends SMGroup {
     head.addSMChild(new Cylinder(HEADSIZE, HEADSIZE));
 
     // adds body, limbs and head to the Stickman as children
-    addChild(body);
-    addChild(rArm);
-    addChild(lArm);
-    addChild(rLeg);
-    addChild(lLeg);
-    addChild(head);
+    addSMChild(body);
+    addSMChild(rArm);
+    addSMChild(lArm);
+    addSMChild(rLeg);
+    addSMChild(lLeg);
+    addSMChild(head);
 
     updateJoints();
 

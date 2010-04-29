@@ -35,7 +35,7 @@ public class Scene {
 
     // add steve as a child and zoom it, so that it can be displayed properly
     objRoot.addChild(steve);
-    steve.scale((float) 0.5, (float) 0.5, (float) 0.5);
+    steve.scale(0.3, 0.3, 0.3);
 
     // adds a light, necessary to see the cylinders
     objRoot.addChild(getLight());
