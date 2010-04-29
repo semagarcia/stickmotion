@@ -63,44 +63,48 @@ public class Stickman extends SMGroup {
     addChild(lLeg);
     addChild(head);
 
-    updatePositions();
+    updateJoints();
 
   }
 
   /**
-   * Method for updating the position and angle of every articulation of the
-   * Stickman
+   * Method for updating the position and angle of the Stickman body joints
    */
-  public void updatePositions() {
+  public void updateJoints() {
 
-    // applies the rotation and sets the correct position to the right arm
+    // Right Arm
     rArm.rotation(_rArmAngle.x, _rArmAngle.y, _rArmAngle.z);
-    rArm.translation(
-        (float) (BODYR + (Math.sin(rArm.angle.z) * rArm.HEIGHT / 2)),
-        (float) (Math.cos(rArm.angle.z) * rArm.HEIGHT / 2), 0);
+    // Displace to be on the edge of the body cylinder
+    rArm.translation(BODYR, 0, 0);
 
-    // applies the rotation and sets the correct position to the left arm
+    // Left Arm
     lArm.rotation(-_lArmAngle.x, -_lArmAngle.y, -_lArmAngle.z);
-    lArm.translation(
-        (float) -(BODYR + Math.sin(lArm.angle.z) * lArm.HEIGHT / 2),
-        (float) (Math.cos(lArm.angle.z) * lArm.HEIGHT / 2), 0);
+    // Displace to be on the edge of the body cylinder
+    lArm.translation(-BODYR, 0, 0);
 
-    // applies the rotation and sets the correct position to the right leg
+    // Right Leg
     rLeg.rotation(_rLegAngle.x, _rLegAngle.y, _rLegAngle.z);
-    rLeg.translation(
-        (float) (BODYR + (Math.sin(rLeg.angle.z) * rLeg.HEIGHT / 2)),
-        (float) (-BODYH + Math.cos(rLeg.angle.z) * rLeg.HEIGHT / 2), 0);
+    // Displace to be on the edge and bottom of the body cylinder
+    rLeg.translation(BODYR, -BODYH, 0);
 
-    // applies the rotation and sets the correct position to the left leg
+    // Left Leg
     lLeg.rotation(-_lLegAngle.x, -_lLegAngle.y, -_lLegAngle.z);
-    lLeg.translation(
-        (float) -(BODYR + (Math.sin(lLeg.angle.z) * lLeg.HEIGHT / 2)),
-        (float) (-BODYH + Math.cos(lLeg.angle.z) * lLeg.HEIGHT / 2), 0);
+    // Displace to be on the edge and bottom of the body cylinder
+    lLeg.translation(-BODYR, -BODYH, 0);
 
+    // Head
     // applies the rotation and sets the correct position to the head
     head.rotation(_headAngle.x, _headAngle.y, _headAngle.z);
-    head.translation((float) (Math.sin(_headAngle.z) * HEADSIZE / 2),
-        (float) (0.6 + Math.cos(_headAngle.z) * HEADSIZE / 2), 0);
+    head
+        .translation(
+        // X axis correction for Z rotation
+            (float) (Math.sin(_headAngle.z) * HEADSIZE / 2),
+            // Y axis correction for X and Z rotation
+            (float) (0.6 + (Math.sin(_headAngle.x) + Math.cos(_headAngle.z))
+                * HEADSIZE / 2),
+            // Z axis correction for Y and X rotation
+            (float) ((Math.sin(_headAngle.y) + Math.cos(_headAngle.x))
+                * HEADSIZE / 2));
 
   }
 }

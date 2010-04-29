@@ -10,35 +10,86 @@ import com.sun.j3d.utils.geometry.Cylinder;
 public class Arm extends SMGroup {
 
   // size of the cylinders that emulates bones
-  public final float HEIGHT = (float) 0.5;
-  public final float RADIUS = (float) 0.05;
+  private final float HEIGHT = (float) 0.5;
+  private final float RADIUS = (float) 0.05;
 
   // Angle for the joint between anterior and forearm
-  public Vector3f angle;
+  private final Vector3f foreAngle;
+  // Angle for the whole arm
+  private final Vector3f armAngle;
+
+  // Forearm
+  private final SMGroup fore;
 
   /**
    * Constructor for the class Arm
    */
   public Arm() {
     super();
-    angle = new Vector3f(0, 0, (float) 0.5);
+
+    // initial values
+    foreAngle = new Vector3f(0, 0, (float) 0.5);
+    armAngle = new Vector3f(0, 0, (float) 0.2);
 
     // anterior doesn't have transformations, its transformations are done
     // directly in the arm
     Cylinder anterior = new Cylinder(RADIUS, HEIGHT);
 
     // fore is a SMGroup because of the transformations applied
-    SMGroup fore = new SMGroup();
+    fore = new SMGroup();
     fore.addSMChild(new Cylinder(RADIUS, HEIGHT));
-
-    // applies the rotation and it correction to the forearm
-    fore.rotation(angle.x, angle.y, angle.z);
-    fore.translation((float) (Math.sin(angle.z) * HEIGHT / 2), -HEIGHT,
-        (float) (Math.sin(angle.x) * HEIGHT / 2));
 
     // adds the children to the arm
     addSMChild(fore);
     addSMChild(anterior);
+
+    updateJoint();
   }
 
+  /**
+   * Method for updating the position and angle of the forearm joint
+   */
+  public void updateJoint() {
+    // applies the rotation
+    fore.rotation(foreAngle.x, foreAngle.y, foreAngle.z);
+    // translates the forearm the correct the angle displacement
+    fore.translation((float) (Math.sin(foreAngle.z) * HEIGHT / 2), -HEIGHT,
+        (float) (Math.sin(foreAngle.x) * HEIGHT / 2));
+  }
+
+  /**
+   * Method for setting the translation parameters and adjusting them to have
+   * the center on the point for attachment to the body.
+   * 
+   * @param x
+   * @param y
+   * @param z
+   */
+  @Override
+  public void translation(float x, float y, float z) {
+    // Apply the correction due to the angle
+    x += (float) ((Math.sin(armAngle.z)) * HEIGHT / 2);
+    y += (float) ((Math.cos(armAngle.z) + Math.cos(armAngle.x)) * HEIGHT / 2);
+    z += (float) ((Math.cos(armAngle.x) + Math.sin(armAngle.y)) * HEIGHT / 2);
+    // Move the arm down so that the center of coordinates is the point where it
+    // will be attached to the body
+    y -= HEIGHT / 2;
+    super.translation(x, y, z);
+  }
+
+  /**
+   * Method for setting the rotation parameters
+   * 
+   * @param x
+   * @param y
+   * @param z
+   */
+  @Override
+  public void rotation(float x, float y, float z) {
+    super.rotation(x, y, z);
+    // store the angle after using the rotation function
+    armAngle.x = x;
+    armAngle.y = y;
+    armAngle.z = z;
+  }
 }
