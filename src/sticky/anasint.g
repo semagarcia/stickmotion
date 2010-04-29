@@ -7,10 +7,24 @@ class Anasint extends Parser;
 	options {
 		k=2;
 	}
+<<<<<<< .mine
+=======
 		
 	instrucciones[HashMap vars]: (sentencia[vars])? {System.out.println("Reconocido. HashMap: "+vars);};
+>>>>>>> .r48
 	
+<<<<<<< .mine
+	//DETECTAR CUANDO EL CÓDIGO ESTÁ VACÍO
+	
+	instrucciones[HashMap vars]: (sentencia[vars] | estrCondicional[vars])*  
+		{
+			System.out.println("Reconocido. HashMap: "+vars);
+		};
+	
+	sentencia[HashMap vars]: (declaracion[vars]|eliminacion[vars]/*|funcion*/) FIN_INSTRUCCION;
+=======
 	sentencia[HashMap vars]: (declaracion[vars]|eliminacion[vars]/*|funcion*/) FIN_INSTRUCCION (sentencia[vars]| /* nothing */);
+>>>>>>> .r48
 	
 	//Declaracion de variables
 	declaracion [HashMap vars]: VAR i:IDENT (OP_ASIG (c:CADENA|e:ENTERO|r:REAL|v:VERDADERO|f:FALSO|ii:IDENT))?
@@ -41,7 +55,23 @@ class Anasint extends Parser;
 		{
 		vars.remove(i.getText());
 		};
+		
+	// Javi: Definición de estructuras condicionales.
+	estrCondicional [HashMap vars]: sentenciaIf[vars] /*| sentenciaSwitch*/;
+	
+	sentenciaIf [HashMap vars]: IF PAR_IZQ PAR_DER LLAVE_IZQ instrucciones[vars] LLAVE_DER
+		{
+			System.out.println("Reconocido. IF ");
+		};
 
+	/*
+	condicional [HashMap vars]: cond:IF
+		{
+			vars.put(cond.getText(),vars.get(cond.getText()));
+			System.out.println("Reconocido. IF ");
+		};
+	*/
+	
 	//Definicion de funciones
 /*	funcion {HashMap vars=new HashMap();}: DEF IDENT PAR_IZQ (declaracion[vars] (SEPARA declaracion[vars])*)? PAR_DER LLAVE_IZQ instrucciones[vars] LLAVE_DER;
 */
