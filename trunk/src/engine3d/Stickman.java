@@ -10,13 +10,8 @@ import com.sun.j3d.utils.geometry.Cylinder;
 public class Stickman extends SMGroup {
 
   // size of the cylinder that emulates the central body
-  private final float BODYH = 1;
-  private final float BODYR = (float) 0.3;
-  // size of the head
-  private final float HEADSIZE = (float) 0.2;
-
-  // Head
-  private final SMGroup head;
+  private final float BODYH = (float) 1.0;
+  private final float BODYR = (float) 0.2;
 
   // Right and Left Arm Angles
   public Vector3f rArmAngle;
@@ -31,6 +26,9 @@ public class Stickman extends SMGroup {
   // They are public so that they can be flexed and updated independently
   public Arm rArm, lArm, rLeg, lLeg;
 
+  // Head
+  private final Head head;
+
   /**
    * Constructor for the class Stickman
    */
@@ -43,8 +41,8 @@ public class Stickman extends SMGroup {
     lLegAngle = new Vector3f(0, 0, (float) 0.5);
     headAngle = new Vector3f(0, 0, 0);
 
-    // the body trunk doesn't have transformations, its transformations are done
-    // directly in the arm
+    // the body trunk doesn't have transformations, the transformations are done
+    // directly to the stickman
     Cylinder body = new Cylinder(BODYR, BODYH);
 
     // create the limbs
@@ -53,9 +51,8 @@ public class Stickman extends SMGroup {
     rLeg = new Arm();
     lLeg = new Arm();
 
-    // the head will be a moveable cube
-    head = new SMGroup();
-    head.addChild(new Cylinder(HEADSIZE, HEADSIZE));
+    // create head
+    head = new Head();
 
     // adds body, limbs and head to the Stickman as children
     addChild(body);
@@ -65,8 +62,13 @@ public class Stickman extends SMGroup {
     addChild(lLeg);
     addChild(head);
 
-    updateJoints();
+    // Initial position
+    rArm.setForeAngle(new Vector3f(0, 0, (float) 0.5));
+    lArm.setForeAngle(new Vector3f(0, 0, (float) -0.5));
+    rLeg.setForeAngle(new Vector3f(0, 0, (float) -0.2));
+    lLeg.setForeAngle(new Vector3f(0, 0, (float) 0.2));
 
+    updateJoints();
   }
 
   /**
@@ -77,35 +79,26 @@ public class Stickman extends SMGroup {
     // Right Arm
     rArm.rotation(rArmAngle.x, rArmAngle.y, rArmAngle.z);
     // Displace to be on the edge of the body cylinder
-    rArm.translation(BODYR, 0, 0);
+    rArm.translation(BODYR, BODYH / 2, 0);
 
     // Left Arm
-    lArm.rotation(-lArmAngle.x, -lArmAngle.y, -lArmAngle.z);
+    lArm.rotation(lArmAngle.x, -lArmAngle.y, -lArmAngle.z);
     // Displace to be on the edge of the body cylinder
-    lArm.translation(-BODYR, 0, 0);
+    lArm.translation(-BODYR, BODYH / 2, 0);
 
     // Right Leg
     rLeg.rotation(rLegAngle.x, rLegAngle.y, rLegAngle.z);
     // Displace to be on the edge and bottom of the body cylinder
-    rLeg.translation(BODYR, -BODYH, 0);
+    rLeg.translation(BODYR, -(BODYH / 2), 0);
 
     // Left Leg
-    lLeg.rotation(-lLegAngle.x, -lLegAngle.y, -lLegAngle.z);
+    lLeg.rotation(lLegAngle.x, -lLegAngle.y, -lLegAngle.z);
     // Displace to be on the edge and bottom of the body cylinder
-    lLeg.translation(-BODYR, -BODYH, 0);
+    lLeg.translation(-BODYR, -(BODYH / 2), 0);
 
     // Head
     // applies the rotation and sets the correct position to the head
     head.rotation(headAngle.x, headAngle.y, headAngle.z);
-    head
-        .translation(
-        // X axis correction for Z rotation
-            (float) (Math.sin(headAngle.z) * HEADSIZE / 2),
-            // Y axis correction for X and Z rotation
-            (float) (0.6 + (Math.sin(headAngle.x) + Math.cos(headAngle.z))
-                * HEADSIZE / 2),
-            // Z axis correction for Y and X rotation
-            (float) ((Math.sin(headAngle.y) + Math.cos(headAngle.x)) * HEADSIZE / 2));
-
+    head.translation(0, BODYH / 2, 0);
   }
 }

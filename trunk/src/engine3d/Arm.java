@@ -29,7 +29,7 @@ public class Arm extends SMGroup {
     super();
 
     // initial values
-    foreAngle = new Vector3f(0, 0, (float) 0.5);
+    foreAngle = new Vector3f(0, 0, (float) 0.2);
     armAngle = new Vector3f(0, 0, (float) 0.2);
 
     // anterior doesn't have transformations, its transformations are done
@@ -70,8 +70,7 @@ public class Arm extends SMGroup {
   public void translation(float x, float y, float z) {
     // Apply the correction due to the angle
     x += (float) ((Math.sin(armAngle.z)) * HEIGHT / 2);
-    y += (float) ((Math.cos(armAngle.z) + Math.cos(armAngle.x)) * HEIGHT / 2);
-    z += (float) ((Math.cos(armAngle.x) + Math.sin(armAngle.y)) * HEIGHT / 2);
+    z += (float) ((Math.sin(armAngle.x)) * HEIGHT / 2);
     // Move the arm down so that the center of coordinates is the point where it
     // will be attached to the body
     y -= HEIGHT / 2;
@@ -93,4 +92,16 @@ public class Arm extends SMGroup {
     armAngle.y = y;
     armAngle.z = z;
   }
+
+  /**
+   * Method for setting the value of the foreAngle
+   * 
+   * @param foreAngle
+   *          Value of foreAngle to set
+   */
+  public void setForeAngle(Vector3f foreAngle) {
+    this.foreAngle = foreAngle;
+    updateJoint();
+  }
+
 }
