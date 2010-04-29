@@ -14,7 +14,8 @@ public class Arm extends SMGroup {
   private final float RADIUS = (float) 0.05;
 
   // Angle for the joint between anterior and forearm
-  private final Vector3f foreAngle;
+  // It's set to public so that we can change it for flexing the arm.
+  public Vector3f foreAngle;
   // Angle for the whole arm
   private final Vector3f armAngle;
 
