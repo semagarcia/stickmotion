@@ -15,19 +15,21 @@ public class Stickman extends SMGroup {
   // size of the head
   private final float HEADSIZE = (float) 0.2;
 
+  // Head
+  private final SMGroup head;
+
   // Right and Left Arm Angles
-  private final Vector3f _rArmAngle;
-  private final Vector3f _lArmAngle;
+  public Vector3f rArmAngle;
+  public Vector3f lArmAngle;
   // Right and Left Leg Angles
-  private final Vector3f _rLegAngle;
-  private final Vector3f _lLegAngle;
+  public Vector3f rLegAngle;
+  public Vector3f lLegAngle;
   // head Angle
-  private final Vector3f _headAngle;
+  public Vector3f headAngle;
 
   // Limbs
-  Arm rArm, lArm, rLeg, lLeg;
-  // Head
-  SMGroup head;
+  // They are public so that they can be flexed and updated independently
+  public Arm rArm, lArm, rLeg, lLeg;
 
   /**
    * Constructor for the class Stickman
@@ -35,11 +37,11 @@ public class Stickman extends SMGroup {
   public Stickman() {
 
     // Initial angle values
-    _rArmAngle = new Vector3f(0, 0, (float) 0.5);
-    _lArmAngle = new Vector3f(0, 0, (float) 0.5);
-    _rLegAngle = new Vector3f(0, 0, (float) 0.5);
-    _lLegAngle = new Vector3f(0, 0, (float) 0.5);
-    _headAngle = new Vector3f(0, 0, 0);
+    rArmAngle = new Vector3f(0, 0, (float) 0.5);
+    lArmAngle = new Vector3f(0, 0, (float) 0.5);
+    rLegAngle = new Vector3f(0, 0, (float) 0.5);
+    lLegAngle = new Vector3f(0, 0, (float) 0.5);
+    headAngle = new Vector3f(0, 0, 0);
 
     // the body trunk doesn't have transformations, its transformations are done
     // directly in the arm
@@ -73,38 +75,37 @@ public class Stickman extends SMGroup {
   public void updateJoints() {
 
     // Right Arm
-    rArm.rotation(_rArmAngle.x, _rArmAngle.y, _rArmAngle.z);
+    rArm.rotation(rArmAngle.x, rArmAngle.y, rArmAngle.z);
     // Displace to be on the edge of the body cylinder
     rArm.translation(BODYR, 0, 0);
 
     // Left Arm
-    lArm.rotation(-_lArmAngle.x, -_lArmAngle.y, -_lArmAngle.z);
+    lArm.rotation(-lArmAngle.x, -lArmAngle.y, -lArmAngle.z);
     // Displace to be on the edge of the body cylinder
     lArm.translation(-BODYR, 0, 0);
 
     // Right Leg
-    rLeg.rotation(_rLegAngle.x, _rLegAngle.y, _rLegAngle.z);
+    rLeg.rotation(rLegAngle.x, rLegAngle.y, rLegAngle.z);
     // Displace to be on the edge and bottom of the body cylinder
     rLeg.translation(BODYR, -BODYH, 0);
 
     // Left Leg
-    lLeg.rotation(-_lLegAngle.x, -_lLegAngle.y, -_lLegAngle.z);
+    lLeg.rotation(-lLegAngle.x, -lLegAngle.y, -lLegAngle.z);
     // Displace to be on the edge and bottom of the body cylinder
     lLeg.translation(-BODYR, -BODYH, 0);
 
     // Head
     // applies the rotation and sets the correct position to the head
-    head.rotation(_headAngle.x, _headAngle.y, _headAngle.z);
+    head.rotation(headAngle.x, headAngle.y, headAngle.z);
     head
         .translation(
         // X axis correction for Z rotation
-            (float) (Math.sin(_headAngle.z) * HEADSIZE / 2),
+            (float) (Math.sin(headAngle.z) * HEADSIZE / 2),
             // Y axis correction for X and Z rotation
-            (float) (0.6 + (Math.sin(_headAngle.x) + Math.cos(_headAngle.z))
+            (float) (0.6 + (Math.sin(headAngle.x) + Math.cos(headAngle.z))
                 * HEADSIZE / 2),
             // Z axis correction for Y and X rotation
-            (float) ((Math.sin(_headAngle.y) + Math.cos(_headAngle.x))
-                * HEADSIZE / 2));
+            (float) ((Math.sin(headAngle.y) + Math.cos(headAngle.x)) * HEADSIZE / 2));
 
   }
 }
