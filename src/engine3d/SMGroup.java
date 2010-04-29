@@ -79,7 +79,7 @@ public class SMGroup extends Group {
    * @param y
    * @param z
    */
-  public void scale(float x, float y, float z) {
+  public void scale(double x, double y, double z) {
     Transform3D scale = new Transform3D();
     scale.setScale(new Vector3d(x, y, z));
     _scale.setTransform(scale);
