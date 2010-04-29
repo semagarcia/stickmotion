@@ -1,6 +1,7 @@
 package engine3d;
 
 import javax.media.j3d.Group;
+import javax.media.j3d.Node;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.Vector3d;
@@ -22,7 +23,7 @@ public class SMGroup extends Group {
     _translation = new TransformGroup();
     _scale = new TransformGroup();
 
-    addChild(_translation);
+    super.addChild(_translation);
     _translation.addChild(_rotation);
     _rotation.addChild(_scale);
 
@@ -34,8 +35,9 @@ public class SMGroup extends Group {
    * 
    * @param group
    */
-  public void addSMChild(Group group) {
-    _scale.addChild(group);
+  @Override
+  public void addChild(Node node) {
+    _scale.addChild(node);
   }
 
   /**
