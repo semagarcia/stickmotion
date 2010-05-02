@@ -7,5 +7,9 @@ var vacia;
 var copiaCad=cad;
 
 sup cad;
-// def funcion(var asd="probando", var int=40, var d) { var cad="ca"; sup asd;};
-var das;
+
+si( (entra==56 Y otro!="ok") O ident) { var cadena="if"; }
+
+si( !(hola==V OX !adios==F) ) { var caden="if2"; }
+
+var a=34; 
