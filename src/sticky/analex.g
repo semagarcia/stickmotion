@@ -120,5 +120,4 @@ class Analex extends Lexer;
 		
 	//Cadenas
 	CADENA: '"' (options {greedy=false;}: ~('\\') | "\\\"")* '"';
-	    
-    
+	
