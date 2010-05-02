@@ -37,6 +37,15 @@ public class Scene {
     objRoot.addChild(steve);
     steve.scale(0.3, 0.3, 0.3);
 
+    // A couple of animation examples
+    // Going right
+    steve.addRotationAnim(1000, 1000, 0, 0, 0, 0, (float) Math.PI / 2);
+    steve.addPositionAnim(1000, 2000, 0, -Math.PI / 2, 0, 0, 1);
+    // Going left
+    steve.addRotationAnim(2000, 3000, 0, 0, 0, 0, (float) -Math.PI);
+    steve.addPositionAnim(1000, 5000, 0, -Math.PI / 2, 0, 0, 1);
+    steve.addRotationAnim(1000, 6000, 0, 0, 0, 0, (float) Math.PI / 2);
+
     // adds a light, necessary to see the cylinders
     objRoot.addChild(getLight());
 
