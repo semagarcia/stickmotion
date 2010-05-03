@@ -31,7 +31,7 @@ class Analex extends Lexer;
 	    SWITCH="opcion";
 	    CASE="caso";
 	    END_CASE="fincaso";
-	    DEFAULT="defecto";    
+	    DEFAULT="defecto";   
     		
 		//Movimientos Stickman
 		GIRAR="girar";
@@ -75,6 +75,9 @@ class Analex extends Lexer;
 	
 	//Separador
 	SEPARA: ',';
+	
+	//Javi: Dos Puntos
+	DOBLE_PUNTO: ':'; 
 	
 	//Llaves
 	LLAVE_IZQ: '{';

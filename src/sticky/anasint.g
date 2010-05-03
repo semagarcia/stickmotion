@@ -12,7 +12,7 @@ class Anasint extends Parser;
 	instrucciones[HashMap vars]: (sentencia[vars])? {System.out.println("Reconocido. HashMap: "+vars);};
 	
 	//comentado para javi
-	sentencia[HashMap vars]: (((declaracion[vars]|eliminacion[vars]/*|funcion*/) FIN_INSTRUCCION) | estructuraCondicional[vars]) (sentencia[vars] | /* nothing */);
+	sentencia[HashMap vars]: (((declaracion[vars]|eliminacion[vars]/*|funcion*/) FIN_INSTRUCCION) | estructuraCondicional[vars]) (sentencia[vars])?;
 
 	//Declaracion de variables
 	declaracion [HashMap vars]: VAR i:IDENT (OP_ASIG (c:CADENA|e:ENTERO|r:REAL|v:VERDADERO|f:FALSO|ii:IDENT))?
@@ -45,9 +45,11 @@ class Anasint extends Parser;
 		};
 		
 	// Javi: Definición de estructuras condicionales.
-	estructuraCondicional [HashMap vars]: sentenciaIf[vars] /*| sentenciaSwitch*/ /*instrucciones[vars]*/;
+	estructuraCondicional [HashMap vars]: sentenciaIf[vars] | sentenciaSwitch[vars] /*instrucciones[vars]*/;
 	
+	// Javi: definición de sentencia IF
 	sentenciaIf [HashMap vars]: IF PAR_IZQ condicion PAR_DER LLAVE_IZQ instrucciones[vars] LLAVE_DER
+								(ELSE PAR_IZQ condicion PAR_DER LLAVE_IZQ instrucciones[vars] LLAVE_DER)?
 		{
 			System.out.println("Reconocido. IF ");
 		};
@@ -64,16 +66,22 @@ class Anasint extends Parser;
 	
 	expComparacion : expBaseCond ( ( operaAritmeticos ) expBaseCond )*
 	{
-		System.out.println("Condiciones");
+		System.out.println("Condicion IF");
 	} ;
 
 	operaAritmeticos : OP_IG | OP_DIST | OP_MAYOR | OP_MENOR | OP_MAYOR_IG | OP_MENOR_IG;
 	
-	expBaseCond: (OP_NO)? (constante | PAR_IZQ condicion PAR_DER);
+	expBaseCond: (OP_NO)? (variable | PAR_IZQ condicion PAR_DER);
 	
-	constante: IDENT | CADENA | ENTERO | REAL | VERDADERO | FALSO;
+	variable: IDENT | CADENA | ENTERO | REAL | VERDADERO | FALSO;
 	
-
+	// Javi: Definición de sentencia SWITCH-CASE
+	sentenciaSwitch [HashMap vars]: SWITCH PAR_IZQ variable PAR_DER LLAVE_IZQ (casosSwitch[vars])* LLAVE_DER
+	{
+		System.out.println("Switch-Case");
+	} ;
+	
+	casosSwitch [HashMap vars]: (CASE variable | DEFAULT ) DOBLE_PUNTO LLAVE_IZQ instrucciones[vars] LLAVE_DER END_CASE FIN_INSTRUCCION;
 	
 	//Definicion de funciones
 /*	funcion {HashMap vars=new HashMap();}: DEF IDENT PAR_IZQ (declaracion[vars] (SEPARA declaracion[vars])*)? PAR_DER LLAVE_IZQ instrucciones[vars] LLAVE_DER;
