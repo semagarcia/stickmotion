@@ -35,10 +35,10 @@ public class Stickman extends SMGroup {
   public Stickman() {
 
     // Initial angle values
-    rArmAngle = new Vector3f(0, 0, (float) 0.5);
-    lArmAngle = new Vector3f(0, 0, (float) 0.5);
-    rLegAngle = new Vector3f(0, 0, (float) 0.5);
-    lLegAngle = new Vector3f(0, 0, (float) 0.5);
+    rArmAngle = new Vector3f(0, 0, 0);
+    lArmAngle = new Vector3f(0, 0, 0);
+    rLegAngle = new Vector3f(0, 0, 0);
+    lLegAngle = new Vector3f(0, 0, 0);
     headAngle = new Vector3f(0, 0, 0);
 
     // the body trunk doesn't have transformations, the transformations are done
@@ -62,11 +62,11 @@ public class Stickman extends SMGroup {
     addChild(lLeg);
     addChild(head);
 
-    // Initial position
-    rArm.setForeAngle(new Vector3f(0, 0, (float) 0.5));
-    lArm.setForeAngle(new Vector3f(0, 0, (float) -0.5));
-    rLeg.setForeAngle(new Vector3f(0, 0, (float) -0.2));
-    lLeg.setForeAngle(new Vector3f(0, 0, (float) 0.2));
+    // // Initial position
+    // rArm.setForeAngle(new Vector3f(0, 0, (float) 0.5));
+    // lArm.setForeAngle(new Vector3f(0, 0, (float) -0.5));
+    // rLeg.setForeAngle(new Vector3f(0, 0, (float) -0.2));
+    // lLeg.setForeAngle(new Vector3f(0, 0, (float) 0.2));
 
     updateJoints();
   }
@@ -82,17 +82,17 @@ public class Stickman extends SMGroup {
     rArm.translation(BODYR, BODYH / 2, 0);
 
     // Left Arm
-    lArm.rotation(lArmAngle.x, -lArmAngle.y, -lArmAngle.z);
+    lArm.rotation(lArmAngle.x, (float) Math.PI + lArmAngle.y, lArmAngle.z);
     // Displace to be on the edge of the body cylinder
     lArm.translation(-BODYR, BODYH / 2, 0);
 
     // Right Leg
-    rLeg.rotation(rLegAngle.x, rLegAngle.y, rLegAngle.z);
+    rLeg.rotation(rLegAngle.x, (float) Math.PI + rLegAngle.y, rLegAngle.z);
     // Displace to be on the edge and bottom of the body cylinder
     rLeg.translation(BODYR, -(BODYH / 2), 0);
 
     // Left Leg
-    lLeg.rotation(lLegAngle.x, -lLegAngle.y, -lLegAngle.z);
+    lLeg.rotation(lLegAngle.x, (float) Math.PI + lLegAngle.y, lLegAngle.z);
     // Displace to be on the edge and bottom of the body cylinder
     lLeg.translation(-BODYR, -(BODYH / 2), 0);
 

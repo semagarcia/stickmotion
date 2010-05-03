@@ -30,6 +30,9 @@ public class Scene {
     // creates the objects root
     BranchGroup objRoot = new BranchGroup();
 
+    // adds a light, necessary to see the cylinders
+    objRoot.addChild(getLight());
+
     // creates a stickam (his name is steve :P)
     Stickman steve = new Stickman();
 
@@ -38,16 +41,72 @@ public class Scene {
     steve.scale(0.3, 0.3, 0.3);
 
     // A couple of animation examples
+
     // Going right
     steve.addRotationAnim(1000, 1000, 0, 0, 0, 0, (float) Math.PI / 2);
     steve.addPositionAnim(1000, 2000, 0, -Math.PI / 2, 0, 0, 1);
     // Going left
     steve.addRotationAnim(2000, 3000, 0, 0, 0, 0, (float) -Math.PI);
     steve.addPositionAnim(1000, 5000, 0, -Math.PI / 2, 0, 0, 1);
+    // Look to the front
     steve.addRotationAnim(1000, 6000, 0, 0, 0, 0, (float) Math.PI / 2);
 
-    // adds a light, necessary to see the cylinders
-    objRoot.addChild(getLight());
+    // Crappy walking animation
+    for (int time = 1000; time < 20000; time += 1000) {
+      // First second
+      // Move right Leg forward (z rot)
+      steve.rLeg.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
+          (float) (Math.PI / 3));
+      // Move right Leg backwards (z rot)
+      steve.lLeg.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
+          (float) -(Math.PI / 3));
+      // Flex foreLegs
+      steve.rLeg.fore.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
+          (float) Math.PI / 3);
+      steve.lLeg.fore.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
+          (float) Math.PI / 3);
+
+      // Next second
+      time += 1000;
+      // Un-Flex foreLegs
+      steve.rLeg.fore.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
+          (float) -Math.PI / 3);
+      steve.lLeg.fore.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
+          (float) -Math.PI / 3);
+      // Move right Leg backwards (z rot)
+      steve.rLeg.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
+          (float) -(Math.PI / 3));
+      // Move right Leg forward (z rot)
+      steve.lLeg.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
+          (float) (Math.PI / 3));
+    }
+
+    // Try to fly
+    for (int time = 1500; time < 20000; time += 1000) {
+      // Raise both Arms
+      steve.rArm.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
+          (float) (Math.PI / 3));
+      steve.lArm.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
+          (float) (Math.PI / 3));
+      // Flex forearms up
+      steve.rArm.fore.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
+          (float) Math.PI / 3);
+      steve.lArm.fore.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
+          (float) Math.PI / 3);
+
+      // Next step
+      time += 1000;
+      // un-Flex forearms
+      steve.rArm.fore.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
+          (float) -Math.PI / 3);
+      steve.lArm.fore.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
+          (float) -Math.PI / 3);
+      // Low both Arms
+      steve.rArm.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
+          (float) -(Math.PI / 3));
+      steve.lArm.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
+          (float) -(Math.PI / 3));
+    }
 
     return objRoot;
   }
