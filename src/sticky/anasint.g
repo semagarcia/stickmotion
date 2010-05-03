@@ -9,10 +9,10 @@ class Anasint extends Parser;
 	}
 
 	
-	instrucciones[HashMap vars]: (sentencia[vars])? {System.out.println("Reconocido. HashMap: "+vars);};
+	instrucciones[HashMap vars]: (sentencia[vars])* {System.out.println("Reconocido. HashMap: "+vars);};
 	
 	//comentado para javi
-	sentencia[HashMap vars]: (((declaracion[vars]|eliminacion[vars]/*|funcion*/) FIN_INSTRUCCION) | estructuraCondicional[vars]) (sentencia[vars])?;
+	sentencia[HashMap vars]: (((declaracion[vars]|eliminacion[vars]/*|funcion*/) FIN_INSTRUCCION) | estructuraCondicional[vars]);
 
 	//Declaracion de variables
 	declaracion [HashMap vars]: VAR i:IDENT (OP_ASIG (c:CADENA|e:ENTERO|r:REAL|v:VERDADERO|f:FALSO|ii:IDENT))?
@@ -49,7 +49,7 @@ class Anasint extends Parser;
 	
 	// Javi: definición de sentencia IF
 	sentenciaIf [HashMap vars]: IF PAR_IZQ condicion PAR_DER LLAVE_IZQ instrucciones[vars] LLAVE_DER
-								(ELSE PAR_IZQ condicion PAR_DER LLAVE_IZQ instrucciones[vars] LLAVE_DER)?
+								(ELSE /*PAR_IZQ condicion PAR_DER*/ LLAVE_IZQ instrucciones[vars] LLAVE_DER)?
 		{
 			System.out.println("Reconocido. IF ");
 		};

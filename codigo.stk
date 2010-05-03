@@ -10,13 +10,14 @@ sup cad;
 
 si( (entra==56 Y otro!="ok") O ident) { var cadena="if"; }
 
-si( !(hola==V OX !adios==F) ) { var caden="if2"; } sino( ejemplo=="Entra" ){ var else="else"; }
+si( !(hola==V OX !adios==F) ) { var caden="if2"; } sino{ var else="else"; }
 
 var a=34; 
+
 
 opcion( hola ) 
 { 
 	caso hola: { var otracad="opcion"; } fincaso;
 	caso hola: { var otracade="opcion2"; } fincaso;
 	defecto: { var capullin="polladita"; } fincaso;
-}}
+}
