@@ -12,7 +12,7 @@ PEPE = 2+3;
 
 res = hola+PEPE+pepele;
 
-si(V) {
+si(4>3) {
 var otra = 2;
 }
 
