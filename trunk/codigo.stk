@@ -1,23 +1,17 @@
-var cad="Cadena";
-var int=2;
-var float=3.3;
-var v=V;
-var f=F;
-var vacia;
-var copiaCad=cad;
+var PEPE, tu;
 
-sup cad;
+var hola = (3*(2+2));
+var res;
+var totolo = 2.3*(3+1);
+var pepele = 1.3*2;
+var cazurri;
 
-si( (entra==56 Y otro!="ok") O ident) { var cadena="if"; }
-
-si( !(hola==V OX !adios==F) ) { var caden="if2"; } sino{ var else="else"; }
-
-var a=34; 
+hola = 2+5;
+PEPE = 2+3;
 
 
-opcion( hola ) 
-{ 
-	caso hola: { var otracad="opcion"; } fincaso;
-	caso hola: { var otracade="opcion2"; } fincaso;
-	defecto: { var capullin="polladita"; } fincaso;
-}
+res = hola+PEPE+pepele;
+
+cazurri = totolo+pepele;
+
+$
