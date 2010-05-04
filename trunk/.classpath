@@ -3,13 +3,5 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="var" path="ANTLR_HOME/antlr.jar" sourcepath="ANTLR_HOME/antlrsrc.zip"/>
-	<classpathentry kind="lib" path="/usr/lib/jvm/java-1.5.0-gcj-4.3-1.5.0.0/jre/lib/j3dcore.jar"/>
-	<classpathentry kind="lib" path="/usr/lib/jvm/java-1.5.0-gcj-4.3-1.5.0.0/jre/lib/j3dutils.jar"/>
-	<classpathentry kind="lib" path="/usr/lib/jvm/java-1.5.0-gcj-4.3-1.5.0.0/jre/lib/jaas.jar"/>
-	<classpathentry kind="lib" path="/usr/lib/jvm/java-1.5.0-gcj-4.3-1.5.0.0/jre/lib/jdbc-stdext.jar"/>
-	<classpathentry kind="lib" path="/usr/lib/jvm/java-1.5.0-gcj-4.3-1.5.0.0/jre/lib/jndi.jar"/>
-	<classpathentry kind="lib" path="/usr/lib/jvm/java-1.5.0-gcj-4.3-1.5.0.0/jre/lib/jsse.jar"/>
-	<classpathentry kind="lib" path="/usr/lib/jvm/java-1.5.0-gcj-4.3-1.5.0.0/jre/lib/rt.jar"/>
-	<classpathentry kind="lib" path="/usr/lib/jvm/java-1.5.0-gcj-4.3-1.5.0.0/jre/lib/vecmath.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
