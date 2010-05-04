@@ -657,7 +657,7 @@ expr_relacional returns [Object respuesta = null]
 	// la regla "sentencias". Tal como está se evalua aunque la expresión booleana no
 	// se cumpla. Quizá haya que mandarle un valor flag a la regla "sentencias"
 	// para que se ejecute si flag=true y no se ejecute si flag=false.
-	sentenciaIF {Object valor;}: IF PAR_IZQ valor = expr_booleana PAR_DER LLAVE_IZQ sentencias LLAVE_DER
+	sentenciaIF {Object valor;}: IF PAR_IZQ (valor = expr_booleana) PAR_DER LLAVE_IZQ sentencias LLAVE_DER
 				(ELSE PAR_IZQ expr_booleana PAR_DER LLAVE_IZQ sentencias LLAVE_DER)?
 	{
 			System.out.println("Reconocido. IF con resultado "+valor);
