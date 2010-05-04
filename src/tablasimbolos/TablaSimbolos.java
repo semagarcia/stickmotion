@@ -179,4 +179,15 @@ public class TablaSimbolos {
     return simbolo;
   }
 
+  public String delSimbolo(Token token) {
+    Simbolo simbolo = null;
+    String nombre = token.getText();
+
+    for (int i = 0; i < tabla.size(); i++)
+      if (nombre.compareTo(tabla.get(i).getNombre()) == 0)
+        simbolo = tabla.remove(i);
+
+    return simbolo.getNombre();
+  }
+
 }
