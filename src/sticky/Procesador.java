@@ -1,26 +1,28 @@
 package sticky;
 
 import java.io.FileInputStream;
-import java.util.HashMap;
+import java.io.FileNotFoundException;
+
+import antlr.ANTLRException;
 
 public class Procesador {
 
-  public static void main(String args[]) {
-    try {
-      // Carga archivo
-      String file = "codigo.stk";
-      FileInputStream fis = new FileInputStream(file);
+  public static void main(String[] args) {
 
-      // Analyzes the characters of the file and makes the corresponding tokens
+    try {
+
+      FileInputStream fis = new FileInputStream("codigo.stk");
       Analex analex = new Analex(fis);
 
-      // Analyzes the ordered tokens
       Anasint anasint = new Anasint(analex);
+      anasint.instrucciones();
 
-      // Calls to the initial rule of the parser
-      anasint.instrucciones(new HashMap());
-    } catch (Exception e) {
-      System.err.println(e.getMessage());
+    } catch (ANTLRException ae) {
+      System.err.println(ae.getMessage());
+    } catch (FileNotFoundException fnfe) {
+      System.err.println("No se encontró el fichero");
     }
+
   }
+
 }

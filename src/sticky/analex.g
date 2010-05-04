@@ -9,10 +9,9 @@ class Analex extends Lexer;
 	}
 	
 	tokens {
-		//Numeros		
-		REAL;
-		ENTERO;
-
+		ENTERO= "int";
+		REAL= "real";
+		
 		//Variables
 		VAR="var";
 		SUP="sup";	
@@ -20,6 +19,7 @@ class Analex extends Lexer;
 		//Booleanos
 		VERDADERO="V";
 		FALSO="F";
+		BOOLEAN="bool";
 	
 	    //Bucles
 	    B_FOR="para";
@@ -68,6 +68,7 @@ class Analex extends Lexer;
 	
 	//Fin de instruccion
 	FIN_INSTRUCCION: ';';
+	FIN_INTERPRETE: '$';
 	
 	//Parentesis
 	PAR_IZQ: '(';
@@ -96,12 +97,11 @@ class Analex extends Lexer;
 	
 	//Operadores de asignacion
 	OP_ASIG: '=';
+	OP_ASIGTO: "=:";
 	
 	//Operadores condicionales
 	OP_MAYOR: '>';
 	OP_MENOR: '<';
-	OP_MAYOR_IG: OP_MAYOR '=';
-	OP_MENOR_IG: OP_MENOR '=';
 	OP_IG: "==";
 	OP_DIST: "!=";
 	
@@ -117,9 +117,9 @@ class Analex extends Lexer;
 	IDENT: (LETRA|'_') (LETRA|'_'|DIGITO)*;
 
 	//Numeros
-	NUMERO: ((DIGITO)+ '.') =>
-    	(DIGITO)+ '.' (DIGITO)* {$setType(REAL);} |
-		(DIGITO)+ {$setType(ENTERO);};
+	NUMERO: REAL | ENT;
+	REAL: ((DIGITO )+ '.' ) => (DIGITO )+ '.' ( DIGITO )* { $setType (REAL); };
+	ENT: ( DIGITO )+ { $setType (ENT);};
 		
 	//Cadenas
 	CADENA: '"' (options {greedy=false;}: ~('\\') | "\\\"")* '"';
