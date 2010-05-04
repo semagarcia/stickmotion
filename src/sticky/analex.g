@@ -14,7 +14,7 @@ class Analex extends Lexer;
 		
 		//Variables
 		VAR="var";
-		SUP="sup";	
+		SUP="sup";
 		
 		//Booleanos
 		VERDADERO="V";
