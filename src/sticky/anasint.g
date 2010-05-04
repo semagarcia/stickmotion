@@ -20,7 +20,7 @@ class Anasint extends Parser;
 	} 
 	:(sentencias)* fin_interprete;
 	 
-	sentencias: (declaracion)* (asignacion)* (sentenciaIF)*;
+	sentencias: (declaracion)* (asignacion)* (sentenciaIF)* (eliminar_var)*;
 
 	//Para declarar variables hay diferentes alternativas:
 	//1. Se declara una variable sin inicializarse.
@@ -83,10 +83,12 @@ asignacion
 	(IDENT OP_ASIG expr_aritmetica FIN_INSTRUCCION) => 
 	i:IDENT OP_ASIG (respuesta = expr_aritmetica)//| respuesta = func_dev[ejecutar, nombreRegion])
 	punto:FIN_INSTRUCCION
-	{
-			System.out.println("asignacion: "+respuesta);
+	{		
 			//if(ejecutar)
-			tablaSimbolos.set(i,respuesta);	
+			if(tablaSimbolos.set(i,respuesta))	
+				System.out.println("asignacion: "+respuesta);
+			else 
+				System.out.println("asignacion no realizada, no existe la variable \""+i.getText()+"\"");
 	}
 
 	;
@@ -680,6 +682,15 @@ expr_relacional returns [Object respuesta = null]
 <<<<<<< .mine
 */
 
+eliminar_var {String res;}: SUP id:IDENT FIN_INSTRUCCION 
+	{
+		  res=tablaSimbolos.delSimbolo(id);
+		  if(res.compareTo(id.getText()) == 0)
+		  	System.out.println("Variable \""+id.getText()+"\" ha sido eliminada");
+		  else 
+		  	System.out.println("Variable \""+id.getText()+"\" no ha sido eliminada");
+	};
+
 fin_interprete:
 	{
 		System.out.println("...FINALIZANDO STICKY...");	
@@ -688,5 +699,6 @@ fin_interprete:
 	{
 		consumeUntil(Token.EOF_TYPE);
 		consume();
+		exit();
 	};
 	
