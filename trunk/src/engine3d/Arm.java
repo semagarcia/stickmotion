@@ -40,11 +40,6 @@ public class Arm extends SMGroup {
 
     updateJoint();
 
-    // float alfa = (float) Math.PI / 2;
-    // float h = (float) (Math.sin(alfa) * HEIGHT / 2);
-    // // addRotationAnim(2000, 1000, Math.PI / 2, 0, 0, 0, alfa);
-    // addPositionAnim(2000, 1000, Math.PI, 0, 0, 0, h);
-
   }
 
   /**
