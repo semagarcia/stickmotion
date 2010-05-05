@@ -1,5 +1,8 @@
 package engine3d;
 
+import javax.vecmath.Vector3f;
+
+import com.sun.j3d.utils.geometry.Cylinder;
 
 /**
  * Class for Stickman's body

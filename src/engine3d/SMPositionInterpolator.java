@@ -1,5 +1,10 @@
 package engine3d;
 
+import javax.media.j3d.Alpha;
+import javax.media.j3d.PositionInterpolator;
+import javax.media.j3d.Transform3D;
+import javax.media.j3d.TransformGroup;
+import javax.media.j3d.WakeupOnElapsedTime;
 
 /**
  * This class is an extension of the PositionInterpolator class thats wake up on

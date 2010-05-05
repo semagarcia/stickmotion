@@ -4,6 +4,11 @@ import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.GraphicsConfiguration;
 
+import javax.media.j3d.Canvas3D;
+
+import com.sun.j3d.utils.applet.MainFrame;
+import com.sun.j3d.utils.universe.SimpleUniverse;
+
 // main class of the program
 public class Main extends Applet {
 

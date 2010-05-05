@@ -1,5 +1,6 @@
 package engine3d;
 
+import javax.vecmath.Vector3f;
 
 /**
  * Class for the stickman's arms
