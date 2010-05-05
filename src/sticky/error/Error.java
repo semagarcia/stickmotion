@@ -1,4 +1,4 @@
-package error;
+package sticky.error;
 
 /**
  * Clase perteneciente al paquete error. Esta clase representa a los tipos de
