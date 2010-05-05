@@ -8,7 +8,8 @@ header {
 
 class Anasint extends Parser;
 	options {
-		k=2; }
+		k=2; 
+		buildAST = true;}
 	{
 		TablaSimbolos tablaSimbolos= new TablaSimbolos();
 	}
@@ -19,9 +20,9 @@ class Anasint extends Parser;
 		System.out.println("...INICIANDO STICKY...");		
 	} 
 	
-	: (sentencia)*;
+	: (sentencia)* fin_interprete;
 	
-	sentencia : declaracion | asignacion | eliminar_var;
+	sentencia: declaracion | asignacion | eliminar_var | sentenciaIF;
 
 	//Para declarar variables hay diferentes alternativas:
 	//1. Se declara una variable sin inicializarse.
@@ -101,6 +102,7 @@ expr_aritmetica returns [Object resultado = null]
 	e1=expr_mod
 	{
 		resultado = e1;	
+		System.out.println(resultado);
 	}
 	(linea1:OP_POT e2 = expr_mod
 	{
@@ -130,13 +132,13 @@ expr_aritmetica returns [Object resultado = null]
 				}
 			}
 		}
-	
 	})*;
 	
 expr_mod returns[Object resultado = null]
 {Object e1; Object e2;}:
 	e1=expr
 	{
+		System.out.println(e1);
 		resultado = e1;
 	}
 	(linea1:OP_MOD e2 = expr
@@ -369,11 +371,11 @@ expr_mult returns [Object resultado = null]
 	  })*;
 
 expr_base returns [Object resultado = null]: 
-		n1:NUMERO {resultado = new Integer(n1.getText());}
+		n1:ENTERO {resultado = new Integer(n1.getText());}
 		|n2:REAL {resultado = new Double(n2.getText());}
-		|n3:VERDADERO {resultado = new Boolean(true);}
-		|n4:FALSO {resultado = new Boolean(false);}
-		|id:IDENT 
+		|n3:VERDADERO {System.out.println("encontrado verdad"); resultado = new Boolean(true);}
+		|n4:FALSO {System.out.println("encontrado falso"); resultado = new Boolean(false);}
+		|id:IDENT
 		{
 			
 			if(tablaSimbolos.existeSimbolo(id.getText()))
@@ -403,99 +405,75 @@ expr_base returns [Object resultado = null]:
 				
 		}
 		| PAR_IZQ resultado = expr_aritmetica PAR_DER
+
 		;
 		
 
-//////////////////////////// EXPRESIONES BOOLEANAS /////////////////////////////////////////
-
-//Evaluamos la expresion lógica correspondiente empezando por la mas baja en la jerarquía: OR AND NOT.
-//Pasos:
-//1. Evaluar las expresiones anteriores a la OR, que tienen mayor prioridad.
-//2. Evaluar las expresiones posteriores a la OR que tienen también mayor prioridad.
-//3. Comprobar que esas dos expresiones anteriores tienen fundamento, es decir, son apropiadas para una función OR de este tipo.
-
-expr_booleana returns [Object respuesta=null] {Object exp; Object exp2;}:
-	exp =  expresionOR {respuesta = exp;}	//1
-	(linea: OP_O exp2= expresionOR 	//2
-		{
-			if(exp2 != null && respuesta!=null) //3
-			{
-				if(exp2 instanceof Boolean && respuesta instanceof Boolean)
-				{
-					boolean var1 = new Boolean(respuesta.toString()).booleanValue();
-					boolean var2 = new Boolean(exp2.toString()).booleanValue();
-					var1 = var1 || var2;
-					respuesta = new Boolean(var1);	
-				}
-				else
-				{
-						Error.errorExpresion(1,linea.getLine());
-				}	
-			}
-		}
-		)*;
-		
-//Evaluamos la expresion lógica siguiente de menor prioridad AND.
-//Pasos:
-//1. Evaluar las expresiones anteriores a la AND, que tienen mayor prioridad.
-//2. Evaluar las expresiones posteriores a la AND que tienen también mayor prioridad.
-//3. Comprobar que esas dos expresiones anteriores tienen fundamento, es decir, son apropiadas para una función AND de este tipo.
-
-expresionOR returns [Object respuesta=null] {Object exp; Object exp2;}:
-	exp =  expresionAND {respuesta = exp;}	//1
-	(linea: OP_O exp2 = expresionAND //2
-		{
-			if(exp2 != null && respuesta!=null) //3
-			{
-				if(exp2 instanceof Boolean && respuesta instanceof Boolean)
-				{
-					boolean var1 = new Boolean(respuesta.toString()).booleanValue();
-					boolean var2 = new Boolean(exp2.toString()).booleanValue();
-					var1 = var1 && var2;
-					respuesta = new Boolean(var1);	
-				}
-				else
-				{
-						Error.errorExpresion(1,linea.getLine());
-				}	
-			}
-		}
-		)*;
-
-//Evaluar la expresión lógica siguiente de menor prioridad: NOT, y como ya se han evaluado todas las expresiones lógicas. La siguiente expresión 
-//de mayor prioridad sería la expresión relacional. La evaluamos (debe ir después de NOT.
-//Pasos:
-//1. Evaluar las expresiones posteriores a la NOT que tienen también mayor prioridad 
-//       (expresiones relacionales)
-//2. Comprobar que esa expresión tiene fundamento, es decir, es 
-//      apropiada para una función NOT de este tipo.
-
-expresionAND returns [Object respuesta=null] {Object exp; Object exp2;}:
-	linea: OP_NO exp2= expr_relacional // 1)
+expresionOR returns [Object resultado = null]
+{Object exp1; Object exp2;}: 
+	exp1= expresionAND
 	{
-			if(exp2 != null) 				// 2)
+		resultado = exp1;
+	}
+	(linea:OP_O exp2=expresionAND
+	{
+	  if(exp2 != null) 				// 2
 			{
 				if(exp2 instanceof Boolean)	
 				{
-					boolean var1 = new Boolean(exp2.toString()).booleanValue();
-					respuesta = new Boolean(!var1);	
+					boolean var1 = new Boolean(exp1.toString()).booleanValue();
+					boolean var2 = new Boolean(exp2.toString()).booleanValue();
+					var1 = var1 || var2;
+					resultado = new Boolean(var1);	
+					
 				}
 				else
 				{
 						Error.errorExpresion(1,linea.getLine());
-				}	
+				}
+			
 			}
-		}
-		|
-		exp = expr_relacional {respuesta=exp;};
+	  }
+	)*;
+
+
 		
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+expresionAND returns [Object resultado = null]
+{Object exp1; Object exp2;}: 
+
+	exp1=expr_relacional {resultado = exp1;}
+	
+	( linea:OP_Y exp2=expr_relacional
+	  {
+	  if(exp2 != null) 				// 2
+			{
+				if(exp2 instanceof Boolean)	
+				{
+					boolean var1 = new Boolean(exp1.toString()).booleanValue();
+					boolean var2 = new Boolean(exp2.toString()).booleanValue();
+					var1 = var1 && var2;
+					resultado = new Boolean(var1);	
+					
+				}
+				else
+				{
+						Error.errorExpresion(1,linea.getLine());
+				}
+			
+			}
+	  }
+	  )*;
 
 ////////////////// EXPRESIONES RELACIONALES /////////////////////////////////
 
 expr_relacional returns [Object respuesta = null]
 {Object e1; Object e2;}:
-	e1 = expr_aritmetica
+	e1 = expr_aritmetica {
+		respuesta = e1;
+		System.out.println(respuesta);
+	}
 	(linea:OP_MAYOR e2 = expr_aritmetica
 	{
 		if(e1 instanceof Integer && e2 instanceof Integer)
@@ -658,8 +636,7 @@ expr_relacional returns [Object respuesta = null]
 	// la regla "sentencias". Tal como está se evalua aunque la expresión booleana no
 	// se cumpla. Quizá haya que mandarle un valor flag a la regla "sentencias"
 	// para que se ejecute si flag=true y no se ejecute si flag=false.
-/*	sentenciaIF {Object valor;}: IF PAR_IZQ (valor = expr_booleana) PAR_DER LLAVE_IZQ sentencias LLAVE_DER
-				(ELSE PAR_IZQ expr_booleana PAR_DER LLAVE_IZQ sentencias LLAVE_DER)?
+	sentenciaIF {Object valor;}: IF valor=expresionOR {System.out.println("valor final= "+valor);} FIN_INSTRUCCION
 	{
 			System.out.println("Reconocido. IF con resultado "+valor);
 	};
