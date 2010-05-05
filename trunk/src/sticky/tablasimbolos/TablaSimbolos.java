@@ -1,4 +1,4 @@
-package tablasimbolos;
+package sticky.tablasimbolos;
 
 import java.util.ArrayList;
 

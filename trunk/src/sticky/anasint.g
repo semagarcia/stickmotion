@@ -1,9 +1,9 @@
 header {
 	package sticky;
 	import java.util.HashMap;
-	import tablasimbolos.TablaSimbolos;
+	import sticky.tablasimbolos.TablaSimbolos;
 	import java.util.ArrayList;
-	import error.Error;
+	import sticky.error.Error;
 }
 
 class Anasint extends Parser;
