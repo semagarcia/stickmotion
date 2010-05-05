@@ -699,6 +699,6 @@ fin_interprete:
 	{
 		consumeUntil(Token.EOF_TYPE);
 		consume();
-		exit();
+		System.exit(0);
 	};
 	
