@@ -135,22 +135,25 @@ public class StickMotion extends javax.swing.JFrame {
 
     animationPanel.setBorder(javax.swing.BorderFactory
         .createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-    animationPanel.setPreferredSize(new java.awt.Dimension(350, 350));
+    animationPanel.setMaximumSize(new java.awt.Dimension(350, 350));
+    animationPanel.setMinimumSize(new java.awt.Dimension(350, 350));
+    animationPanel.setPreferredSize(new java.awt.Dimension(460, 345));
 
     javax.swing.GroupLayout animationPanelLayout = new javax.swing.GroupLayout(
         animationPanel);
     animationPanel.setLayout(animationPanelLayout);
     animationPanelLayout.setHorizontalGroup(animationPanelLayout
         .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGap(
-            0, 471, Short.MAX_VALUE));
+            0, 456, Short.MAX_VALUE));
     animationPanelLayout.setVerticalGroup(animationPanelLayout
         .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGap(
-            0, 346, Short.MAX_VALUE));
+            0, 341, Short.MAX_VALUE));
 
     optionPanelResults.setBorder(javax.swing.BorderFactory
         .createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
 
     editorResults.setEditable(false);
+    editorResults.setOpaque(false);
     jScrollPane2.setViewportView(editorResults);
 
     labeleditorResult.setText("Resultado Interpretación:");
@@ -165,10 +168,11 @@ public class StickMotion extends javax.swing.JFrame {
                 .addGroup(
                     optionPanelResultsLayout.createParallelGroup(
                         javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane2,
-                            javax.swing.GroupLayout.DEFAULT_SIZE, 447,
-                            Short.MAX_VALUE).addComponent(labeleditorResult))
-                .addContainerGap()));
+                        .addComponent(labeleditorResult).addComponent(
+                            jScrollPane2,
+                            javax.swing.GroupLayout.Alignment.TRAILING,
+                            javax.swing.GroupLayout.DEFAULT_SIZE, 432,
+                            Short.MAX_VALUE)).addContainerGap()));
     optionPanelResultsLayout.setVerticalGroup(optionPanelResultsLayout
         .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(
@@ -176,8 +180,9 @@ public class StickMotion extends javax.swing.JFrame {
                 .addComponent(labeleditorResult).addPreferredGap(
                     javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2,
-                    javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
-                .addContainerGap()));
+                    javax.swing.GroupLayout.PREFERRED_SIZE, 150,
+                    javax.swing.GroupLayout.PREFERRED_SIZE).addContainerGap(17,
+                    Short.MAX_VALUE)));
 
     editor.addKeyListener(new java.awt.event.KeyAdapter() {
       @Override
@@ -191,38 +196,42 @@ public class StickMotion extends javax.swing.JFrame {
     areaApp.setLayout(areaAppLayout);
     areaAppLayout.setHorizontalGroup(areaAppLayout.createParallelGroup(
         javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+        javax.swing.GroupLayout.Alignment.TRAILING,
         areaAppLayout.createSequentialGroup().addContainerGap().addComponent(
-            jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 396,
-            javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
-            javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addGroup(
-                areaAppLayout.createParallelGroup(
-                    javax.swing.GroupLayout.Alignment.LEADING).addComponent(
-                    optionPanelResults, javax.swing.GroupLayout.DEFAULT_SIZE,
+            jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 688,
+            Short.MAX_VALUE).addPreferredGap(
+            javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addGroup(
+            areaAppLayout.createParallelGroup(
+                javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addComponent(optionPanelResults,
+                    javax.swing.GroupLayout.DEFAULT_SIZE,
                     javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(animationPanel,
-                        javax.swing.GroupLayout.DEFAULT_SIZE, 475,
-                        Short.MAX_VALUE)).addContainerGap()));
+                .addComponent(animationPanel,
+                    javax.swing.GroupLayout.DEFAULT_SIZE,
+                    javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addContainerGap()));
     areaAppLayout
         .setVerticalGroup(areaAppLayout
             .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(
+                javax.swing.GroupLayout.Alignment.TRAILING,
                 areaAppLayout
                     .createSequentialGroup()
                     .addContainerGap()
                     .addGroup(
                         areaAppLayout
                             .createParallelGroup(
-                                javax.swing.GroupLayout.Alignment.LEADING)
+                                javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jScrollPane1,
-                                javax.swing.GroupLayout.DEFAULT_SIZE, 738,
+                                javax.swing.GroupLayout.Alignment.LEADING,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, 567,
                                 Short.MAX_VALUE)
                             .addGroup(
                                 areaAppLayout
                                     .createSequentialGroup()
                                     .addComponent(animationPanel,
                                         javax.swing.GroupLayout.PREFERRED_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                        345,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(
                                         javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -247,7 +256,7 @@ public class StickMotion extends javax.swing.JFrame {
         statusPanelLayout.createSequentialGroup().addContainerGap()
             .addComponent(statusLabel).addPreferredGap(
                 javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(currentStatusLabel).addContainerGap(783,
+            .addComponent(currentStatusLabel).addContainerGap(1060,
                 Short.MAX_VALUE)));
     statusPanelLayout.setVerticalGroup(statusPanelLayout.createParallelGroup(
         javax.swing.GroupLayout.Alignment.LEADING).addGroup(
@@ -845,29 +854,28 @@ public class StickMotion extends javax.swing.JFrame {
         getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(layout.createParallelGroup(
-        javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-        layout.createSequentialGroup().addContainerGap().addGroup(
-            layout.createParallelGroup(
-                javax.swing.GroupLayout.Alignment.LEADING).addComponent(
-                areaApp, javax.swing.GroupLayout.DEFAULT_SIZE,
-                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(statusPanel,
-                    javax.swing.GroupLayout.DEFAULT_SIZE,
-                    javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addContainerGap()).addComponent(toolBar,
-        javax.swing.GroupLayout.DEFAULT_SIZE, 943, Short.MAX_VALUE));
+        javax.swing.GroupLayout.Alignment.LEADING).addComponent(toolBar,
+        javax.swing.GroupLayout.DEFAULT_SIZE, 1220, Short.MAX_VALUE).addGroup(
+        layout.createSequentialGroup().addContainerGap().addComponent(
+            statusPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
+            javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addContainerGap()).addGroup(
+        layout.createSequentialGroup().addContainerGap().addComponent(areaApp,
+            javax.swing.GroupLayout.DEFAULT_SIZE,
+            javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addContainerGap()));
     layout.setVerticalGroup(layout.createParallelGroup(
         javax.swing.GroupLayout.Alignment.LEADING).addGroup(
         javax.swing.GroupLayout.Alignment.TRAILING,
         layout.createSequentialGroup().addComponent(toolBar,
             javax.swing.GroupLayout.PREFERRED_SIZE, 25,
             javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
+            javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(
+            areaApp, javax.swing.GroupLayout.PREFERRED_SIZE,
+            javax.swing.GroupLayout.DEFAULT_SIZE,
+            javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
             javax.swing.LayoutStyle.ComponentPlacement.RELATED,
             javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(areaApp, javax.swing.GroupLayout.PREFERRED_SIZE,
-                javax.swing.GroupLayout.DEFAULT_SIZE,
-                javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(
-                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(statusPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
                 javax.swing.GroupLayout.DEFAULT_SIZE,
                 javax.swing.GroupLayout.PREFERRED_SIZE)));
