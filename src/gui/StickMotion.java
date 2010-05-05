@@ -6,6 +6,7 @@
 
 package gui;
 
+import java.awt.GraphicsConfiguration;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -13,10 +14,13 @@ import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.media.j3d.Canvas3D;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
+
+import com.sun.j3d.utils.universe.SimpleUniverse;
 
 /**
  * Clase principal de entrada - Aplicación gráfica
@@ -48,7 +52,21 @@ public class StickMotion extends javax.swing.JFrame {
     /* Deshacer y Rehacer */
     undoRedoManager = new javax.swing.undo.UndoManager();
     editor.getDocument().addUndoableEditListener(undoRedoManager);
+
+    loadScene();
   } // fin constructor StickMotion()
+
+  /**
+   * Charges the 3d scene and shows it on animationPanel
+   */
+  private void loadScene() {
+    GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+    Canvas3D canvas3D = new Canvas3D(config);
+    canvas3D.setSize(460, 345);
+    animationPanel.add(canvas3D);
+
+    new engine3d.Scene(canvas3D);
+  }
 
   /**
    * This method is called from within the constructor to initialize the form.
