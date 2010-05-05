@@ -1,15 +1,5 @@
 package engine3d;
 
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.DirectionalLight;
-import javax.vecmath.Color3f;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3f;
-
-import com.sun.j3d.utils.universe.SimpleUniverse;
-
 // this class loads all the scene in a simple universe
 public class Scene {
 

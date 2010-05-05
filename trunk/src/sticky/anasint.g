@@ -18,9 +18,16 @@ class Anasint extends Parser;
 		Object x=null;
 		System.out.println("...INICIANDO STICKY...");		
 	} 
+<<<<<<< .mine
+	
+	: (sentencia)*;
+	
+	sentencia : declaracion | asignacion | eliminar_var;
+=======
 	:(sentencia)* fin_interprete;
 	 
 	sentencia: declaracion | asignacion | sentenciaIF | eliminar_var;
+>>>>>>> .r86
 
 	//Para declarar variables hay diferentes alternativas:
 	//1. Se declara una variable sin inicializarse.
@@ -43,7 +50,6 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 		
 		|(VAR IDENT OP_ASIG) =>VAR i2:IDENT OP_ASIG (x=expr_aritmetica) punto2:FIN_INSTRUCCION
 			{			
-				System.out.println("entra2");	
 				boolean res = tablaSimbolos.put(i2,x);	// modifico el valor en la tabla de simbolos
 				if(res)
 		  			System.out.println("Variable \""+i2.getText()+"\" ha sido declarada con valor "+x);
@@ -84,7 +90,7 @@ asignacion
 	{		
 			//if(ejecutar)
 			if(tablaSimbolos.set(i,respuesta))	
-				System.out.println("asignacion: "+respuesta);
+				System.out.println("asignacion a la variable \""+i.getText()+"\": "+respuesta);
 			else 
 				System.out.println("asignacion no realizada, no existe la variable \""+i.getText()+"\"");
 	}
@@ -657,8 +663,13 @@ expr_relacional returns [Object respuesta = null]
 	// la regla "sentencias". Tal como está se evalua aunque la expresión booleana no
 	// se cumpla. Quizá haya que mandarle un valor flag a la regla "sentencias"
 	// para que se ejecute si flag=true y no se ejecute si flag=false.
+<<<<<<< .mine
+/*	sentenciaIF {Object valor;}: IF PAR_IZQ (valor = expr_booleana) PAR_DER LLAVE_IZQ sentencias LLAVE_DER
+				(ELSE PAR_IZQ expr_booleana PAR_DER LLAVE_IZQ sentencias LLAVE_DER)?
+=======
 	sentenciaIF {Object valor;}: IF PAR_IZQ (valor = expr_booleana) PAR_DER LLAVE_IZQ sentencia LLAVE_DER
 				(ELSE PAR_IZQ expr_booleana PAR_DER LLAVE_IZQ sentencia LLAVE_DER)?
+>>>>>>> .r86
 	{
 			System.out.println("Reconocido. IF con resultado "+valor);
 	};
@@ -697,6 +708,9 @@ fin_interprete:
 	{
 		consumeUntil(Token.EOF_TYPE);
 		consume();
+<<<<<<< .mine
+=======
 		System.exit(0);
+>>>>>>> .r85
 	};
 	
