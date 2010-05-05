@@ -1,0 +1,105 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[spanish]{babel} % Paquete para utilizar el español
+\usepackage{palatino} % Para cambiar el tipo de letra
+
+% Reconocimiento de caracteres del idioma Español en LaTeX.
+\usepackage[utf8x]{inputenc} % Codificacion de entrada
+\usepackage[T1]{fontenc} % Codificacion de fuente
+
+% Cabecera de la "portada"
+\title{\textbf{StickMotion:} Editor de posturas, posiciones y movimientos}
+\author{\small\textit{Carmona Varo, Fernando; García García, José Manuel; López Fernandez, David;}\\
+	\small\textit{Navas Torres, Francisco Javier; Porras Bueno, Javier}}
+
+\begin{document}
+
+  \maketitle % Crea el título y los autores
+
+  \begin{abstract}
+    En el presente documento se procederá a la descripción del trabajo a realizar en la parte de práctica de la asignatura Procesadores del
+    Lenguaje, impartida por el profesor D. Enrique Yeguas Bolívar. Tal y como adelante el título de este informe, el trabajo consistirá en una
+    aplicación que, a través de una serie de órdenes, ejecutará unos movimientos concretos y específicos.\\
+  \end{abstract}
+
+  \section{Introducción. Contexto del problema}
+  La finalidad del software que se va a desarrollar es, tal y como se ha mencionado en el abstract de este documento, desarrollar una aplicación
+  que ejecute una serie de órdenes que introduzca el usuario. Éste debe poseer ciertos conocimientos de programación para que le sea más fácil la
+  utilización adecuada de sentencias, bucles, etc. \\
+  
+  La aplicación sólo reconoce y acepta sentencias desarrolladas para el \textbf{lenguaje de programación sticky}, el cual se abordará en posteriores 
+  documentos de una manera más formal y técnica.\\
+  
+  \section{Arquitectura de la aplicación}
+  La aplicación a desarrollar será posible ejecutarla sólo en local, por lo que no requerirá ningún tipo de conexión a Internet ni dependerá de otra
+  aplicación, módulo o similar. De esta forma se hace sencillo su movilidad entre diversas máquinas y entre diversos sistemas operativos, pues al 
+  estar desarrollada en Java permite una máxima compatibilidad, aumentando de esta forma el número potencial de usuarios que utilicen dicha 
+  herramienta.\\
+  
+  \section{Descripción del stickman}
+    \subsection{¿Cómo está formado?}
+    El stickman pretende ser la representación sencilla del cuerpo de una persona, por lo que inicialmente posee sus mismas características y 
+    articulaciones principales:
+    \begin{itemize}
+      \item Dos hombros que permiten la rotación de los brazos.
+      \item Dos brazos que permiten la flexión/extensión por la articulación del codo.
+      \item Dos piernas que permiten la flexión/extensión por la articulación de la rodilla.
+      \item La cadera que permite la flexión/extensión por ella misma así como la rotación de las piernas.
+      \item Un centro de gravedad o CDG, situado a la mitad aproximadamente del tronco.\\
+    \end{itemize}
+    
+    \subsection{¿Qué es lo que puede hacer?}
+    Nuestro stickman podrá realizar una serie de movimientos que podrán dotarlo de una funcionalidad suficiente para realizar la mayoría de acciones
+    que se le ocurran al usuario:
+    \begin{itemize}
+      \item \textbf{\textit{Cabeza}}: podrá moverse horizontalmente hacia los lados, es decir, hacia un hombro y hacia otro.
+      \item \textbf{\textit{Hombros}}: permiten movimientos de 360\textdegree para mover completamente los brazos en cualquier dirección y sentido.
+      \item \textbf{\textit{Piernas}}: permiten movimientos de 360\textdegree para mover completamente las piernas en cualquier dirección y sentido.
+      \item \textbf{\textit{Codos}}: permiten movimientos, como máximo, de 180\textdegree (lo que correspondería a la extensión completa del brazo).
+      \item \textbf{\textit{Rodillas}}: permiten movimientos, como máximo, de 180\textdegree (lo que se corresponde con la extensión completa de la
+	    pierna).\\
+    \end{itemize}
+    
+    \subsection{¿Cómo lo puede hacer?}
+    Para los movimientos descritos en el apartado anterior la aplicación cuenta con una serie de funciones que permitirán rotar cualquier miembro del
+    stickman, así como posicionarlo en cualquier lugar de la ventana de animación.\\
+    
+    \subsection{¿Cómo es representado?}
+    Como todo stickman, nuestro pequeño protagonista estará compuesta por, como se ha mencionado antes, una cabeza, un tronco, dos brazos y dos piernas,
+    representados todos ellos por medio de líneas simples. Más adelante se estudiará la opción de mapearlo mediante texturas y dotarlo de un mayor
+    realismo.\\
+  
+  \section{Descripción de la aplicación}
+  La aplicación, de escritorio como se ha mencionado anteriormente, consiste en una interfaz gráfica que tendrá dos partes claramente diferenciadas:
+  \begin{enumerate}
+    \item La parte donde se dibujará el stickman y éste realizará todos sus movimientos.
+    \item La parte donde se introducirán las sentencias o instrucciones; en definitiva, el uso de la aplicación. \\
+  \end{enumerate}
+  Para introducir las instrucciones se proveerán dos métodos:
+  \begin{enumerate}
+    \item Entrada estándar desde la propia aplicación, lo que facilita al usuario la prueba y testeo de acciones simples.
+    \item Entrada desde fichero, lo que permite al usuario la prueba y testeo de un conjunto de instrucciones que conforman una acción más compleja.\\
+  \end{enumerate}
+  Además, la aplicación va a contar con las siguientes características:
+  \begin{itemize}
+    \item Para aquellos movimientos repetitivos o que posean cierto automatismo: bucles \textbf{while} y \textbf{for}.
+    \item Para porciones de código condicionales: sentencias \textbf{if}.
+    \item Creación y declaración de variables.
+    \item Para el incremento y decremento de variables: operadores ``\textbf{++}'' y ``\textbf{--}''.
+    \item Para la pausa entre movimientos: sentencias \textbf{wait}.
+    \item Inclusión de librerías: fragmentos de código escrito en lenguaje sticky que implementan funciones concretas y específicas, aliviando así la
+	  carga de trabajo al usuario, evitando de esta forma el tener que reinventar la rueda con código que ya ha sido desarrollado.
+  \end{itemize}
+
+
+
+  
+  \section{Recursos}
+  Los recursos con los que se cuenta para este trabajo son: 
+  \begin{itemize}
+    \item \textbf{Humano:} Los componentes del grupo, ya mencionados en el comienzo de este documento.
+    \item \textbf{Software:} Se hará uso del entorno de desarrollo integrado Eclipse 3.4 junto con el plugin correspondiente de ANTLR.
+    \item \textbf{Hardware:} Los equipos personales de los miembros que conforman el grupo.
+  \end{itemize}
+
+
+\end{document}
