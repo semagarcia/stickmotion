@@ -18,9 +18,9 @@ class Anasint extends Parser;
 		Object x=null;
 		System.out.println("...INICIANDO STICKY...");		
 	} 
-	:(sentencias)* fin_interprete;
+	:(sentencia)* fin_interprete;
 	 
-	sentencias: (declaracion)* (asignacion)* (sentenciaIF)* (eliminar_var)*;
+	sentencia: declaracion | asignacion | sentenciaIF | eliminar_var;
 
 	//Para declarar variables hay diferentes alternativas:
 	//1. Se declara una variable sin inicializarse.
@@ -79,8 +79,6 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 
 asignacion 
 	{ String mensaje = new String(); Object respuesta; Object respuesta2;}:
-
-	(IDENT OP_ASIG expr_aritmetica FIN_INSTRUCCION) => 
 	i:IDENT OP_ASIG (respuesta = expr_aritmetica)//| respuesta = func_dev[ejecutar, nombreRegion])
 	punto:FIN_INSTRUCCION
 	{		
@@ -659,8 +657,8 @@ expr_relacional returns [Object respuesta = null]
 	// la regla "sentencias". Tal como está se evalua aunque la expresión booleana no
 	// se cumpla. Quizá haya que mandarle un valor flag a la regla "sentencias"
 	// para que se ejecute si flag=true y no se ejecute si flag=false.
-	sentenciaIF {Object valor;}: IF PAR_IZQ (valor = expr_booleana) PAR_DER LLAVE_IZQ sentencias LLAVE_DER
-				(ELSE PAR_IZQ expr_booleana PAR_DER LLAVE_IZQ sentencias LLAVE_DER)?
+	sentenciaIF {Object valor;}: IF PAR_IZQ (valor = expr_booleana) PAR_DER LLAVE_IZQ sentencia LLAVE_DER
+				(ELSE PAR_IZQ expr_booleana PAR_DER LLAVE_IZQ sentencia LLAVE_DER)?
 	{
 			System.out.println("Reconocido. IF con resultado "+valor);
 	};
