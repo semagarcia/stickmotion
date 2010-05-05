@@ -16,6 +16,9 @@ import javax.vecmath.Vector3f;
  */
 public class SMGroup extends Group {
 
+  // Area to be rendered in the animations. Specifies the programmed region
+  private static final BoundingSphere _bounds = new BoundingSphere();
+
   // Statics initial transformations
   private final TransformGroup _rotation;
   private final TransformGroup _translation;
@@ -23,9 +26,6 @@ public class SMGroup extends Group {
 
   // Node where the sons are going to be added
   private final BranchGroup _child;
-
-  // Area to be rendered in the animations
-  private final BoundingSphere _bounds;
 
   /**
    * Constructor that creates a group with its transformations
@@ -42,9 +42,6 @@ public class SMGroup extends Group {
     _translation.addChild(_rotation);
     _rotation.addChild(_scale);
     _scale.addChild(_child);
-
-    // Specifies the programmed region
-    _bounds = new BoundingSphere();
   }
 
   /**
