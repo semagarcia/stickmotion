@@ -1,7 +1,7 @@
 var PEPE, tu;
 
 var hola = (3*(2+2));
-var res;
+var res = 4;
 var totolos = 2.3*(3+1);
 var pepele = 1.3*2;
 var cazurri;
