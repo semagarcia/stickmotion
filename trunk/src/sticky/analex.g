@@ -17,9 +17,11 @@ class Analex extends Lexer;
 		SUP="sup";
 		
 		//Booleanos
-		VERDADERO="V";
-		FALSO="F";
-		BOOLEAN="bool";
+
+		BOOLEAN = "bool";
+		VERDADERO = "VERDAD";
+		FALSO = "FALSO";
+		
 	
 	    //Bucles
 	    B_FOR="para";
@@ -48,6 +50,7 @@ class Analex extends Lexer;
 		
 		//Definicion de funciones
 	//	DEF="def";
+
 				
 	}
 
@@ -102,14 +105,14 @@ class Analex extends Lexer;
 	//Operadores condicionales
 	OP_MAYOR: '>';
 	OP_MENOR: '<';
-	OP_IG: "==";
+	OP_IG: "=="; 
 	OP_DIST: "!=";
+	OP_OX : "OX";
+	OP_NO : "NO";
+	OP_Y : "&&";
+	OP_O : "||";
 	
-	//Operadores logicos
-	OP_Y: 'Y';
-	OP_O: 'O';
-	OP_OX: "OX";
-	OP_NO: "NO"|'!';
+
 	
 	//Identificadores
 	protected LETRA: 'a'..'z'|'A'..'Z';
@@ -117,10 +120,10 @@ class Analex extends Lexer;
 	IDENT: (LETRA|'_') (LETRA|'_'|DIGITO)*;
 
 	//Numeros
-	NUMERO: REAL | ENT;
-	REAL: ((DIGITO )+ '.' ) => (DIGITO )+ '.' ( DIGITO )* { $setType (REAL); };
-	ENT: ( DIGITO )+ { $setType (ENT);};
+	NUMERO: ((DIGITO )+ '.' ) => (DIGITO )+ '.' ( DIGITO )* { $setType (REAL); } | ( DIGITO )+ { $setType (ENTERO);};
 		
+	
+	
 	//Cadenas
 	CADENA: '"' (options {greedy=false;}: ~('\\') | "\\\"")* '"';
 	
