@@ -1,9 +1,36 @@
 
-var pepe = 1;
+var pepe = VERDAD;
 
-mientras (pepe != 10) {
-	pepe = pepe +1;
+si (pepe Y FALSO) 
+	{
+	si(FALSO)
+		tuen = 3;
+	sino
+		neut = 3;
+	}
+sino 
+	{
+	pepe = 2;
+	}
+PEPE = 2;
+
+
+
+var limite = 6;
+var resultado = 0;
+
+si (FALSO) {
+	si(VERDAD) 
+		var david = 2;
+		
 }
 
+mientras(resultado < limite ) {
+	resultado = resultado + 1;
+	mientras(resultado == 3) 
+		resultado = resultado + 1;
+		
+	}
+	
 $
 
