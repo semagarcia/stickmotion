@@ -25,7 +25,8 @@ public class Main extends Applet {
     Canvas3D canvas3D = new Canvas3D(config);
     add("Center", canvas3D);
 
-    new Scene(canvas3D);
+    Scene scene = new Scene();
+    scene.start(canvas3D);
   }
 
   /**

@@ -22,8 +22,17 @@ class Anasint extends Parser;
 	
 	: (sentencia)* fin_interprete;
 	
-	
-	sentencia: declaracion | asignacion | eliminar_var | sentenciaIF | sentenciaWHILE ;
+	sentencia: stickcommand | declaracion | asignacion | eliminar_var | sentenciaIF;
+
+
+
+stickcommand {Object a,i,d;}:
+	(
+		(GIRAR STICKMAN (a = expr_aritmetica) (i = expr_aritmetica) (d = expr_aritmetica) FIN_INSTRUCCION)
+		{
+			System.out.println("a:"+a);
+		}
+	);
 
 
 	//Para declarar variables hay diferentes alternativas:
