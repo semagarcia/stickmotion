@@ -27,7 +27,7 @@ public class Stickman extends SMGroup {
   public Arm rArm, lArm, rLeg, lLeg;
 
   // Head
-  private final Head head;
+  public Head head;
 
   /**
    * Constructor for the class Stickman
