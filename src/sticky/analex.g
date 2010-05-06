@@ -49,7 +49,7 @@ class Analex extends Lexer;
 		INCLUIR="incluir";
 		
 		//Definicion de funciones
-	//	DEF="def";
+		//	DEF="def";
 
 				
 	}
@@ -110,7 +110,7 @@ class Analex extends Lexer;
 	OP_IG: "==";
 	OP_DIST: "!=";
 	OP_OX : "OX";
-	OP_NO : "NO";
+	OP_NO : "NO"; 
 	OP_Y : 'Y';
 	OP_O : 'O';
 
@@ -124,9 +124,7 @@ class Analex extends Lexer;
 
 	//Numeros
 	NUMERO: ((DIGITO )+ '.' ) => (DIGITO )+ '.' ( DIGITO )* { $setType (REAL); } | ( DIGITO )+ { $setType (ENTERO);};
-		
-	
-	
+			
 	//Cadenas
 	CADENA: '"' (options {greedy=false;}: ~('\\') | "\\\"")* '"';
 	
