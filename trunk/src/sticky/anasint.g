@@ -682,7 +682,7 @@ evaluarExpresion returns [Object respuesta = null]:
         ({b==true}? sentencia 
         | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION)
         
-        ((ELSE ~LLAVE_IZQ ) => ELSE
+        ((ELSE) => ELSE
         ({b==false}? sentencia
         | {b==true}? (options{greedy=false;}:.)+ FIN_INSTRUCCION
         ))?
@@ -728,6 +728,9 @@ fin_interprete:
 	};
 
 
+//1 -> while de la forma mientras (VERDAD) { hola = 1; hola = 2; var otra; }
+//2 -> while de la forma mientras (VERDAD) hola = 1; sino hola=2;
+
 sentenciaWHILE
     {
         Boolean b = null; 
@@ -735,16 +738,26 @@ sentenciaWHILE
         int marker = mark();
     } :
 	
-	linea:B_WHILE PAR_IZQ expresion = evaluarExpresion PAR_DER
+	(B_WHILE PAR_IZQ evaluarExpresion PAR_DER LLAVE_IZQ) =>   //1
+	B_WHILE PAR_IZQ expresion = evaluarExpresion PAR_DER LLAVE_IZQ
 	{
 		b = ((Boolean)expresion).booleanValue();
 		System.out.println("Resultado evaluacion while :"+b);
 				
-	}
-	LLAVE_IZQ 
-		({b==false}? (options{greedy=false;}:.)+ LLAVE_DER
-		| {b==true}? (sentencia)* LLAVE_DER {rewind(marker);} )
+	} 
+	({b==true}? (sentencia)* LLAVE_DER {rewind(marker);}
+    | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
+	|
 	
+	(B_WHILE PAR_IZQ evaluarExpresion PAR_DER) =>   //2
+	B_WHILE PAR_IZQ expresion = evaluarExpresion PAR_DER
+	{
+		b = ((Boolean)expresion).booleanValue();
+		System.out.println("Resultado evaluacion while sin corchetes :"+b);
+				
+	} 
+		({b==true}? sentencia {rewind(marker);}
+        | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION )
 	;
 
 	
