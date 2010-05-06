@@ -2,8 +2,11 @@ header {
 	package sticky;
 	import java.util.HashMap;
 	import sticky.tablasimbolos.TablaSimbolos;
+	import java.io.FileInputStream;
 	import java.util.ArrayList;
 	import sticky.error.Error;
+	import antlr.*;
+	import antlr.InputBuffer;
 }
 
 class Anasint extends Parser;
@@ -397,7 +400,7 @@ expr_base returns [Object resultado = null]:
 					Error.visualizarError(1,id.getLine(),"ERROR: La variable no tiene asignado ningun valor "+id.getText());	
 				}
 				
-				if(contenido.matches("[0-9~.]"))
+				if(contenido.matches("[0-9~.]*"))
 	  				{
 	  				System.out.println("Entero");
 	  				resultado = new Integer(contenido.toString()).intValue();
@@ -716,21 +719,24 @@ fin_interprete:
 		consume();
 	};
 	
+
 sentenciaWHILE
-	{boolean ejecutar = false; Object expresion = null;
-	Object valor = null; int marca = 0;
-	}:
+    {
+        Boolean b = null; 
+        Object expresion = null; 
+        int marker = mark();
+    } :
 	
 	linea:B_WHILE PAR_IZQ expresion = evaluarExpresion PAR_DER
 	{
-		boolean exp = new Boolean(expresion.toString()).booleanValue();
-		
-		System.out.println("Resultado evaluacion while :"+exp);
+		b = ((Boolean)expresion).booleanValue();
+		System.out.println("Resultado evaluacion while :"+b);
 				
 	}
 	LLAVE_IZQ 
-		(sentencia)*
-	LLAVE_DER
+		({b==false}? (options{greedy=false;}:.)+ LLAVE_DER
+		| {b==true}? (sentencia)* LLAVE_DER {rewind(marker);} )
+	
 	;
 
 	
