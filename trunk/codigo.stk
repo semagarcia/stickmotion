@@ -1,36 +1,32 @@
-
-var pepe = VERDAD;
-
-si (pepe Y FALSO) 
-	{
-	si(FALSO)
-		tuen = 3;
-	sino
-		neut = 3;
+//CONDICIONAL IF
+si(VERDAD O FALSO) {
+	si(4<3 O VERDAD Y FALSO) {
+		var hola;
 	}
-sino 
-	{
-	pepe = 2;
+	sino {
+		var hele = 0;
 	}
-PEPE = 2;
-
-
-
-var limite = 6;
-var resultado = 0;
-
-si (FALSO) {
-	si(VERDAD) 
-		var david = 2;
-		
 }
 
-mientras(resultado < limite ) {
-	resultado = resultado + 1;
-	mientras(resultado == 3) 
-		resultado = resultado + 1;
-		
+//BUCLE MIENTRAS
+var contador = 0;
+mientras(contador < 2) {
+	hele = hele + 1;
+	contador = contador + 1;
+}
+
+//BUCLE PARA
+var i=0;
+para(i;i<5;2;)
+	var pepe;
+
+//Vuelvo a inicializar i porque el bucle anterior modifica su valor
+i = 0;
+para(i;i<3;1;) {	
+	var pepelu;
+	var pipilu;
 	}
+
 	
 $
 
