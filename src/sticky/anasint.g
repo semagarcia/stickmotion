@@ -23,7 +23,7 @@ class Anasint extends Parser;
 	: (sentencia)* fin_interprete;
 	
 	
-	sentencia: declaracion | asignacion | eliminar_var | sentenciaIF  ;
+	sentencia: declaracion | asignacion | eliminar_var | sentenciaIF | sentenciaWHILE ;
 
 
 	//Para declarar variables hay diferentes alternativas:
@@ -39,7 +39,7 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 		  boolean res=tablaSimbolos.put(i1);
 		  if(res)
 		  	System.out.println("Variable \""+i1.getText()+"\" ha sido declarada");
-		  else 
+		  else
 		  	System.out.println("Variable \""+i1.getText()+"\" no ha sido declarada");
 		}
 		
@@ -83,17 +83,15 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 asignacion 
 	{ String mensaje = new String(); Object respuesta; Object respuesta2;}:
 
-	i:IDENT OP_ASIG (respuesta = expr_aritmetica)//| respuesta = func_dev[ejecutar, nombreRegion])
+	i:IDENT OP_ASIG (respuesta = expr_aritmetica) //| respuesta = func_dev[ejecutar, nombreRegion])
 	punto:FIN_INSTRUCCION
-	{		
+	{		System.out.println("asignacion aritmetica");
 			//if(ejecutar)
 			if(tablaSimbolos.set(i,respuesta))	
 				System.out.println("asignacion a la variable \""+i.getText()+"\": "+respuesta);
 			else 
 				System.out.println("asignacion no realizada, no existe la variable \""+i.getText()+"\"");
-	}
-
-	;
+	} ;
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -412,14 +410,19 @@ expr_base returns [Object resultado = null]:
 			
 				
 		}
-		| PAR_IZQ resultado = expresionOR PAR_DER
-
+		| (PAR_IZQ expr_aritmetica PAR_DER) => PAR_IZQ (resultado = expr_aritmetica) PAR_DER
+		| (PAR_IZQ expresionOR PAR_DER) => PAR_IZQ (resultado = expresionOR) PAR_DER
 		;
 		
 
 expresionOR returns [Object resultado = null]
 {Object exp1 = null; Object exp2=null;}: 
-	
+	exp1= expresionAND
+	{
+		System.out.println("expresionOR "+exp1);
+		resultado = exp1;
+		
+	}
 	(linea:OP_O exp2=expresionAND
 	{
 	  System.out.println("entra en or con OP_O");
@@ -441,12 +444,7 @@ expresionOR returns [Object resultado = null]
 			}
 	  }
 	)*
-	exp1= expresionAND
-	{
-		System.out.println("expresionOR "+exp1);
-		resultado = exp1;
-		
-	};
+	;
 	
 
 
@@ -456,8 +454,7 @@ expresionOR returns [Object resultado = null]
 expresionAND returns [Object resultado = null]
 {Object exp1 = null ; Object exp2 = null;}: 
 
-	
-	
+	exp1=expr_relacional { System.out.println("expresionAND " + exp1); resultado = exp1;}
 	( linea:OP_Y exp2=expr_relacional
 	  {
 	  if(exp2 != null) 				// 2
@@ -477,8 +474,8 @@ expresionAND returns [Object resultado = null]
 			
 			}
 	  }
-	  )*
-	  exp1=expr_relacional { System.out.println("expresionAND " + exp1); resultado = exp1;};
+	  )*;
+	  
 
 ////////////////// EXPRESIONES RELACIONALES /////////////////////////////////
 
@@ -641,12 +638,12 @@ expr_relacional returns [Object respuesta = null]
 			Error.visualizarError(1,linea4.getLine(), "No se puede realizar expresiones relacionales con datos de distinto tipo");
 		}
 	}
-	);
+	)*;
 
 ////////////////////// REGLAS PARA LA EVALUACION DE EXPRESIONES ///////////////////
 
 evaluarExpresion returns [Object respuesta = null]: 
-	respuesta = expresionOR;
+	respuesta = expresionOR {System.out.println("Evaluar expresion: "+ respuesta);};
 
 	// Javi: definición de sentencia IF
 	// David: Está bien la sentencia IF, pero creo que si la "expr_booleana"
@@ -659,15 +656,20 @@ evaluarExpresion returns [Object respuesta = null]:
         {
                 if (o.getClass() == Boolean.class)
                            b = ((Boolean)o).booleanValue();
-                else System.out.println("Error");
+                else System.out.println("Error IF");
                 
                 System.out.println("Entra en IF. Evaluación: "+o);
         }
         ({b==true}? (sentencia)* LLAVE_DER
-        | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER
-        (ELSE LLAVE_IZQ (sentencia)* LLAVE_DER)? 
-        )
+        | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER)
+        
+        (ELSE LLAVE_IZQ 
+        ({b==false}? (sentencia)* LLAVE_DER
+        | {b==true}? (options{greedy=false;}:.)+ LLAVE_DER
+        ))?
         ;
+    
+    
 	
 	//Javi: Condiciones usadas en estructuras condicionales o bucles.
 	
@@ -704,4 +706,22 @@ fin_interprete:
 		consumeUntil(Token.EOF_TYPE);
 		consume();
 	};
+	
+sentenciaWHILE
+	{boolean ejecutar = false; Object expresion = null;
+	Object valor = null; int marca = 0;
+	}:
+	
+	linea:B_WHILE PAR_IZQ expresion = evaluarExpresion PAR_DER
+	{
+		boolean exp = new Boolean(expresion.toString()).booleanValue();
+		
+		System.out.println("Resultado evaluacion while :"+exp);
+				
+	}
+	LLAVE_IZQ 
+		(sentencia)*
+	LLAVE_DER
+	;
+
 	

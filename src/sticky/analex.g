@@ -21,8 +21,7 @@ class Analex extends Lexer;
 
 		BOOLEAN = "bool";
 		
-		OP_Y = "and";
-		OP_O = "or";
+		
 	
 	    //Bucles
 	    B_FOR="para"; 
@@ -35,7 +34,7 @@ class Analex extends Lexer;
 	    CASE="caso";
 	    END_CASE="fincaso";
 	    DEFAULT="defecto"; 
-  
+ 
 		//Movimientos Stickman
 		GIRAR="girar";
 		FLEXIONAR="flexionar";
@@ -108,10 +107,12 @@ class Analex extends Lexer;
 	//Operadores condicionales
 	OP_MAYOR: '>';
 	OP_MENOR: '<';
-	OP_IG: "=="; 
+	OP_IG: "==";
 	OP_DIST: "!=";
 	OP_OX : "OX";
 	OP_NO : "NO";
+	OP_Y : 'Y';
+	OP_O : 'O';
 
 	
 
