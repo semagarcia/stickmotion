@@ -23,21 +23,14 @@ class Anasint extends Parser;
 		System.out.println("...INICIANDO STICKY...");		
 	} 
 	
-	: (sentencia)* fin_interprete;
+	: (sentencia)* fin_interprete; //Una o varias sentencias, y finaliza
 	
-	sentencia: stickcommand | declaracion | asignacion | eliminar_var | sentenciaIF;
-
-
-
-stickcommand {Object a,i,d;}:
-	(
-		(GIRAR STICKMAN (a = expr_aritmetica) (i = expr_aritmetica) (d = expr_aritmetica) FIN_INSTRUCCION)
-		{
-			System.out.println("a:"+a);
-		}
-	);
-
-
+	
+	sentencia: (simple FIN_INSTRUCCION) | bucle ; //O una sentencia simple con ; o un bucle, que no lleva ; para acabar (si sus intrucciones)
+	
+	simple: declaracion | asignacion | eliminar_var; //Esto permitirá usar ; para salir del greedy, ya que ; no se pide aquí
+	bucle: sentenciaIF | sentenciaWHILE;
+	
 	//Para declarar variables hay diferentes alternativas:
 	//1. Se declara una variable sin inicializarse.
 	//2. Se declara una variable y si inicializa.
@@ -46,7 +39,7 @@ stickcommand {Object a,i,d;}:
 
 declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}:
 	(	//Alternativa 1
-		(VAR IDENT FIN_INSTRUCCION) => VAR i1:IDENT FIN_INSTRUCCION 
+		(VAR IDENT ~OP_ASIG) => VAR i1:IDENT
 		{ 
 		  boolean res=tablaSimbolos.put(i1);
 		  if(res)
@@ -57,7 +50,7 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 		
 		//Alternativa 2
 		
-		|(VAR IDENT OP_ASIG) =>VAR i2:IDENT OP_ASIG (x=expr_aritmetica) punto2:FIN_INSTRUCCION
+		|(VAR IDENT OP_ASIG) =>VAR i2:IDENT OP_ASIG (x=expr_aritmetica) 
 			{			
 				boolean res = tablaSimbolos.put(i2,x);	// modifico el valor en la tabla de simbolos
 				if(res)
@@ -67,7 +60,7 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 		
 			}
 		//Alternativa 3
-		|(VAR IDENT (SEPARA IDENT)*) => VAR i3:IDENT (SEPARA i3_alt:IDENT {lista.add(i3_alt);} )* punto3:FIN_INSTRUCCION
+		|(VAR IDENT (SEPARA IDENT)*) => VAR i3:IDENT (SEPARA i3_alt:IDENT {lista.add(i3_alt);} )* 
 					{
 						// Tenemos que insertar cada identificador encontrado en la tabla de simbolos
 						boolean res = tablaSimbolos.put(i3);
@@ -96,7 +89,7 @@ asignacion
 	{ String mensaje = new String(); Object respuesta; Object respuesta2;}:
 
 	i:IDENT OP_ASIG (respuesta = expr_aritmetica) //| respuesta = func_dev[ejecutar, nombreRegion])
-	punto:FIN_INSTRUCCION
+	
 	{		System.out.println("asignacion aritmetica");
 			//if(ejecutar)
 			if(tablaSimbolos.set(i,respuesta))	
@@ -657,13 +650,10 @@ expr_relacional returns [Object respuesta = null]
 evaluarExpresion returns [Object respuesta = null]: 
 	respuesta = expresionOR {System.out.println("Evaluar expresion: "+ respuesta);};
 
-	// Javi: definición de sentencia IF
-	// David: Está bien la sentencia IF, pero creo que si la "expr_booleana"
-	// (que devuelve un valor true o false) no se cumple, no debería ejecutarse 
-	// la regla "sentencias". Tal como está se evalua aunque la expresión booleana no
-	// se cumpla. Quizá haya que mandarle un valor flag a la regla "sentencias"
-	// para que se ejecute si flag=true y no se ejecute si flag=false.
+//1 -> if de la forma si (VERDAD) { hola = 1; } sino { hola = 2; var otra; }
+//2 -> if de la forma si (VERDAD) hola = 1; sino hola=2;
 	sentenciaIF {Object o; boolean b=false;} : 
+		(IF PAR_IZQ (evaluarExpresion) PAR_DER LLAVE_IZQ) => //1
 		IF PAR_IZQ (o=evaluarExpresion) PAR_DER LLAVE_IZQ
         {
                 if (o.getClass() == Boolean.class)
@@ -673,12 +663,30 @@ evaluarExpresion returns [Object respuesta = null]:
                 System.out.println("Entra en IF. Evaluación: "+o);
         }
         ({b==true}? (sentencia)* LLAVE_DER
-        | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER)
+        | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
         
-        (ELSE LLAVE_IZQ 
+        ((ELSE LLAVE_IZQ) => ELSE LLAVE_IZQ
         ({b==false}? (sentencia)* LLAVE_DER
         | {b==true}? (options{greedy=false;}:.)+ LLAVE_DER
         ))?
+        |
+        (IF PAR_IZQ (evaluarExpresion) PAR_DER) => //2
+         IF PAR_IZQ (o=evaluarExpresion) PAR_DER 
+        {
+                if (o.getClass() == Boolean.class)
+                           b = ((Boolean)o).booleanValue();
+                else System.out.println("Error IF");
+                
+                System.out.println("Entra en IF sin corchetes. Evaluación: "+o);
+        }
+        ({b==true}? sentencia 
+        | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION)
+        
+        ((ELSE ~LLAVE_IZQ ) => ELSE
+        ({b==false}? sentencia
+        | {b==true}? (options{greedy=false;}:.)+ FIN_INSTRUCCION
+        ))?
+        
         ;
     
     
@@ -700,7 +708,7 @@ evaluarExpresion returns [Object respuesta = null]:
 <<<<<<< .mine
 */
 
-eliminar_var {String res;}: SUP id:IDENT FIN_INSTRUCCION 
+eliminar_var {String res;}: SUP id:IDENT
 	{
 		  res=tablaSimbolos.delSimbolo(id);
 		  if(res.compareTo(id.getText()) == 0)
@@ -718,7 +726,7 @@ fin_interprete:
 		consumeUntil(Token.EOF_TYPE);
 		consume();
 	};
-	
+
 
 sentenciaWHILE
     {
