@@ -1,14 +1,9 @@
 
-var pepe = VERDAD;
+var pepe = 1;
 
-
-si(4>(2+2) Y (FALSO O (VERDAD Y FALSO))) {
-var holae;
+mientras (pepe != 10) {
+	pepe = pepe +1;
 }
-sino {
-var pepe;
-}
-
 
 $
 
