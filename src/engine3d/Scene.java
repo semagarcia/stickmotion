@@ -13,14 +13,25 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
 // this class loads all the scene in a simple universe
 public class Scene {
 
+  // Stickman
+  Stickman steve;
+  // Time
+  long time;
+
   // Creates the scene in a simple universe
   public Scene(Canvas3D canvas3D) {
 
+    // Initializes the time counter
+    time = 1000;
+
+    // Creates the scene and universe
     BranchGroup scene = createSceneGraph();
     SimpleUniverse simpleU = new SimpleUniverse(canvas3D);
 
+    // Set the viewport for the universe
     simpleU.getViewingPlatform().setNominalViewingTransform();
 
+    // Associate the scene to the universe
     simpleU.addBranchGraph(scene);
   }
 
@@ -34,7 +45,7 @@ public class Scene {
     objRoot.addChild(getLight());
 
     // creates a stickam (his name is steve :P)
-    Stickman steve = new Stickman();
+    steve = new Stickman();
 
     // add steve as a child and zoom it, so that it can be displayed properly
     objRoot.addChild(steve);
@@ -43,71 +54,63 @@ public class Scene {
     // A couple of animation examples
 
     // Going right
-    steve.addRotationAnim(1000, 1000, 0, 0, 0, 0, (float) Math.PI / 2);
-    steve.addPositionAnim(1000, 2000, 0, -Math.PI / 2, 0, 0, 1);
+    rotateStickman((float) (Math.PI / 2), 0, 1000);
+    addTime(1000);
+    moveForwardStickman(1, 1000);
+    addTime(1000);
     // Going left
-    steve.addRotationAnim(2000, 3000, 0, 0, 0, 0, (float) -Math.PI);
-    steve.addPositionAnim(1000, 5000, 0, -Math.PI / 2, 0, 0, 1);
+    rotateStickman((float) -Math.PI, 0, 1000);
+    addTime(1000);
+    moveForwardStickman(1, 1000);
+    addTime(1000);
     // Look to the front
-    steve.addRotationAnim(1000, 6000, 0, 0, 0, 0, (float) Math.PI / 2);
+    rotateStickman((float) Math.PI / 2, 0, 1000);
 
+    setTime(1000);
     // Crappy walking animation
-    for (int time = 1000; time < 20000; time += 1000) {
-      // First second
+    for (int i = 0; i < 20; i++) {
       // Move right Leg forward (z rot)
-      steve.rLeg.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
-          (float) (Math.PI / 3));
-      // Move right Leg backwards (z rot)
-      steve.lLeg.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
-          (float) -(Math.PI / 3));
+      rotateRLeg(0, (float) (Math.PI / 3), 500);
+      // Move left Leg backwards (z rot)
+      rotateLLeg(0, (float) -(Math.PI / 3), 500);
       // Flex foreLegs
-      steve.rLeg.fore.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
-          (float) Math.PI / 3);
-      steve.lLeg.fore.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
-          (float) Math.PI / 3);
-
+      flexRLeg((float) Math.PI / 3, 500);
+      flexLLeg((float) Math.PI / 3, 500);
       // Next second
-      time += 1000;
+      addTime(500);
       // Un-Flex foreLegs
-      steve.rLeg.fore.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
-          (float) -Math.PI / 3);
-      steve.lLeg.fore.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
-          (float) -Math.PI / 3);
+      flexRLeg((float) -Math.PI / 3, 500);
+      flexLLeg((float) -Math.PI / 3, 500);
       // Move right Leg backwards (z rot)
-      steve.rLeg.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
-          (float) -(Math.PI / 3));
-      // Move right Leg forward (z rot)
-      steve.lLeg.addRotationAnim(1000, time, 0, 0, (float) Math.PI / 2, 0,
-          (float) (Math.PI / 3));
+      rotateRLeg(0, (float) -(Math.PI / 3), 500);
+      // Move left Leg forward (z rot)
+      rotateLLeg(0, (float) (Math.PI / 3), 500);
+      addTime(500);
     }
 
+    int d = 500;
+    setTime(1000);
+    // Rotate the arms to move sideways
+    rotateRArm((float) Math.PI / 2, 0, 50);
+    rotateLArm((float) Math.PI / 2, 0, 50);
     // Try to fly
-    for (int time = 1500; time < 20000; time += 1000) {
-      // Raise both Arms
-      steve.rArm.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
-          (float) (Math.PI / 3));
-      steve.lArm.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
-          (float) (Math.PI / 3));
-      // Flex forearms up
-      steve.rArm.fore.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
-          (float) Math.PI / 3);
-      steve.lArm.fore.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
-          (float) Math.PI / 3);
-
-      // Next step
-      time += 1000;
+    for (int i = 0; i < 100; i++) {
+      // raise arms
+      rotateRArm(0, (float) Math.PI / 2, d);
+      rotateLArm(0, (float) Math.PI / 2, d);
+      // flex forearms
+      flexRArm((float) Math.PI / 3, d);
+      flexLArm((float) Math.PI / 3, d);
+      // next step
+      addTime(d);
       // un-Flex forearms
-      steve.rArm.fore.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
-          (float) -Math.PI / 3);
-      steve.lArm.fore.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
-          (float) -Math.PI / 3);
+      flexRArm((float) -Math.PI / 3, d);
+      flexLArm((float) -Math.PI / 3, d);
       // Low both Arms
-      steve.rArm.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
-          (float) -(Math.PI / 3));
-      steve.lArm.addRotationAnim(1000, time, (float) Math.PI / 2, 0, 0, 0,
-          (float) -(Math.PI / 3));
+      rotateRArm(0, (float) -Math.PI / 2, d);
+      rotateLArm(0, (float) -Math.PI / 2, d);
+      addTime(d);
     }
-
     return objRoot;
   }
 
@@ -127,6 +130,88 @@ public class Scene {
     directional_light.setInfluencingBounds(bounds);
 
     return directional_light;
+  }
+
+  /**
+   * Method for animating the rotation of a SMGroup in spherical coordinates
+   * 
+   * @param group
+   * @param azimuth
+   * @param inclination
+   * @param duration
+   */
+  public void rotateSMGroup(SMGroup group, float azimuth, float inclination,
+      long duration) {
+    group.addRotationAnim(duration, time, 0, 0, Math.PI / 2, 0, inclination);
+    group.addRotationAnim(duration, time, 0, 0, 0, 0, azimuth);
+  }
+
+  public void rotateHead(float azimuth, float inclination, long duration) {
+    rotateSMGroup(steve.head, azimuth, inclination, duration);
+  }
+
+  public void rotateRArm(float azimuth, float inclination, long duration) {
+    rotateSMGroup(steve.rArm, azimuth, inclination, duration);
+  }
+
+  public void rotateLArm(float azimuth, float inclination, long duration) {
+    rotateSMGroup(steve.lArm, azimuth, inclination, duration);
+  }
+
+  public void rotateRLeg(float azimuth, float inclination, long duration) {
+    rotateSMGroup(steve.rLeg, azimuth, inclination, duration);
+  }
+
+  public void rotateLLeg(float azimuth, float inclination, long duration) {
+    rotateSMGroup(steve.lLeg, azimuth, inclination, duration);
+  }
+
+  // ///
+  public void flexRArm(float angle, long duration) {
+    rotateSMGroup(steve.rArm.fore, 0, angle, duration);
+  }
+
+  public void flexLArm(float angle, long duration) {
+    rotateSMGroup(steve.lArm.fore, 0, angle, duration);
+  }
+
+  public void flexRLeg(float angle, long duration) {
+    rotateSMGroup(steve.rLeg.fore, 0, angle, duration);
+  }
+
+  public void flexLLeg(float angle, long duration) {
+    rotateSMGroup(steve.lLeg.fore, 0, angle, duration);
+  }
+
+  public void rotateStickman(float azimuth, float inclination, long duration) {
+    rotateSMGroup(steve, azimuth, inclination, duration);
+  }
+
+  public void moveForwardStickman(float distance, long duration) {
+    steve.addPositionAnim(duration, time, 0, -Math.PI / 2, 0, 0, distance);
+  }
+
+  public void addTime(long step) {
+    time += step;
+  }
+
+  /**
+   * Method for getting the value of the time
+   * 
+   * @return returns time value
+   */
+  public long getTime() {
+    return time;
+  }
+
+  /**
+   * Method for setting the value of the time
+   * 
+   * @param time
+   *          Value of time to set
+   */
+  public void setTime(long time) {
+    this.time = time;
   }
 
 }
