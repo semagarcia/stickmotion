@@ -29,7 +29,7 @@ class Anasint extends Parser;
 	sentencia: (simple FIN_INSTRUCCION) | bucle ; //O una sentencia simple con ; o un bucle, que no lleva ; para acabar (si sus intrucciones)
 	
 	simple: declaracion | asignacion | eliminar_var; //Esto permitirá usar ; para salir del greedy, ya que ; no se pide aquí
-	bucle: sentenciaIF | sentenciaWHILE;
+	bucle: sentenciaIF | sentenciaWHILE | sentenciaFOR;
 	
 	//Para declarar variables hay diferentes alternativas:
 	//1. Se declara una variable sin inicializarse.
@@ -760,4 +760,97 @@ sentenciaWHILE
         | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION )
 	;
 
+
+//Permite bucles-for de la forma:	
+//Alternativa 1: para(identificador;expresion booleana; entero) { intruccion; intruccion2; }
+//Alternativa 2: para(identificador;expresion booleana; entero)  intruccion; 
+//NOTA: El valor de identificador queda alterado después de la ejecución del bucle.
+
+sentenciaFOR
+    {
+        Boolean b = null; 
+        Boolean hecho = false;
+        Object expresion = null; 
+        int marker = mark();
+    	int numero = 0;
+    } :
+    	//1
+	(B_FOR PAR_IZQ IDENT FIN_INSTRUCCION evaluarExpresion FIN_INSTRUCCION ENTERO FIN_INSTRUCCION PAR_DER LLAVE_IZQ) =>
+	B_FOR PAR_IZQ id:IDENT FIN_INSTRUCCION expresion = evaluarExpresion FIN_INSTRUCCION n:ENTERO FIN_INSTRUCCION PAR_DER LLAVE_IZQ
+	{
+		b = ((Boolean)expresion).booleanValue();
+		System.out.println("Resultado evaluacion for :"+b);
+		
+		if(hecho == false) {
+		//Obtiene el valor de la variable id
+		if(tablaSimbolos.existeSimbolo(id.getText()))
+			{
+				String contenido = tablaSimbolos.getContenidoSimbolo(id.getText());
+				
+				if(contenido==null)
+				{
+					Error.visualizarError(1,id.getLine(),"ERROR: La variable no tiene asignado ningun valor "+id.getText());	
+				}
+				
+				if(contenido.matches("[0-9~.]*"))
+	  				{
+	  				System.out.println("Entero");
+	  				numero = new Integer(contenido.toString()).intValue();
+	  				hecho = true;
+	  				}	
+			}
+			else 
+				Error.visualizarError(1,id.getLine(),"ERROR: la variable no ha sido declarada "+id.getText());
+			
+			}
+			
+		numero = numero + Integer.parseInt(n.getText());
+			
+		//Guarda el valor 
+		System.out.println(numero);	
+		tablaSimbolos.set(id, numero);
+	} 
+	({b==true}? (sentencia)* LLAVE_DER {rewind(marker);}
+    | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
 	
+	|
+		//2
+	(B_FOR PAR_IZQ IDENT FIN_INSTRUCCION evaluarExpresion FIN_INSTRUCCION ENTERO FIN_INSTRUCCION PAR_DER) => 
+	B_FOR PAR_IZQ id2:IDENT FIN_INSTRUCCION expresion = evaluarExpresion FIN_INSTRUCCION n2:ENTERO FIN_INSTRUCCION PAR_DER
+	{
+		b = ((Boolean)expresion).booleanValue();
+		System.out.println("Resultado evaluacion for :"+b);
+		
+		if(hecho == false) {
+		//Obtiene el valor de la variable id
+		if(tablaSimbolos.existeSimbolo(id2.getText()))
+			{
+				String contenido = tablaSimbolos.getContenidoSimbolo(id2.getText());
+				
+				if(contenido==null)
+				{
+					Error.visualizarError(1,id2.getLine(),"ERROR: La variable no tiene asignado ningun valor "+id2.getText());	
+				}
+				
+				if(contenido.matches("[0-9~.]*"))
+	  				{
+	  				System.out.println("Entero");
+	  				numero = new Integer(contenido.toString()).intValue();
+	  				hecho = true;
+	  				}	
+			}
+			else 
+				Error.visualizarError(1,id2.getLine(),"ERROR: la variable no ha sido declarada "+id2.getText());
+			
+			}
+			
+		numero = numero + Integer.parseInt(n2.getText());
+			
+		//Guarda el valor 
+		System.out.println(numero);	
+		tablaSimbolos.set(id2, numero);
+	} 
+	({b==true}? sentencia {rewind(marker);}
+    | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION) 
+	
+	;	
