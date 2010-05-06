@@ -18,21 +18,37 @@ public class Scene {
   // Time
   long time;
 
-  // Creates the scene in a simple universe
-  public Scene(Canvas3D canvas3D) {
+  // Group containing the whole scene
+  BranchGroup sceneGroup;
+
+  /**
+   * 
+   * Constructor for the class Scene
+   * 
+   */
+  public Scene() {
 
     // Initializes the time counter
     time = 1000;
 
     // Creates the scene and universe
-    BranchGroup scene = createSceneGraph();
+    sceneGroup = createSceneGraph();
+
+  }
+
+  /**
+   * Method for starting the scene
+   * 
+   * @arg canvas3D
+   */
+  public void start(Canvas3D canvas3D) {
     SimpleUniverse simpleU = new SimpleUniverse(canvas3D);
 
     // Set the viewport for the universe
     simpleU.getViewingPlatform().setNominalViewingTransform();
 
-    // Associate the scene to the universe
-    simpleU.addBranchGraph(scene);
+    // Associate the scene to the universe to start the animation
+    simpleU.addBranchGraph(sceneGroup);
   }
 
   // returns the scene
@@ -53,64 +69,51 @@ public class Scene {
 
     // A couple of animation examples
 
-    // Going right
-    rotateStickman((float) (Math.PI / 2), 0, 1000);
-    addTime(1000);
-    moveForwardStickman(1, 1000);
-    addTime(1000);
-    // Going left
-    rotateStickman((float) -Math.PI, 0, 1000);
-    addTime(1000);
-    moveForwardStickman(1, 1000);
-    addTime(1000);
-    // Look to the front
-    rotateStickman((float) Math.PI / 2, 0, 1000);
-
-    setTime(1000);
-    // Crappy walking animation
-    for (int i = 0; i < 20; i++) {
-      // Move right Leg forward (z rot)
-      rotateRLeg(0, (float) (Math.PI / 3), 500);
-      // Move left Leg backwards (z rot)
-      rotateLLeg(0, (float) -(Math.PI / 3), 500);
-      // Flex foreLegs
-      flexRLeg((float) Math.PI / 3, 500);
-      flexLLeg((float) Math.PI / 3, 500);
-      // Next second
-      addTime(500);
-      // Un-Flex foreLegs
-      flexRLeg((float) -Math.PI / 3, 500);
-      flexLLeg((float) -Math.PI / 3, 500);
-      // Move right Leg backwards (z rot)
-      rotateRLeg(0, (float) -(Math.PI / 3), 500);
-      // Move left Leg forward (z rot)
-      rotateLLeg(0, (float) (Math.PI / 3), 500);
-      addTime(500);
-    }
-
-    int d = 500;
-    setTime(1000);
-    // Rotate the arms to move sideways
-    rotateRArm((float) Math.PI / 2, 0, 50);
-    rotateLArm((float) Math.PI / 2, 0, 50);
-    // Try to fly
-    for (int i = 0; i < 100; i++) {
-      // raise arms
-      rotateRArm(0, (float) Math.PI / 2, d);
-      rotateLArm(0, (float) Math.PI / 2, d);
-      // flex forearms
-      flexRArm((float) Math.PI / 3, d);
-      flexLArm((float) Math.PI / 3, d);
-      // next step
-      addTime(d);
-      // un-Flex forearms
-      flexRArm((float) -Math.PI / 3, d);
-      flexLArm((float) -Math.PI / 3, d);
-      // Low both Arms
-      rotateRArm(0, (float) -Math.PI / 2, d);
-      rotateLArm(0, (float) -Math.PI / 2, d);
-      addTime(d);
-    }
+    // setTime(1000);
+    // // Crappy walking animation
+    // for (int i = 0; i < 20; i++) {
+    // // Move right Leg forward (z rot)
+    // rotateRLeg(0, (float) (Math.PI / 3), 500);
+    // // Move left Leg backwards (z rot)
+    // rotateLLeg(0, (float) -(Math.PI / 3), 500);
+    // // Flex foreLegs
+    // flexRLeg((float) Math.PI / 3, 500);
+    // flexLLeg((float) Math.PI / 3, 500);
+    // // Next second
+    // addTime(500);
+    // // Un-Flex foreLegs
+    // flexRLeg((float) -Math.PI / 3, 500);
+    // flexLLeg((float) -Math.PI / 3, 500);
+    // // Move right Leg backwards (z rot)
+    // rotateRLeg(0, (float) -(Math.PI / 3), 500);
+    // // Move left Leg forward (z rot)
+    // rotateLLeg(0, (float) (Math.PI / 3), 500);
+    // addTime(500);
+    // }
+    //
+    // int d = 500;
+    // setTime(1000);
+    // // Rotate the arms to move sideways
+    // rotateRArm((float) Math.PI / 2, 0, 50);
+    // rotateLArm((float) Math.PI / 2, 0, 50);
+    // // Try to fly
+    // for (int i = 0; i < 100; i++) {
+    // // raise arms
+    // rotateRArm(0, (float) Math.PI / 2, d);
+    // rotateLArm(0, (float) Math.PI / 2, d);
+    // // flex forearms
+    // flexRArm((float) Math.PI / 3, d);
+    // flexLArm((float) Math.PI / 3, d);
+    // // next step
+    // addTime(d);
+    // // un-Flex forearms
+    // flexRArm((float) -Math.PI / 3, d);
+    // flexLArm((float) -Math.PI / 3, d);
+    // // Low both Arms
+    // rotateRArm(0, (float) -Math.PI / 2, d);
+    // rotateLArm(0, (float) -Math.PI / 2, d);
+    // addTime(d);
+    // }
     return objRoot;
   }
 

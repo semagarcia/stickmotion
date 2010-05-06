@@ -56,19 +56,19 @@ public class StickMotion extends javax.swing.JFrame {
     undoRedoManager = new javax.swing.undo.UndoManager();
     editor.getDocument().addUndoableEditListener(undoRedoManager);
 
-    loadScene();
+    // loadScene();
   } // fin constructor StickMotion()
 
   /**
    * Charges the 3d scene and shows it on animationPanel
    */
-  private void loadScene() {
+  private Canvas3D loadCanvas3D() {
     GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
     Canvas3D canvas3D = new Canvas3D(config);
     canvas3D.setSize(460, 345);
     animationPanel.add(canvas3D);
 
-    scene = new engine3d.Scene(canvas3D);
+    return canvas3D;
   }
 
   /**
@@ -1026,6 +1026,28 @@ public class StickMotion extends javax.swing.JFrame {
       java.awt.event.ActionEvent evt) {// GEN-FIRST:event_optionFileInterpreterActionPerformed
     // Acción cuando el usuario clickee en Interpretar (menú y atajo teclado)
     editorResults.setText("Interpretando...\n");
+
+    // TODO: Hay que enlazar esto con el ANTLR de forma que use el scene
+    // y devuelva un string con los errores para mostrar en editorResults
+
+    engine3d.Scene scene = new engine3d.Scene();
+
+    scene.setTime(1000);
+    // Going right
+    scene.rotateStickman((float) (Math.PI / 2), 0, 1000);
+    scene.addTime(1000);
+    scene.moveForwardStickman(1, 1000);
+    scene.addTime(1000);
+    // Going left
+    scene.rotateStickman((float) -Math.PI, 0, 1000);
+    scene.addTime(1000);
+    scene.moveForwardStickman(1, 1000);
+    scene.addTime(1000);
+    // Look to the front
+    scene.rotateStickman((float) Math.PI / 2, 0, 1000);
+
+    scene.start(loadCanvas3D());
+
   }// GEN-LAST:event_optionFileInterpreterActionPerformed
 
   private void iconInterpreterActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_iconInterpreterActionPerformed
