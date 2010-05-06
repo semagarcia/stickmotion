@@ -38,6 +38,9 @@ public class StickMotion extends javax.swing.JFrame {
   // Variable que indica el nombre del fichero, cuando se haya abierto
   private String nomFile = new String("");
 
+  // Variable que contiene la escena 3D
+  private engine3d.Scene scene;
+
   /** Creates new form StickMotion */
   public StickMotion() {
     initComponents();
@@ -65,7 +68,7 @@ public class StickMotion extends javax.swing.JFrame {
     canvas3D.setSize(460, 345);
     animationPanel.add(canvas3D);
 
-    new engine3d.Scene(canvas3D);
+    scene = new engine3d.Scene(canvas3D);
   }
 
   /**
