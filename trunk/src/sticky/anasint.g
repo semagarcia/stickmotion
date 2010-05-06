@@ -9,7 +9,7 @@ header {
 class Anasint extends Parser;
 	options {
 		k=2; 
-		buildAST = true;}
+	}
 	{
 		TablaSimbolos tablaSimbolos= new TablaSimbolos();
 	}
@@ -22,7 +22,9 @@ class Anasint extends Parser;
 	
 	: (sentencia)* fin_interprete;
 	
-	sentencia: declaracion | asignacion | eliminar_var | sentenciaIF;
+	
+	sentencia: declaracion | asignacion | eliminar_var | sentenciaIF  ;
+
 
 	//Para declarar variables hay diferentes alternativas:
 	//1. Se declara una variable sin inicializarse.
@@ -102,7 +104,7 @@ expr_aritmetica returns [Object resultado = null]
 	e1=expr_mod
 	{
 		resultado = e1;	
-		System.out.println(resultado);
+		System.out.println("exp_aritmetica " + resultado);
 	}
 	(linea1:OP_POT e2 = expr_mod
 	{
@@ -138,7 +140,7 @@ expr_mod returns[Object resultado = null]
 {Object e1; Object e2;}:
 	e1=expr
 	{
-		System.out.println(e1);
+		System.out.println("expr_mod "+e1);
 		resultado = e1;
 	}
 	(linea1:OP_MOD e2 = expr
@@ -193,6 +195,7 @@ expr returns [Object resultado = null]
 {Object e1; Object e2; Object e3; Object e4;}: 
 	e1= expr_mult
 	{
+		System.out.println("expr "+e1);
 		resultado = e1;
 	}
 	(linea1:OP_SUM e2=expr_mult
@@ -273,7 +276,7 @@ expr returns [Object resultado = null]
 expr_mult returns [Object resultado = null]
 {Object e1; Object e2; Object e3;}: 
 
-	e1=expr_base {resultado = e1;}
+	e1=expr_base {resultado = e1; System.out.println("expr_mult "+resultado);}
 	
 	( linea1:OP_MUL e2=expr_base
 	  {
@@ -392,6 +395,11 @@ expr_base returns [Object resultado = null]:
 	  				System.out.println("Entero");
 	  				resultado = new Integer(contenido.toString()).intValue();
 	  				}
+	  			else if(contenido.matches("true") || contenido.matches("false"))
+	  				{
+	  				System.out.println("boolean");
+	  				resultado = new Boolean(contenido.toString()).booleanValue();
+	  				}
 	  			else if((Float)Float.parseFloat(contenido) instanceof Float)
 	  				{
 	  				System.out.println("flotante");
@@ -404,19 +412,17 @@ expr_base returns [Object resultado = null]:
 			
 				
 		}
-		| PAR_IZQ resultado = expr_aritmetica PAR_DER
+		| PAR_IZQ resultado = expresionOR PAR_DER
 
 		;
 		
 
 expresionOR returns [Object resultado = null]
-{Object exp1; Object exp2;}: 
-	exp1= expresionAND
-	{
-		resultado = exp1;
-	}
+{Object exp1 = null; Object exp2=null;}: 
+	
 	(linea:OP_O exp2=expresionAND
 	{
+	  System.out.println("entra en or con OP_O");
 	  if(exp2 != null) 				// 2
 			{
 				if(exp2 instanceof Boolean)	
@@ -434,16 +440,23 @@ expresionOR returns [Object resultado = null]
 			
 			}
 	  }
-	)*;
+	)*
+	exp1= expresionAND
+	{
+		System.out.println("expresionOR "+exp1);
+		resultado = exp1;
+		
+	};
+	
 
 
 		
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 expresionAND returns [Object resultado = null]
-{Object exp1; Object exp2;}: 
+{Object exp1 = null ; Object exp2 = null;}: 
 
-	exp1=expr_relacional {resultado = exp1;}
+	
 	
 	( linea:OP_Y exp2=expr_relacional
 	  {
@@ -464,7 +477,8 @@ expresionAND returns [Object resultado = null]
 			
 			}
 	  }
-	  )*;
+	  )*
+	  exp1=expr_relacional { System.out.println("expresionAND " + exp1); resultado = exp1;};
 
 ////////////////// EXPRESIONES RELACIONALES /////////////////////////////////
 
@@ -472,7 +486,7 @@ expr_relacional returns [Object respuesta = null]
 {Object e1; Object e2;}:
 	e1 = expr_aritmetica {
 		respuesta = e1;
-		System.out.println(respuesta);
+		System.out.println("exp_relacional " + respuesta);
 	}
 	(linea:OP_MAYOR e2 = expr_aritmetica
 	{
@@ -629,6 +643,10 @@ expr_relacional returns [Object respuesta = null]
 	}
 	);
 
+////////////////////// REGLAS PARA LA EVALUACION DE EXPRESIONES ///////////////////
+
+evaluarExpresion returns [Object respuesta = null]: 
+	respuesta = expresionOR;
 
 	// Javi: definición de sentencia IF
 	// David: Está bien la sentencia IF, pero creo que si la "expr_booleana"
@@ -636,10 +654,20 @@ expr_relacional returns [Object respuesta = null]
 	// la regla "sentencias". Tal como está se evalua aunque la expresión booleana no
 	// se cumpla. Quizá haya que mandarle un valor flag a la regla "sentencias"
 	// para que se ejecute si flag=true y no se ejecute si flag=false.
-	sentenciaIF {Object valor;}: IF valor=expresionOR {System.out.println("valor final= "+valor);} FIN_INSTRUCCION
-	{
-			System.out.println("Reconocido. IF con resultado "+valor);
-	};
+	sentenciaIF {Object o; boolean b=false;} : 
+		IF PAR_IZQ (o=evaluarExpresion) PAR_DER LLAVE_IZQ
+        {
+                if (o.getClass() == Boolean.class)
+                           b = ((Boolean)o).booleanValue();
+                else System.out.println("Error");
+                
+                System.out.println("Entra en IF. Evaluación: "+o);
+        }
+        ({b==true}? (sentencia)* LLAVE_DER
+        | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER
+        (ELSE LLAVE_IZQ (sentencia)* LLAVE_DER)? 
+        )
+        ;
 	
 	//Javi: Condiciones usadas en estructuras condicionales o bucles.
 	

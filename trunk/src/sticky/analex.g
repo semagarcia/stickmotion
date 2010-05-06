@@ -6,25 +6,26 @@ class Analex extends Lexer;
 	options {
 		k=2;
 		importVocab=Anasint;
+		exportVocab=Analex;
 	}
 	
 	tokens {
 		ENTERO= "int";
 		REAL= "real";
-		
+	
 		//Variables
 		VAR="var";
 		SUP="sup";
 		
-		//Booleanos
+		//BooleanoS
 
 		BOOLEAN = "bool";
-		VERDADERO = "VERDAD";
-		FALSO = "FALSO";
 		
+		OP_Y = "and";
+		OP_O = "or";
 	
 	    //Bucles
-	    B_FOR="para";
+	    B_FOR="para"; 
 	    B_WHILE="mientras";
 	    
 	    //Estructuras condicionales
@@ -33,8 +34,8 @@ class Analex extends Lexer;
 	    SWITCH="opcion";
 	    CASE="caso";
 	    END_CASE="fincaso";
-	    DEFAULT="defecto";   
-    		
+	    DEFAULT="defecto"; 
+  
 		//Movimientos Stickman
 		GIRAR="girar";
 		FLEXIONAR="flexionar";
@@ -79,6 +80,8 @@ class Analex extends Lexer;
 	
 	//Separador
 	SEPARA: ',';
+	VERDADERO : "VERDAD";
+	FALSO : "FALSO";
 	
 	//Javi: Dos Puntos
 	DOBLE_PUNTO: ':'; 
@@ -109,8 +112,7 @@ class Analex extends Lexer;
 	OP_DIST: "!=";
 	OP_OX : "OX";
 	OP_NO : "NO";
-	OP_Y : "&&";
-	OP_O : "||";
+
 	
 
 	
