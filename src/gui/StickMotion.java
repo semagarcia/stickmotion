@@ -39,7 +39,7 @@ public class StickMotion extends javax.swing.JFrame {
   private String nomFile = new String("");
 
   // Variable que contiene la escena 3D
-  private engine3d.Scene scene;
+  public static engine3d.Scene scene;
 
   /** Creates new form StickMotion */
   public StickMotion() {
@@ -1025,26 +1025,23 @@ public class StickMotion extends javax.swing.JFrame {
   private void optionFileInterpreterActionPerformed(
       java.awt.event.ActionEvent evt) {// GEN-FIRST:event_optionFileInterpreterActionPerformed
     // Acción cuando el usuario clickee en Interpretar (menú y atajo teclado)
-    editorResults.setText("Interpretando...\n");
 
-    // TODO: Hay que enlazar esto con el ANTLR de forma que use el scene
-    // y devuelva un string con los errores para mostrar en editorResults
-
+    // Load the Scene
     engine3d.Scene scene = new engine3d.Scene();
 
-    scene.setTime(1000);
-    // Going right
-    scene.rotateStickman((float) (Math.PI / 2), 0, 1000);
-    scene.addTime(1000);
-    scene.moveForwardStickman(1, 1000);
-    scene.addTime(1000);
-    // Going left
-    scene.rotateStickman((float) -Math.PI, 0, 1000);
-    scene.addTime(1000);
-    scene.moveForwardStickman(1, 1000);
-    scene.addTime(1000);
-    // Look to the front
-    scene.rotateStickman((float) Math.PI / 2, 0, 1000);
+    /*
+     * scene.setTime(1000); // Going right scene.rotateStickman((float) (Math.PI
+     * / 2), 0, 1000); scene.addTime(1000); scene.moveForwardStickman(1, 1000);
+     * scene.addTime(1000); // Going left scene.rotateStickman((float) -Math.PI,
+     * 0, 1000); scene.addTime(1000); scene.moveForwardStickman(1, 1000);
+     * scene.addTime(1000); // Look to the front scene.rotateStickman((float)
+     * Math.PI / 2, 0, 1000);
+     */
+
+    // Run the language processor with the content of the "editor", and show the
+    // output of it
+    // in the "editorResults" field.
+    editorResults.setText(sticky.Procesador.run(editor.getText()));
 
     scene.start(loadCanvas3D());
 
