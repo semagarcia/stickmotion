@@ -27,6 +27,7 @@ public class Main extends Applet {
 
     Scene scene = new Scene();
     scene.start(canvas3D);
+
   }
 
   /**
