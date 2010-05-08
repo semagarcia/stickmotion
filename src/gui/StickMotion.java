@@ -1041,7 +1041,7 @@ public class StickMotion extends javax.swing.JFrame {
     // Run the language processor with the content of the "editor", and show the
     // output of it
     // in the "editorResults" field.
-    editorResults.setText(sticky.Procesador.run(editor.getText()));
+    editorResults.setText(sticky.Procesador.run(editor.getText(), 0));
 
     scene.start(loadCanvas3D());
 
