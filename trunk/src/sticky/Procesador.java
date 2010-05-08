@@ -9,9 +9,11 @@ import antlr.ANTLRException;
 public abstract class Procesador {
 
   private static String output;
+  private static int debugMode;
 
   public static void main(String[] args) {
 
+    debugMode = 1;
     try {
 
       FileInputStream fis = new FileInputStream("codigo.stk");
@@ -25,12 +27,11 @@ public abstract class Procesador {
     } catch (FileNotFoundException fnfe) {
       System.err.println("No se encontró el fichero");
     }
-
-    System.out.println(output);
   }
 
-  public static String run(String code) {
+  public static String run(String code, int debug) {
 
+    debugMode = debug;
     output = "Processing...\n";
     try {
 
@@ -48,7 +49,12 @@ public abstract class Procesador {
     return output;
   }
 
-  public static void println(String str) {
-    output += str + '\n';
+  public static void println(int debugLevel, String str) {
+    if (debugLevel > 0) {
+      if (debugLevel <= debugMode)
+        str = "DEBUG: " + str;
+      output += str + '\n';
+      System.out.println(str);
+    }
   }
 }
