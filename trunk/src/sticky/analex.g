@@ -17,12 +17,6 @@ class Analex extends Lexer;
 		VAR="var";
 		SUP="sup";
 		
-		//BooleanoS
-
-		BOOLEAN = "bool";
-		
-		
-	
 	    //Bucles
 	    B_FOR="para"; 
 	    B_WHILE="mientras";
@@ -47,6 +41,9 @@ class Analex extends Lexer;
 		
 		//Inclusion de codigo
 		INCLUIR="incluir";
+		
+		//Impresión por pantalla
+		IMPRIMIR="mostrar";
 		
 		//Definicion de funciones
 		//	DEF="def";
@@ -102,8 +99,7 @@ class Analex extends Lexer;
 	
 	//Operadores de asignacion
 	OP_ASIG: '=';
-	OP_ASIGTO: "=:";
-	
+		
 	//Operadores condicionales
 	OP_MAYOR: '>';
 	OP_MENOR: '<';
@@ -114,16 +110,14 @@ class Analex extends Lexer;
 	OP_Y : 'Y';
 	OP_O : 'O';
 
-	
 
-	
 	//Identificadores
 	protected LETRA: 'a'..'z'|'A'..'Z';
 	protected DIGITO: '0'..'9';
 	IDENT: (LETRA|'_') (LETRA|'_'|DIGITO)*;
 
 	//Numeros
-	NUMERO: ((DIGITO )+ '.' ) => (DIGITO )+ '.' ( DIGITO )* { $setType (REAL); } | ( DIGITO )+ { $setType (ENTERO);};
+	NUMERO: ( (DIGITO )+ '.' ) => (DIGITO )+ '.' ( DIGITO )* { $setType (REAL); } | ( DIGITO )+ { $setType (ENTERO);};
 			
 	//Cadenas
 	CADENA: '"' (options {greedy=false;}: ~('\\') | "\\\"")* '"';

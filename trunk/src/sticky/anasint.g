@@ -28,7 +28,7 @@ class Anasint extends Parser;
 	
 	sentencia: (simple FIN_INSTRUCCION) | bucle ; //O una sentencia simple con ; o un bucle, que no lleva ; para acabar (si sus intrucciones)
 	
-	simple: declaracion | asignacion | eliminar_var; //Esto permitirá usar ; para salir del greedy, ya que ; no se pide aquí
+	simple {String valor; Object valor2;}: declaracion | asignacion | eliminar_var | valor=imprimir { System.out.println(valor); } | valor2=expr_incremento ; //Esto permitirá usar ; para salir del greedy, ya que ; no se pide aquí
 	bucle: sentenciaIF | sentenciaWHILE | sentenciaFOR;
 	
 	//Para declarar variables hay diferentes alternativas:
@@ -39,35 +39,34 @@ class Anasint extends Parser;
 
 declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}:
 	(	//Alternativa 1
-		(VAR IDENT ~OP_ASIG) => VAR i1:IDENT
+		(VAR IDENT FIN_INSTRUCCION) => VAR i1:IDENT
 		{ 
 		  boolean res=tablaSimbolos.put(i1);
 		  if(res)
 		  	System.out.println("Variable \""+i1.getText()+"\" ha sido declarada");
 		  else
-		  	System.out.println("Variable \""+i1.getText()+"\" no ha sido declarada");
+		  	System.out.println("Variable \""+i1.getText()+"\" no ha sido declarada, ya existe");
 		}
 		
 		//Alternativa 2
-		
-		|(VAR IDENT OP_ASIG) =>VAR i2:IDENT OP_ASIG (x=expr_aritmetica) 
+		|(VAR IDENT OP_ASIG expresionOR) =>VAR i3:IDENT OP_ASIG (x=expresionOR) 
 			{			
-				boolean res = tablaSimbolos.put(i2,x);	// modifico el valor en la tabla de simbolos
+				boolean res = tablaSimbolos.put(i3,x);	// modifico el valor en la tabla de simbolos
 				if(res)
-		  			System.out.println("Variable \""+i2.getText()+"\" ha sido declarada con valor "+x);
+		  			System.out.println("Variable \""+i3.getText()+"\" ha sido declarada con valor "+x);
 		  		else 
-		  			System.out.println("Variable \""+i2.getText()+"\" no ha sido declarada");
+		  			System.out.println("Variable \""+i3.getText()+"\" no ha sido declarada, ya existe");
 		
 			}
 		//Alternativa 3
-		|(VAR IDENT (SEPARA IDENT)*) => VAR i3:IDENT (SEPARA i3_alt:IDENT {lista.add(i3_alt);} )* 
+		|(VAR IDENT (SEPARA IDENT)*) => VAR i4:IDENT (SEPARA i3_alt:IDENT {lista.add(i3_alt);} )* 
 					{
 						// Tenemos que insertar cada identificador encontrado en la tabla de simbolos
-						boolean res = tablaSimbolos.put(i3);
+						boolean res = tablaSimbolos.put(i4);
 						if(res)
-		  					System.out.println("Variable \""+i3.getText()+"\" ha sido declarada");
+		  					System.out.println("Variable \""+i4.getText()+"\" ha sido declarada");
 		  				else 
-		  					System.out.println("Variable \""+i3.getText()+"\" no ha sido declarada");
+		  					System.out.println("Variable \""+i4.getText()+"\" no ha sido declarada, ya existe");
 						Token tok;
 						for(int j=0; j < lista.size(); j++)
 						{
@@ -76,7 +75,7 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 								if(res)
 		  							System.out.println("Variable \""+tok.getText()+"\" ha sido declarada");
 		  						else 
-		  							System.out.println("Variable \""+tok.getText()+"\" no ha sido declarada");
+		  							System.out.println("Variable \""+tok.getText()+"\" no ha sido declarada, ya existe");
 						}
 					}
 					
@@ -88,65 +87,32 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 asignacion 
 	{ String mensaje = new String(); Object respuesta; Object respuesta2;}:
 
-	i:IDENT OP_ASIG (respuesta = expr_aritmetica) //| respuesta = func_dev[ejecutar, nombreRegion])
+	i2:IDENT OP_ASIG (respuesta = expresionOR)
 	
-	{		System.out.println("asignacion aritmetica");
-			//if(ejecutar)
-			if(tablaSimbolos.set(i,respuesta))	
-				System.out.println("asignacion a la variable \""+i.getText()+"\": "+respuesta);
+	{		
+			if(tablaSimbolos.set(i2,respuesta))	
+				System.out.println("Asignacion a la variable \""+i2.getText()+"\": "+respuesta);
 			else 
-				System.out.println("asignacion no realizada, no existe la variable \""+i.getText()+"\"");
+				System.out.println("Asignacion no realizada, no existe la variable \""+i2.getText()+"\"");
 	} ;
 //////////////////////////////////////////////////////////////////////////////////
 
 
 
 /////////////////// EXPRESIONES ARITMETICAS //////////////////////////////////////////////
-expr_aritmetica returns [Object resultado = null]
-{Object e1; Object e2;}: 
+
+	
+expr_aritmetica returns[Object resultado = null]
+{Object e1 = null; Object e2 = null; Object e3 = null;}:
 	e1=expr_mod
 	{
-		resultado = e1;	
-		System.out.println("exp_aritmetica " + resultado);
-	}
-	(linea1:OP_POT e2 = expr_mod
-	{
-		if(e1 instanceof Integer && e2 instanceof Integer)
-		{
-			int valor1 = new Integer(e1.toString()).intValue();
-			int valor2 = new Integer(e2.toString()).intValue();
+		//Esto es por si sucede algo así var=-2; El signo - al principio hace que e1 primer operando sea null y el segundo 2
+		if(e1 == null)
+			e1 = 0;
 			
-			resultado = new Double(Math.pow(valor1, valor2));
-		}
-		else
-		{
-			if(e1 instanceof String || e2 instanceof String)
-			{
-				Error.visualizarError(1,linea1.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
-			}
-			else
-			{
-			
-				if(e1 instanceof String || e2 instanceof String)
-					Error.visualizarError(1,linea1.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con valores booleanos");
-				else
-				{
-					double valor1 = new Double(e1.toString()).doubleValue();
-					int valor2 = new Integer(e2.toString()).intValue();
-					resultado = new Double(Math.pow(valor1, valor2));
-				}
-			}
-		}
-	})*;
-	
-expr_mod returns[Object resultado = null]
-{Object e1; Object e2;}:
-	e1=expr
-	{
-		System.out.println("expr_mod "+e1);
 		resultado = e1;
 	}
-	(linea1:OP_MOD e2 = expr
+	(linea1:OP_MOD e2 = expr_mod
 	{
 		if(e1 instanceof Integer && e2 instanceof Integer)
 		{
@@ -156,23 +122,7 @@ expr_mod returns[Object resultado = null]
 			resultado = new Integer(valor1%valor2);
 		}
 		
-		if(e1 instanceof Integer && e2 instanceof Double)
-		{
-			int valor1 = new Integer(e1.toString()).intValue();
-			double valor2 = new Double(e2.toString()).doubleValue();
-			
-			resultado = new Double(valor1%valor2);
-		}
-		
-		if(e1 instanceof Double && e2 instanceof Integer)
-		{
-			double valor1 = new Double(e1.toString()).doubleValue();
-			int valor2 = new Integer(e2.toString()).intValue();
-			
-			resultado = new Double(valor1%valor2);
-		}
-		
-		if(e1 instanceof Double && e2 instanceof Double)
+		if((e1 instanceof Double || e2 instanceof Double) && !(e1 instanceof String || e2 instanceof String || e1 instanceof Boolean || e2 instanceof Boolean))
 		{
 			double valor1 = new Double(e1.toString()).doubleValue();
 			double valor2 = new Double(e2.toString()).doubleValue();
@@ -194,14 +144,17 @@ expr_mod returns[Object resultado = null]
 	;
 	
 
-expr returns [Object resultado = null]
+expr_mod returns [Object resultado = null]
 {Object e1; Object e2; Object e3; Object e4;}: 
-	e1= expr_mult
+	e1= expr
 	{
-		System.out.println("expr "+e1);
+		//Esto es por si sucede algo así var=-2; El signo - al principio hace que e1 primer operando sea null y el segundo 2
+		if(e1 == null)
+			e1 = 0;
+
 		resultado = e1;
 	}
-	(linea1:OP_SUM e2=expr_mult
+	(linea1:OP_SUM e2=expr
 	{
 		if(e1 instanceof Integer && e2 instanceof Integer)
 	  	{
@@ -242,13 +195,12 @@ expr returns [Object resultado = null]
 	  		}
 	  	}	
 	}
-	| linea2:OP_RES e3 = expr_mult
+	| linea2:OP_RES e3 = expr
 	{
 		if(e1 instanceof Integer && e3 instanceof Integer)
 	  	{
 	  		int valor1 = new Integer(e1.toString()).intValue();
 	  		int valor2 = new Integer(e3.toString()).intValue();
-	  		
 	  		resultado = new Integer(valor1-valor2);
 	  		
 	  		e1=resultado;
@@ -276,13 +228,20 @@ expr returns [Object resultado = null]
 	}
 	)*;
 
-expr_mult returns [Object resultado = null]
+expr returns [Object resultado = null]
 {Object e1; Object e2; Object e3;}: 
-
-	e1=expr_base {resultado = e1; System.out.println("expr_mult "+resultado);}
 	
-	( linea1:OP_MUL e2=expr_base
+	e1=expr_mult {
+		//Esto es por si sucede algo así var=-2; El signo - al principio hace que e1 primer operando sea null y el segundo 2
+		if(e1 == null)
+			e1 = 0;
+			
+		resultado = e1;
+		}
+
+	( linea1:OP_MUL e2=expr_mult
 	  {
+	  	
 	  	if(e1 instanceof Integer && e2 instanceof Integer)
 	  	{
 	  		int valor1 = new Integer(e1.toString()).intValue();
@@ -293,27 +252,7 @@ expr_mult returns [Object resultado = null]
 	  		e1=resultado;
 	  	}
 	  	
-	  	if(e1 instanceof Integer && e2 instanceof Double)
-	  	{
-	  		int valor1 = new Integer(e1.toString()).intValue();
-	  		double valor2 = new Double(e2.toString()).doubleValue();
-	  		
-	  		resultado = new Double(valor1*valor2);
-	  		
-	  		e1=resultado;
-	  	}
-	  	
-	  	if(e1 instanceof Double && e2 instanceof Integer)
-	  	{
-	  		double valor1 = new Double(e1.toString()).doubleValue();
-	  		int valor2 = new Integer(e2.toString()).intValue();
-	  		
-	  		resultado = new Double(valor1*valor2);
-	  		
-	  		e1=resultado;
-	  	}
-	  	
-	  	if(e1 instanceof Double && e2 instanceof Double)
+	  	if((e1 instanceof Double || e2 instanceof Double) && !(e1 instanceof String || e2 instanceof String || e1 instanceof Boolean || e2 instanceof Boolean))
 	  	{
 	  		double valor1 = new Double(e1.toString()).doubleValue();
 	  		double valor2 = new Double(e2.toString()).doubleValue();
@@ -333,7 +272,7 @@ expr_mult returns [Object resultado = null]
 	  			Error.visualizarError(1,linea1.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con valores booleanos");
 	  	}
 	  }
-	  | linea2:OP_DIV e3 = expr_base
+	  | linea2:OP_DIV e3 = expr_mult
 	  {
 	  	if(e1 instanceof Integer && e3 instanceof Integer)
 	  	{
@@ -346,7 +285,7 @@ expr_mult returns [Object resultado = null]
 	  				e1=resultado;
 	  		}
 	  		else
-	  			Error.visualizarError(1,linea2.getLine(),"ERROR: por 0");
+	  			Error.visualizarError(1,linea2.getLine(),"ERROR: División por 0");
 	  	}
 	  	else
 	  	{
@@ -360,6 +299,7 @@ expr_mult returns [Object resultado = null]
 	  				Error.visualizarError(1,linea2.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con valores booleanos");
 	  			else
 	  			{	
+	  				//Si no son flotantes
 	  				double valor1 = new Double(e1.toString()).doubleValue();
 	  				double valor2 = new Double(e3.toString()).doubleValue();
 	  			
@@ -369,71 +309,246 @@ expr_mult returns [Object resultado = null]
 	  					e1=resultado;
 	  				}
 	  				else
-	  					Error.visualizarError(1,linea2.getLine(),"ERROR: por 0");
+	  					Error.visualizarError(1,linea2.getLine(),"ERROR: División por 0");
 	  			}
 	  		}
 	  			
 	  	}	
 	  })*;
+	  
+
+expr_mult returns [Object resultado = null]
+{Object e1; Object e2;}:
+	
+	e1=expr_raiz
+	{
+		//Esto es por si sucede algo así var=-2; El signo - al principio hace que e1 primer operando sea null y el segundo 2
+		if(e1 == null)
+			e1 = 0;
+			
+		resultado = e1;	
+	}
+	(linea1:OP_POT e2 = expr_raiz
+	{
+		
+		if(e1 instanceof Integer && e2 instanceof Integer)
+		{
+			int valor1 = new Integer(e1.toString()).intValue();
+			int valor2 = new Integer(e2.toString()).intValue();
+			
+			resultado = new Double(Math.pow(valor1, valor2));
+		}
+		else
+		{
+			if(e1 instanceof String || e2 instanceof String)
+			{
+				Error.visualizarError(1,linea1.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
+			}
+			else
+			{
+			
+				if(e1 instanceof String || e2 instanceof String)
+					Error.visualizarError(1,linea1.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con valores booleanos");
+				else
+				{
+					double valor1 = new Double(e1.toString()).doubleValue();
+					int valor2 = new Integer(e2.toString()).intValue();
+					resultado = new Double(Math.pow(valor1, valor2));
+				}
+			}
+		}
+	})*;
+	
+	
+expr_raiz returns [Object resultado = null]
+{Object exp1 = null ; Object exp2 = null;}: 
+
+	exp1=expr_base {
+		//Esto es por si sucede algo así var=-2; El signo - al principio hace que e1 primer operando sea null y el segundo 2
+		if(exp1 == null)
+			exp1 = 0;
+			 
+		resultado = exp1;
+		}
+	|
+	( linea:OP_RAIZ exp2=expr_base
+	  {
+	  if(exp2 != null) 				// 2
+			{
+				
+			if(exp2 instanceof Boolean)
+				{
+				Error.visualizarError(1,linea.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con booleanos.");
+				}
+			else
+				{
+				if(exp2 instanceof String)
+					{
+					Error.visualizarError(1,linea.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con cadenas de caracteres.");
+					}
+				else
+					{
+					Double var = new Double(exp2.toString()).doubleValue();
+					var = Math.sqrt(var);
+					resultado = var;
+					}
+				}
+	
+			}
+	  }
+	  )* ;
+
+
 
 expr_base returns [Object resultado = null]: 
 		n1:ENTERO {resultado = new Integer(n1.getText());}
 		|n2:REAL {resultado = new Double(n2.getText());}
-		|n3:VERDADERO {System.out.println("encontrado verdad"); resultado = new Boolean(true);}
-		|n4:FALSO {System.out.println("encontrado falso"); resultado = new Boolean(false);}
-		|id:IDENT
+		|n3:VERDADERO {resultado = new Boolean(true);}
+		|n4:FALSO {resultado = new Boolean(false);}
+		|n5:CADENA {resultado = new String( n5.getText()); }
+		|(IDENT) => id:IDENT
 		{
-			
 			if(tablaSimbolos.existeSimbolo(id.getText()))
 			{
 				String contenido = tablaSimbolos.getContenidoSimbolo(id.getText());
 				
-				if(contenido==null)
+				if(contenido.compareTo("") == 0)
 				{
-					Error.visualizarError(1,id.getLine(),"ERROR: La variable no tiene asignado ningun valor "+id.getText());	
+					Error.visualizarError(1,id.getLine(),"ERROR: La variable "+id.getText()+" no tiene asignado ningun valor.");	
 				}
-				
-				if(contenido.matches("[0-9~.]*"))
+				else {
+				//Si no es una cadena (si lleva " matches devuelve false)
+				if(contenido.matches("[0-9.]+|true|false"))
 	  				{
-	  				System.out.println("Entero");
-	  				resultado = new Integer(contenido.toString()).intValue();
+	  				//Si lleva true o false es un booleano
+	  				if(contenido.matches("true|false"))
+	  					{
+	  					resultado = new Boolean(contenido.toString()).booleanValue();
+	  					}
+	  				//Si lleva solo numeros de 0 a 9
+	  				else if(contenido.matches("[0-9]+"))
+	  					{
+	  					resultado = new Integer(contenido.toString()).intValue();
+	  					}
+	  				//Y si no es un entero
+	  				else {
+	  					resultado = new Float(contenido.toString()).floatValue();
+	  					}
 	  				}
-	  			else if(contenido.matches("true") || contenido.matches("false"))
-	  				{
-	  				System.out.println("boolean");
-	  				resultado = new Boolean(contenido.toString()).booleanValue();
-	  				}
-	  			else if((Float)Float.parseFloat(contenido) instanceof Float)
-	  				{
-	  				System.out.println("flotante");
-	  				resultado = new Float(contenido.toString()).floatValue();
-	  				}
-			
+	  			else //es una cadena
+	  			{
+	  				
+	  				resultado = new String(contenido.toString());
+	  			}
+				}
 			}
 			else 
-				Error.visualizarError(1,id.getLine(),"ERROR: la variable no ha sido declarada "+id.getText());
-			
+				Error.visualizarError(1,id.getLine(),"ERROR: la variable "+ id.getText() +" no ha sido declarada.");
+
 				
 		}
+		| resultado = expr_incremento
 		| (PAR_IZQ expr_aritmetica PAR_DER) => PAR_IZQ (resultado = expr_aritmetica) PAR_DER
 		| (PAR_IZQ expresionOR PAR_DER) => PAR_IZQ (resultado = expresionOR) PAR_DER
 		;
-		
+
+expr_incremento returns [Object resultado = null]:
+(IDENT OP_INC) => id2:IDENT OP_INC
+		{
+			if(tablaSimbolos.existeSimbolo(id2.getText()))
+			{
+				String contenido = tablaSimbolos.getContenidoSimbolo(id2.getText());
+				
+				if(contenido.compareTo("") == 0)
+				{
+					Error.visualizarError(1,id2.getLine(),"ERROR: La variable "+id2.getText()+" no tiene asignado ningun valor.");	
+				}
+				else {
+				//Si no es una cadena (si lleva " matches devuelve false)
+				if(contenido.matches("[0-9.]+|true|false"))
+	  				{
+	  				//Si lleva true o false es un booleano
+	  				if(contenido.matches("true|false"))
+	  					{
+	  					Error.visualizarError(1,id2.getLine(),"ERROR: la variable "+id2.getText()+" es un booleano y por tanto no se puede incrementar.");
+	  					}
+	  				//Si lleva solo numeros de 0 a 9
+	  				else if(contenido.matches("[0-9]+"))
+	  					{
+	  					resultado = new Integer(contenido.toString()).intValue()+1;
+	  					tablaSimbolos.set(id2,resultado);
+	  					}
+	  				//Y si no es un entero
+	  				else {
+	  					resultado = new Float(contenido.toString()).floatValue()+1;
+	  					tablaSimbolos.set(id2,resultado);
+	  					}
+	  				}
+	  			else //es una cadena
+	  			{
+	  				Error.visualizarError(1,id2.getLine(),"ERROR: la variable "+id2.getText()+" es una cadena y por tanto no se puede incrementar.");
+	  			}
+				}
+			}
+			else 
+				Error.visualizarError(1,id2.getLine(),"ERROR: la variable "+id2.getText()+" no ha sido declarada.");
+
+				
+		}
+		| (IDENT OP_DEC) => id3:IDENT OP_DEC
+		{
+			if(tablaSimbolos.existeSimbolo(id3.getText()))
+			{
+				String contenido = tablaSimbolos.getContenidoSimbolo(id3.getText());
+				
+				if(contenido.compareTo("") == 0)
+				{
+					Error.visualizarError(1,id3.getLine(),"ERROR: La variable "+id3.getText()+" no tiene asignado ningun valor.");	
+				}
+				else {
+				//Si no es una cadena (si lleva " matches devuelve false)
+				if(contenido.matches("[0-9.]+|true|false"))
+	  				{
+	  				//Si lleva true o false es un booleano
+	  				if(contenido.matches("true|false"))
+	  					{
+	  					Error.visualizarError(1,id3.getLine(),"ERROR: la variable "+id3.getText()+" es un booleano y por tanto no se puede decrementar.");
+	  					}
+	  				//Si lleva solo numeros de 0 a 9
+	  				else if(contenido.matches("[0-9]+"))
+	  					{
+	  					resultado = new Integer(contenido.toString()).intValue()-1;
+	  					tablaSimbolos.set(id3,resultado);
+	  					}
+	  				//Y si no es un entero
+	  				else {
+	  					resultado = new Float(contenido.toString()).floatValue()-1;
+	  					tablaSimbolos.set(id3,resultado);
+	  					}
+	  				}
+	  			else //es una cadena
+	  			{
+	  				Error.visualizarError(1,id3.getLine(),"ERROR: la variable "+id3.getText()+" es una cadena y por tanto no se puede decrementar.");
+	  			}
+				}
+			}
+			else 
+				Error.visualizarError(1,id3.getLine(),"ERROR: la variable "+id3.getText()+" no ha sido declarada. ");
+				
+		}	;
 
 expresionOR returns [Object resultado = null]
-{Object exp1 = null; Object exp2=null;}: 
-	exp1= expresionAND
+{Object exp1 = null; Object exp2=null; Object exp3=null;}: 
+	exp1= expresionXOR
 	{
-		System.out.println("expresionOR "+exp1);
 		resultado = exp1;
-		
 	}
-	(linea:OP_O exp2=expresionAND
+	(
+	linea:OP_O exp2=expresionXOR
 	{
-	  System.out.println("entra en or con OP_O");
 	  if(exp2 != null) 				// 2
 			{
-				if(exp2 instanceof Boolean)	
+				if(exp2 instanceof Boolean && exp1 instanceof Boolean)	
 				{
 					boolean var1 = new Boolean(exp1.toString()).booleanValue();
 					boolean var2 = new Boolean(exp2.toString()).booleanValue();
@@ -443,15 +558,41 @@ expresionOR returns [Object resultado = null]
 				}
 				else
 				{
-						Error.errorExpresion(1,linea.getLine());
+						Error.visualizarError(1,linea.getLine(),"ERROR: Sólo se pueden realizar operaciones lógicas con booleanos.");
 				}
 			
 			}
-	  }
-	)*
+	  }	)*
 	;
-	
 
+expresionXOR returns [Object resultado = null]
+{Object exp1 = null; Object exp2=null; Object exp3=null;}: 
+	exp1= expresionAND
+	{
+		resultado = exp1;
+	}
+	( linea:OP_OX exp3=expresionAND
+	{
+	  if(exp3 != null) 				// 2
+			{
+				if(exp3 instanceof Boolean && exp1 instanceof Boolean)	
+				{
+					boolean var1 = new Boolean(exp1.toString()).booleanValue();
+					boolean var2 = new Boolean(exp3.toString()).booleanValue();
+					if((var1 || var2) && (var1 != var2))
+						resultado = new Boolean(true);	
+					else 
+						resultado = new Boolean(false);
+					
+				}
+				else
+				{
+						Error.visualizarError(1,linea.getLine(),"ERROR: Sólo se pueden realizar operaciones lógicas con booleanos.");
+				}
+			
+			}
+	  } )* 
+	  ;
 
 		
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -459,12 +600,13 @@ expresionOR returns [Object resultado = null]
 expresionAND returns [Object resultado = null]
 {Object exp1 = null ; Object exp2 = null;}: 
 
-	exp1=expr_relacional { System.out.println("expresionAND " + exp1); resultado = exp1;}
-	( linea:OP_Y exp2=expr_relacional
+	exp1=expresionNOT {resultado = exp1;}
+	( linea:OP_Y exp2=expresionNOT
 	  {
 	  if(exp2 != null) 				// 2
 			{
-				if(exp2 instanceof Boolean)	
+				
+				if(exp1 instanceof Boolean && exp2 instanceof Boolean )	
 				{
 					boolean var1 = new Boolean(exp1.toString()).booleanValue();
 					boolean var2 = new Boolean(exp2.toString()).booleanValue();
@@ -474,13 +616,49 @@ expresionAND returns [Object resultado = null]
 				}
 				else
 				{
-						Error.errorExpresion(1,linea.getLine());
+						Error.visualizarError(1,linea.getLine(),"ERROR: Sólo se pueden realizar operaciones lógicas con booleanos.");
 				}
 			
 			}
 	  }
 	  )*;
-	  
+	 
+expresionNOT returns [Object resultado = null]
+{Object exp1 = null ; Object exp2 = null;}: 
+
+	(expr_relacional) => exp1=expr_relacional { resultado = exp1;}
+	|
+	( linea:OP_NO exp2=expr_relacional
+	  {
+	  if(exp2 != null) 				// 2
+			{
+				
+			if(exp2 instanceof Integer)
+				{
+				Error.visualizarError(1,linea.getLine(),"ERROR: No se pueden realizar operaciones booleanas con enteros.");
+				}
+			else
+				{
+				if(exp2 instanceof String)
+					{
+					Error.visualizarError(1,linea.getLine(),"ERROR: No se pueden realizar operaciones booleanas con cadenas de caracteres.");
+					}
+				else
+					{
+			
+					if(exp2 instanceof Double)
+						Error.visualizarError(1,linea.getLine(),"ERROR: No se pueden realizar operaciones booleanas con valores flotantes.");
+					else
+						{
+						Boolean var = new Boolean(exp2.toString()).booleanValue();
+						resultado = !var;
+						}
+					}
+				}
+	
+			}
+	  }
+	  )*;
 
 ////////////////// EXPRESIONES RELACIONALES /////////////////////////////////
 
@@ -488,7 +666,6 @@ expr_relacional returns [Object respuesta = null]
 {Object e1; Object e2;}:
 	e1 = expr_aritmetica {
 		respuesta = e1;
-		System.out.println("exp_relacional " + respuesta);
 	}
 	(linea:OP_MAYOR e2 = expr_aritmetica
 	{
@@ -650,8 +827,11 @@ expr_relacional returns [Object respuesta = null]
 evaluarExpresion returns [Object respuesta = null]: 
 	respuesta = expresionOR {System.out.println("Evaluar expresion: "+ respuesta);};
 
+////////////////////// SENTENCIAS IF //////////////////////////////////////////////
 //1 -> if de la forma si (VERDAD) { hola = 1; } sino { hola = 2; var otra; }
 //2 -> if de la forma si (VERDAD) hola = 1; sino hola=2;
+//3 -> if de la forma si (VERDAD) {hola = 1; } sino hola=2;
+//4 -> if de la forma si (VERDAD) hola = 1; sino { hola=2; }
 	sentenciaIF {Object o; boolean b=false;} : 
 		(IF PAR_IZQ (evaluarExpresion) PAR_DER LLAVE_IZQ) => //1
 		IF PAR_IZQ (o=evaluarExpresion) PAR_DER LLAVE_IZQ
@@ -659,8 +839,6 @@ evaluarExpresion returns [Object respuesta = null]:
                 if (o.getClass() == Boolean.class)
                            b = ((Boolean)o).booleanValue();
                 else System.out.println("Error IF");
-                
-                System.out.println("Entra en IF. Evaluación: "+o);
         }
         ({b==true}? (sentencia)* LLAVE_DER
         | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
@@ -668,25 +846,35 @@ evaluarExpresion returns [Object respuesta = null]:
         ((ELSE LLAVE_IZQ) => ELSE LLAVE_IZQ
         ({b==false}? (sentencia)* LLAVE_DER
         | {b==true}? (options{greedy=false;}:.)+ LLAVE_DER
-        ))?
+        )
         |
-        (IF PAR_IZQ (evaluarExpresion) PAR_DER) => //2
+        (ELSE ~LLAVE_IZQ) => ELSE 							//3
+        ({b==false}? sentencia
+        | {b==true}? (options{greedy=false;}:.)+ FIN_INSTRUCCION
+        )
+        )?
+        |
+        (IF PAR_IZQ (evaluarExpresion) PAR_DER) => 			//2
          IF PAR_IZQ (o=evaluarExpresion) PAR_DER 
         {
                 if (o.getClass() == Boolean.class)
                            b = ((Boolean)o).booleanValue();
                 else System.out.println("Error IF");
-                
-                System.out.println("Entra en IF sin corchetes. Evaluación: "+o);
         }
         ({b==true}? sentencia 
         | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION)
         
-        ((ELSE) => ELSE
+        (
+        (ELSE ~LLAVE_IZQ) => ELSE
         ({b==false}? sentencia
-        | {b==true}? (options{greedy=false;}:.)+ FIN_INSTRUCCION
-        ))?
-        
+        | {b==true}? (options{greedy=false;}:.)+ FIN_INSTRUCCION	
+        )
+        |
+        (ELSE LLAVE_IZQ) => ELSE LLAVE_IZQ					//4
+        ({b==false}? (sentencia)* LLAVE_DER
+        | {b==true}? (options{greedy=false;}:.)+ LLAVE_DER
+        )
+        )?
         ;
     
     
@@ -725,6 +913,7 @@ fin_interprete:
 	{
 		consumeUntil(Token.EOF_TYPE);
 		consume();
+		System.exit(1);
 	};
 
 
@@ -742,7 +931,6 @@ sentenciaWHILE
 	B_WHILE PAR_IZQ expresion = evaluarExpresion PAR_DER LLAVE_IZQ
 	{
 		b = ((Boolean)expresion).booleanValue();
-		System.out.println("Resultado evaluacion while :"+b);
 				
 	} 
 	({b==true}? (sentencia)* LLAVE_DER {rewind(marker);}
@@ -753,7 +941,6 @@ sentenciaWHILE
 	B_WHILE PAR_IZQ expresion = evaluarExpresion PAR_DER
 	{
 		b = ((Boolean)expresion).booleanValue();
-		System.out.println("Resultado evaluacion while sin corchetes :"+b);
 				
 	} 
 		({b==true}? sentencia {rewind(marker);}
@@ -779,7 +966,6 @@ sentenciaFOR
 	B_FOR PAR_IZQ id:IDENT FIN_INSTRUCCION expresion = evaluarExpresion FIN_INSTRUCCION n:ENTERO FIN_INSTRUCCION PAR_DER LLAVE_IZQ
 	{
 		b = ((Boolean)expresion).booleanValue();
-		System.out.println("Resultado evaluacion for :"+b);
 		
 		if(hecho == false) {
 		//Obtiene el valor de la variable id
@@ -794,7 +980,6 @@ sentenciaFOR
 				
 				if(contenido.matches("[0-9~.]*"))
 	  				{
-	  				System.out.println("Entero");
 	  				numero = new Integer(contenido.toString()).intValue();
 	  				hecho = true;
 	  				}	
@@ -807,7 +992,6 @@ sentenciaFOR
 		numero = numero + Integer.parseInt(n.getText());
 			
 		//Guarda el valor 
-		System.out.println(numero);	
 		tablaSimbolos.set(id, numero);
 	} 
 	({b==true}? (sentencia)* LLAVE_DER {rewind(marker);}
@@ -819,7 +1003,6 @@ sentenciaFOR
 	B_FOR PAR_IZQ id2:IDENT FIN_INSTRUCCION expresion = evaluarExpresion FIN_INSTRUCCION n2:ENTERO FIN_INSTRUCCION PAR_DER
 	{
 		b = ((Boolean)expresion).booleanValue();
-		System.out.println("Resultado evaluacion for :"+b);
 		
 		if(hecho == false) {
 		//Obtiene el valor de la variable id
@@ -834,7 +1017,6 @@ sentenciaFOR
 				
 				if(contenido.matches("[0-9~.]*"))
 	  				{
-	  				System.out.println("Entero");
 	  				numero = new Integer(contenido.toString()).intValue();
 	  				hecho = true;
 	  				}	
@@ -847,10 +1029,70 @@ sentenciaFOR
 		numero = numero + Integer.parseInt(n2.getText());
 			
 		//Guarda el valor 
-		System.out.println(numero);	
 		tablaSimbolos.set(id2, numero);
 	} 
 	({b==true}? sentencia {rewind(marker);}
     | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION) 
 	
-	;	
+	;
+	
+imprimir returns [String respuesta=null]
+{ String expr1; String expr2;}:
+IMPRIMIR PAR_IZQ
+expr1 = impr_base { respuesta = expr1;}
+(OP_SUM expr2 = impr_base
+{
+	respuesta = new String(expr1+expr2);
+	expr1 = respuesta;
+	
+})* PAR_DER
+;
+
+impr_base returns [String respuesta=null]
+{Object e;}:
+	(n1:CADENA {
+		//Elimina las comillas 
+		int longitud = (n1.getText()).length();
+		char [] cadena1 = (n1.getText()).toCharArray();
+		String cadena2 = new String();
+		
+		for(int i = 0; i < (n1.getText()).length(); i++)
+		{
+			if(cadena1[i] != '"')
+				cadena2 += cadena1[i];
+		}
+		respuesta = cadena2; 
+	}
+	|id:IDENT
+	{
+			//Comprobamos que la variable este declarada
+			if(tablaSimbolos.existeSimbolo(id.getText()))
+			{
+				//Contenido de la variable
+				String contenido = tablaSimbolos.getContenidoSimbolo(id.getText());
+				
+				if(contenido.compareTo("") == 0)
+				{
+					Error.visualizarError(1,id.getLine(),"ERROR: La variable "+id.getText()+" no tiene asignado ningun valor.");	
+				}
+				else
+				{
+					//Elimina las comillas 
+					int longitud = contenido.length();
+					char [] cadena1 = contenido.toCharArray();
+					String cadena2 = new String();
+		
+					for(int i = 0; i < contenido.length(); i++)
+						{
+						if(cadena1[i] != '"')
+						cadena2 += cadena1[i];
+						}
+					respuesta = cadena2;		
+				}
+			}
+			else // No está declarado
+				Error.visualizarError(1,id.getLine(),"ERROR: la variable no ha sido declarada "+id.getText());
+	} )
+	;
+
+		
