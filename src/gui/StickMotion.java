@@ -46,7 +46,7 @@ public class StickMotion extends javax.swing.JFrame {
     initComponents();
 
     /* Inicio de otros componentes */
-    editorsticky.DefaultSyntaxKit.initKit();
+    // editorsticky.DefaultSyntaxKit.initKit();
     editor.setContentType("text/sticky");
 
     /* Por defecto, el icono de guardar aparece deshabilitado */
@@ -1041,7 +1041,15 @@ public class StickMotion extends javax.swing.JFrame {
     // Run the language processor with the content of the "editor", and show the
     // output of it
     // in the "editorResults" field.
-    editorResults.setText(sticky.Procesador.run(editor.getText(), 0));
+
+    // RESULTADOS DE LA INTERPRETACION
+    // debugMode == 0 -> Se muestra error
+    // debugMode == 1 -> Se muestra error y debug nivel 1
+    // debugMode == 2 -> Se muestra error, debug nivel 1 y debug nivel 2
+    // ... (meintras más alto sea debugMode mayor nivel de detalle)
+    int debugMode = 2; // Mostrará hasta debug de nivel 2
+
+    editorResults.setText(sticky.Procesador.run(editor.getText(), debugMode));
 
     scene.start(loadCanvas3D());
 
