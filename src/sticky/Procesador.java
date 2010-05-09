@@ -8,12 +8,11 @@ import antlr.ANTLRException;
 
 public abstract class Procesador {
 
-  private static String output;
-  private static int debugMode;
+  private static String output = "";
+  private static int debugMode = 2; // Por defecto 2 (lo muestra todo)
 
   public static void main(String[] args) {
 
-    debugMode = 1;
     try {
 
       FileInputStream fis = new FileInputStream("codigo.stk");
@@ -32,7 +31,7 @@ public abstract class Procesador {
   public static String run(String code, int debug) {
 
     debugMode = debug;
-    output = "Processing...\n";
+    output = "";
     try {
 
       InputStream is = com.sun.xml.internal.ws.util.xml.XmlUtil
@@ -45,16 +44,35 @@ public abstract class Procesador {
     } catch (ANTLRException ae) {
       System.err.println(ae.getMessage());
     }
-
     return output;
   }
 
   public static void println(int debugLevel, String str) {
+    // debugLevel<0 -> Información vital (Mensajes de inicio y fin de sticky y
+    // primitiva
+    // mostrar() )
+    // debugLevel == 0 -> Mensajes de error
+    // debugLevel > 0 -> Mensajes Debug <debugLevel>.
     if (debugLevel > 0) {
-      if (debugLevel <= debugMode)
-        str = "DEBUG: " + str;
+      if (debugLevel <= debugMode) {
+        str = "DEBUG " + debugLevel + ": " + str;
+        output += str + '\n';
+        System.out.println(output);
+      }
+    } else if (debugLevel == 0) {
+      str = "ERROR: " + str;
       output += str + '\n';
-      System.out.println(str);
+      System.out.println(output);
+    } else {
+      // Este es necesario para la primitiva mostrar(), para que no se imprima
+      // ni Error ni Debug delante
+      output += str + '\n';
+      System.out.println(output);
     }
   }
+
+  public static void cambiarNivelDebug(int nivel) {
+    debugMode = nivel;
+  }
+
 }
