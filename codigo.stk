@@ -29,6 +29,7 @@ sup prueba2;
 
 //Prueba de precedencia de operaciones y operador XO
 prueba = VERDAD OX (FALSO O VERDAD);
+pepe = 2;
 
 //Prueba de algunos errores
 var otra = pepe/0;
