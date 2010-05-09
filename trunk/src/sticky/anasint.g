@@ -4,7 +4,6 @@ header {
 	import sticky.tablasimbolos.TablaSimbolos;
 	import java.io.FileInputStream;
 	import java.util.ArrayList;
-	import sticky.error.Error;
 	import antlr.*;
 	import antlr.InputBuffer;
 }
@@ -20,7 +19,7 @@ class Anasint extends Parser;
 	instrucciones 
 	{
 		Object x=null;
-		System.out.println("...INICIANDO STICKY...");		
+		Procesador.println(-1,"...INICIANDO STICKY...");		
 	} 
 	
 	: (sentencia)* fin_interprete; //Una o varias sentencias, y finaliza
@@ -28,7 +27,7 @@ class Anasint extends Parser;
 	
 	sentencia: (simple FIN_INSTRUCCION) | bucle ; //O una sentencia simple con ; o un bucle, que no lleva ; para acabar (si sus intrucciones)
 	
-	simple {String valor; Object valor2;}: declaracion | asignacion | eliminar_var | valor=imprimir { System.out.println(valor); } | valor2=expr_incremento ; //Esto permitirá usar ; para salir del greedy, ya que ; no se pide aquí
+	simple {String valor; Object valor2;}: declaracion | asignacion | eliminar_var | valor=imprimir { Procesador.println(-1,valor); } | valor2=expr_incremento ; //Esto permitirá usar ; para salir del greedy, ya que ; no se pide aquí
 	bucle: sentenciaIF | sentenciaWHILE | sentenciaFOR;
 	
 	//Para declarar variables hay diferentes alternativas:
@@ -43,9 +42,9 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 		{ 
 		  boolean res=tablaSimbolos.put(i1);
 		  if(res)
-		  	System.out.println("Variable \""+i1.getText()+"\" ha sido declarada");
+		  	Procesador.println(1, "Variable \""+i1.getText()+"\" ha sido declarada");
 		  else
-		  	System.out.println("Variable \""+i1.getText()+"\" no ha sido declarada, ya existe");
+		  	Procesador.println(0, "Variable \""+i1.getText()+"\" no ha sido declarada, ya existe");
 		}
 		
 		//Alternativa 2
@@ -53,9 +52,9 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 			{			
 				boolean res = tablaSimbolos.put(i3,x);	// modifico el valor en la tabla de simbolos
 				if(res)
-		  			System.out.println("Variable \""+i3.getText()+"\" ha sido declarada con valor "+x);
+		  			Procesador.println(1, "Variable \""+i3.getText()+"\" ha sido declarada con valor "+x);
 		  		else 
-		  			System.out.println("Variable \""+i3.getText()+"\" no ha sido declarada, ya existe");
+		  			Procesador.println(0, "Variable \""+i3.getText()+"\" no ha sido declarada, ya existe");
 		
 			}
 		//Alternativa 3
@@ -64,18 +63,18 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 						// Tenemos que insertar cada identificador encontrado en la tabla de simbolos
 						boolean res = tablaSimbolos.put(i4);
 						if(res)
-		  					System.out.println("Variable \""+i4.getText()+"\" ha sido declarada");
+		  					Procesador.println(1, "Variable \""+i4.getText()+"\" ha sido declarada");
 		  				else 
-		  					System.out.println("Variable \""+i4.getText()+"\" no ha sido declarada, ya existe");
+		  					Procesador.println(0, "Variable \""+i4.getText()+"\" no ha sido declarada, ya existe");
 						Token tok;
 						for(int j=0; j < lista.size(); j++)
 						{
 								tok = (Token)lista.get(j); // obtengo un identificador de la lista
 								res = tablaSimbolos.put(tok);
 								if(res)
-		  							System.out.println("Variable \""+tok.getText()+"\" ha sido declarada");
+		  							Procesador.println(1, "Variable \""+tok.getText()+"\" ha sido declarada");
 		  						else 
-		  							System.out.println("Variable \""+tok.getText()+"\" no ha sido declarada, ya existe");
+		  							Procesador.println(0, "Variable \""+tok.getText()+"\" no ha sido declarada, ya existe");
 						}
 					}
 					
@@ -91,9 +90,9 @@ asignacion
 	
 	{		
 			if(tablaSimbolos.set(i2,respuesta))	
-				System.out.println("Asignacion a la variable \""+i2.getText()+"\": "+respuesta);
+				Procesador.println(1, "Asignacion a la variable \""+i2.getText()+"\": "+respuesta);
 			else 
-				System.out.println("Asignacion no realizada, no existe la variable \""+i2.getText()+"\"");
+				Procesador.println(0, "Asignacion no realizada, no existe la variable \""+i2.getText()+"\"");
 	} ;
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -132,12 +131,12 @@ expr_aritmetica returns[Object resultado = null]
 		
 		if(e1 instanceof String || e2 instanceof String)
 		{
-			Error.visualizarError(1,linea1.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
+			Procesador.println(0,"Linea "+linea1.getLine()+": No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
 		}
 		
 		if(e1 instanceof Boolean || e2 instanceof Boolean)
 		{
-			Error.visualizarError(1,linea1.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con valores booleanos");
+			Procesador.println(0,"Linea "+linea1.getLine()+": No se pueden realizar operaciones aritmeticas con valores booleanos");
 		}
 		
 	})*
@@ -177,13 +176,13 @@ expr_mod returns [Object resultado = null]
 	  			}
 	  			else
 	  			{
-	  				Error.visualizarError(1,linea1.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
+	  				Procesador.println(0,"Linea "+linea1.getLine()+": No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
 	  			}
 	  		}
 	  		else
 	  		{
 	  			if(e1 instanceof Boolean || e2 instanceof Boolean)
-	  				Error.visualizarError(1,linea1.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con valores booleanos");
+	  				Procesador.println(0,"Linea "+linea1.getLine()+": No se pueden realizar operaciones aritmeticas con valores booleanos");
 	  			else
 	  			{
 	  				double valor1 = new Double(e1.toString()).doubleValue();
@@ -209,12 +208,12 @@ expr_mod returns [Object resultado = null]
 	  	{
 	  		if(e1 instanceof String || e3 instanceof String)
 	  		{
-	  			Error.visualizarError(1,linea2.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
+	  			Procesador.println(0,"Linea "+linea2.getLine()+": No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
 	  		}
 	  		else
 	  		{
 	  			if(e1 instanceof Boolean || e3 instanceof Boolean)
-	  				Error.visualizarError(1,linea2.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con valores booleanos");
+	  				Procesador.println(0,"Linea "+linea2.getLine()+": No se pueden realizar operaciones aritmeticas con valores booleanos");
 	  			else
 	  			{
 	  				double valor1 = new Double(e1.toString()).doubleValue();
@@ -264,12 +263,12 @@ expr returns [Object resultado = null]
 	  	
 	  	if(e1 instanceof String || e2 instanceof String)
 	  	{
-	  			Error.visualizarError(1,linea1.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
+	  			Procesador.println(0,"Linea "+linea1.getLine()+": No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
 	  	}
 	  	
 	  	if(e1 instanceof Boolean || e2 instanceof Boolean)
 	  	{
-	  			Error.visualizarError(1,linea1.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con valores booleanos");
+	  			Procesador.println(0,"Linea "+linea1.getLine()+": No se pueden realizar operaciones aritmeticas con valores booleanos");
 	  	}
 	  }
 	  | linea2:OP_DIV e3 = expr_mult
@@ -285,18 +284,18 @@ expr returns [Object resultado = null]
 	  				e1=resultado;
 	  		}
 	  		else
-	  			Error.visualizarError(1,linea2.getLine(),"ERROR: División por 0");
+	  			Procesador.println(0,"Linea "+linea2.getLine()+": División por 0");
 	  	}
 	  	else
 	  	{
 	  		if(e1 instanceof String || e3 instanceof String)
 	  		{
-	  			Error.visualizarError(1,linea2.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
+	  			Procesador.println(0,"Linea "+linea2.getLine()+": No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
 	  		}
 	  		else
 	  		{
 	  			if(e1 instanceof Boolean || e3 instanceof Boolean)
-	  				Error.visualizarError(1,linea2.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con valores booleanos");
+	  				Procesador.println(0,"Linea "+linea2.getLine()+": No se pueden realizar operaciones aritmeticas con valores booleanos");
 	  			else
 	  			{	
 	  				//Si no son flotantes
@@ -309,7 +308,7 @@ expr returns [Object resultado = null]
 	  					e1=resultado;
 	  				}
 	  				else
-	  					Error.visualizarError(1,linea2.getLine(),"ERROR: División por 0");
+	  					Procesador.println(0,"Linea "+linea2.getLine()+": División por 0");
 	  			}
 	  		}
 	  			
@@ -342,13 +341,13 @@ expr_mult returns [Object resultado = null]
 		{
 			if(e1 instanceof String || e2 instanceof String)
 			{
-				Error.visualizarError(1,linea1.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
+				Procesador.println(0,"Linea "+linea1.getLine()+": No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
 			}
 			else
 			{
 			
 				if(e1 instanceof String || e2 instanceof String)
-					Error.visualizarError(1,linea1.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con valores booleanos");
+					Procesador.println(0,"Linea "+linea1.getLine()+": No se pueden realizar operaciones aritmeticas con valores booleanos");
 				else
 				{
 					double valor1 = new Double(e1.toString()).doubleValue();
@@ -378,13 +377,13 @@ expr_raiz returns [Object resultado = null]
 				
 			if(exp2 instanceof Boolean)
 				{
-				Error.visualizarError(1,linea.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con booleanos.");
+				Procesador.println(0,"Linea "+linea.getLine()+": No se pueden realizar operaciones aritmeticas con booleanos.");
 				}
 			else
 				{
 				if(exp2 instanceof String)
 					{
-					Error.visualizarError(1,linea.getLine(),"ERROR: No se pueden realizar operaciones aritmeticas con cadenas de caracteres.");
+					Procesador.println(0,"Linea "+linea.getLine()+": No se pueden realizar operaciones aritmeticas con cadenas de caracteres.");
 					}
 				else
 					{
@@ -414,7 +413,7 @@ expr_base returns [Object resultado = null]:
 				
 				if(contenido.compareTo("") == 0)
 				{
-					Error.visualizarError(1,id.getLine(),"ERROR: La variable "+id.getText()+" no tiene asignado ningun valor.");	
+					Procesador.println(0,"Linea "+id.getLine()+": La variable "+id.getText()+" no tiene asignado ningun valor.");	
 				}
 				else {
 				//Si no es una cadena (si lleva " matches devuelve false)
@@ -443,7 +442,7 @@ expr_base returns [Object resultado = null]:
 				}
 			}
 			else 
-				Error.visualizarError(1,id.getLine(),"ERROR: la variable "+ id.getText() +" no ha sido declarada.");
+				Procesador.println(0,"Linea "+id.getLine()+": la variable "+ id.getText() +" no ha sido declarada.");
 
 				
 		}
@@ -461,7 +460,7 @@ expr_incremento returns [Object resultado = null]:
 				
 				if(contenido.compareTo("") == 0)
 				{
-					Error.visualizarError(1,id2.getLine(),"ERROR: La variable "+id2.getText()+" no tiene asignado ningun valor.");	
+					Procesador.println(0,"Linea "+id2.getLine()+": La variable "+id2.getText()+" no tiene asignado ningun valor.");	
 				}
 				else {
 				//Si no es una cadena (si lleva " matches devuelve false)
@@ -470,7 +469,7 @@ expr_incremento returns [Object resultado = null]:
 	  				//Si lleva true o false es un booleano
 	  				if(contenido.matches("true|false"))
 	  					{
-	  					Error.visualizarError(1,id2.getLine(),"ERROR: la variable "+id2.getText()+" es un booleano y por tanto no se puede incrementar.");
+	  					Procesador.println(0,"Linea "+id2.getLine()+": la variable "+id2.getText()+" es un booleano y por tanto no se puede incrementar.");
 	  					}
 	  				//Si lleva solo numeros de 0 a 9
 	  				else if(contenido.matches("[0-9]+"))
@@ -486,12 +485,12 @@ expr_incremento returns [Object resultado = null]:
 	  				}
 	  			else //es una cadena
 	  			{
-	  				Error.visualizarError(1,id2.getLine(),"ERROR: la variable "+id2.getText()+" es una cadena y por tanto no se puede incrementar.");
+	  				Procesador.println(0,"Linea "+id2.getLine()+": la variable "+id2.getText()+" es una cadena y por tanto no se puede incrementar.");
 	  			}
 				}
 			}
 			else 
-				Error.visualizarError(1,id2.getLine(),"ERROR: la variable "+id2.getText()+" no ha sido declarada.");
+				Procesador.println(0,"Linea "+id2.getLine()+": la variable "+id2.getText()+" no ha sido declarada.");
 
 				
 		}
@@ -503,7 +502,7 @@ expr_incremento returns [Object resultado = null]:
 				
 				if(contenido.compareTo("") == 0)
 				{
-					Error.visualizarError(1,id3.getLine(),"ERROR: La variable "+id3.getText()+" no tiene asignado ningun valor.");	
+					Procesador.println(0,"Linea "+id3.getLine()+": La variable "+id3.getText()+" no tiene asignado ningun valor.");	
 				}
 				else {
 				//Si no es una cadena (si lleva " matches devuelve false)
@@ -512,7 +511,7 @@ expr_incremento returns [Object resultado = null]:
 	  				//Si lleva true o false es un booleano
 	  				if(contenido.matches("true|false"))
 	  					{
-	  					Error.visualizarError(1,id3.getLine(),"ERROR: la variable "+id3.getText()+" es un booleano y por tanto no se puede decrementar.");
+	  					Procesador.println(0,"Linea "+id3.getLine()+": la variable "+id3.getText()+" es un booleano y por tanto no se puede decrementar.");
 	  					}
 	  				//Si lleva solo numeros de 0 a 9
 	  				else if(contenido.matches("[0-9]+"))
@@ -528,12 +527,12 @@ expr_incremento returns [Object resultado = null]:
 	  				}
 	  			else //es una cadena
 	  			{
-	  				Error.visualizarError(1,id3.getLine(),"ERROR: la variable "+id3.getText()+" es una cadena y por tanto no se puede decrementar.");
+	  				Procesador.println(0,"Linea "+id3.getLine()+": la variable "+id3.getText()+" es una cadena y por tanto no se puede decrementar.");
 	  			}
 				}
 			}
 			else 
-				Error.visualizarError(1,id3.getLine(),"ERROR: la variable "+id3.getText()+" no ha sido declarada. ");
+				Procesador.println(0,"Linea "+id3.getLine()+": la variable "+id3.getText()+" no ha sido declarada. ");
 				
 		}	;
 
@@ -558,7 +557,7 @@ expresionOR returns [Object resultado = null]
 				}
 				else
 				{
-						Error.visualizarError(1,linea.getLine(),"ERROR: Sólo se pueden realizar operaciones lógicas con booleanos.");
+						Procesador.println(0,"Linea "+linea.getLine()+": Sólo se pueden realizar operaciones lógicas con booleanos.");
 				}
 			
 			}
@@ -587,7 +586,7 @@ expresionXOR returns [Object resultado = null]
 				}
 				else
 				{
-						Error.visualizarError(1,linea.getLine(),"ERROR: Sólo se pueden realizar operaciones lógicas con booleanos.");
+						Procesador.println(0,"Linea "+linea.getLine()+": Sólo se pueden realizar operaciones lógicas con booleanos.");
 				}
 			
 			}
@@ -616,7 +615,7 @@ expresionAND returns [Object resultado = null]
 				}
 				else
 				{
-						Error.visualizarError(1,linea.getLine(),"ERROR: Sólo se pueden realizar operaciones lógicas con booleanos.");
+						Procesador.println(0,"Linea "+linea.getLine()+": Sólo se pueden realizar operaciones lógicas con booleanos.");
 				}
 			
 			}
@@ -635,19 +634,19 @@ expresionNOT returns [Object resultado = null]
 				
 			if(exp2 instanceof Integer)
 				{
-				Error.visualizarError(1,linea.getLine(),"ERROR: No se pueden realizar operaciones booleanas con enteros.");
+				Procesador.println(0,"Linea "+linea.getLine()+": No se pueden realizar operaciones booleanas con enteros.");
 				}
 			else
 				{
 				if(exp2 instanceof String)
 					{
-					Error.visualizarError(1,linea.getLine(),"ERROR: No se pueden realizar operaciones booleanas con cadenas de caracteres.");
+					Procesador.println(0,"Linea "+linea.getLine()+": No se pueden realizar operaciones booleanas con cadenas de caracteres.");
 					}
 				else
 					{
 			
 					if(exp2 instanceof Double)
-						Error.visualizarError(1,linea.getLine(),"ERROR: No se pueden realizar operaciones booleanas con valores flotantes.");
+						Procesador.println(0,"Linea "+linea.getLine()+": No se pueden realizar operaciones booleanas con valores flotantes.");
 					else
 						{
 						Boolean var = new Boolean(exp2.toString()).booleanValue();
@@ -701,7 +700,7 @@ expr_relacional returns [Object respuesta = null]
 		if(((e1 instanceof String == true) && (e2 instanceof String == false))
 			||((e1 instanceof String == false)&&(e2 instanceof String == true)))
 		{
-			Error.visualizarError(1,linea.getLine(), "No se puede realizar expresiones relacionales con datos de distinto tipo");
+			Procesador.println(0,"Linea "+linea.getLine()+": No se puede realizar expresiones relacionales con datos de distinto tipo");
 			respuesta = new Boolean(false);
 		}
 		
@@ -741,7 +740,7 @@ expr_relacional returns [Object respuesta = null]
 		if(((e1 instanceof String == true) && (e2 instanceof String == false))
 			||((e1 instanceof String == false)&&(e2 instanceof String == true)))
 		{
-			Error.visualizarError(1,linea2.getLine(), "No se puede realizar expresiones relacionales con datos de distinto tipo");
+			Procesador.println(0,"Linea "+linea2.getLine()+": No se puede realizar expresiones relacionales con datos de distinto tipo");
 			respuesta = new Boolean(false);
 		}
 	}
@@ -779,7 +778,7 @@ expr_relacional returns [Object respuesta = null]
 		if(((e1 instanceof String == true) && (e2 instanceof String == false))
 			||((e1 instanceof String == false)&&(e2 instanceof String == true)))
 		{
-			Error.visualizarError(1,linea3.getLine(), "No se puede realizar expresiones relacionales con datos de distinto tipo");
+			Procesador.println(0,"Linea "+linea3.getLine()+": No se puede realizar expresiones relacionales con datos de distinto tipo");
 			respuesta = new Boolean(false);
 		}
 	}
@@ -817,7 +816,7 @@ expr_relacional returns [Object respuesta = null]
 		if(((e1 instanceof String == true) && (e2 instanceof String == false))
 			||((e1 instanceof String == false)&&(e2 instanceof String == true)))
 		{
-			Error.visualizarError(1,linea4.getLine(), "No se puede realizar expresiones relacionales con datos de distinto tipo");
+			Procesador.println(0,"Linea "+linea4.getLine()+": No se puede realizar expresiones relacionales con datos de distinto tipo");
 		}
 	}
 	)*;
@@ -825,7 +824,7 @@ expr_relacional returns [Object respuesta = null]
 ////////////////////// REGLAS PARA LA EVALUACION DE EXPRESIONES ///////////////////
 
 evaluarExpresion returns [Object respuesta = null]: 
-	respuesta = expresionOR {System.out.println("Evaluar expresion: "+ respuesta);};
+	respuesta = expresionOR {Procesador.println(2, "Evaluar expresion: "+ respuesta);};
 
 ////////////////////// SENTENCIAS IF //////////////////////////////////////////////
 //1 -> if de la forma si (VERDAD) { hola = 1; } sino { hola = 2; var otra; }
@@ -838,7 +837,7 @@ evaluarExpresion returns [Object respuesta = null]:
         {
                 if (o.getClass() == Boolean.class)
                            b = ((Boolean)o).booleanValue();
-                else System.out.println("Error IF");
+                else Procesador.println(0, " IF");
         }
         ({b==true}? (sentencia)* LLAVE_DER
         | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
@@ -859,7 +858,7 @@ evaluarExpresion returns [Object respuesta = null]:
         {
                 if (o.getClass() == Boolean.class)
                            b = ((Boolean)o).booleanValue();
-                else System.out.println("Error IF");
+                else Procesador.println(0, " IF");
         }
         ({b==true}? sentencia 
         | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION)
@@ -886,7 +885,7 @@ evaluarExpresion returns [Object respuesta = null]:
 	// Javi: Definición de sentencia SWITCH-CASE
 	sentenciaSwitch [HashMap vars]: SWITCH PAR_IZQ variable PAR_DER LLAVE_IZQ (casosSwitch[vars])* LLAVE_DER
 	{
-		System.out.println("Switch-Case");
+		Procesador.println("Switch-Case");
 	} ;
 	
 	casosSwitch [HashMap vars]: (CASE variable | DEFAULT ) DOBLE_PUNTO LLAVE_IZQ instrucciones[vars] LLAVE_DER END_CASE FIN_INSTRUCCION;
@@ -900,20 +899,20 @@ eliminar_var {String res;}: SUP id:IDENT
 	{
 		  res=tablaSimbolos.delSimbolo(id);
 		  if(res.compareTo(id.getText()) == 0)
-		  	System.out.println("Variable \""+id.getText()+"\" ha sido eliminada");
+		  	Procesador.println(1, "Variable \""+id.getText()+"\" ha sido eliminada");
 		  else 
-		  	System.out.println("Variable \""+id.getText()+"\" no ha sido eliminada");
+		  	Procesador.println(0, "Variable \""+id.getText()+"\" no ha sido eliminada, no existe");
 	};
 
 fin_interprete:
 	{
-		System.out.println("...FINALIZANDO STICKY...");	
+		Procesador.println(-1,"...FINALIZANDO STICKY...");	
 	}
 	FIN_INTERPRETE
 	{
 		consumeUntil(Token.EOF_TYPE);
 		consume();
-		System.exit(1);
+		
 	};
 
 
@@ -975,7 +974,7 @@ sentenciaFOR
 				
 				if(contenido==null)
 				{
-					Error.visualizarError(1,id.getLine(),"ERROR: La variable no tiene asignado ningun valor "+id.getText());	
+					Procesador.println(0,"Linea "+id.getLine()+": La variable no tiene asignado ningun valor "+id.getText());	
 				}
 				
 				if(contenido.matches("[0-9~.]*"))
@@ -985,7 +984,7 @@ sentenciaFOR
 	  				}	
 			}
 			else 
-				Error.visualizarError(1,id.getLine(),"ERROR: la variable no ha sido declarada "+id.getText());
+				Procesador.println(0,"Linea "+id.getLine()+": la variable no ha sido declarada "+id.getText());
 			
 			}
 			
@@ -1012,7 +1011,7 @@ sentenciaFOR
 				
 				if(contenido==null)
 				{
-					Error.visualizarError(1,id2.getLine(),"ERROR: La variable no tiene asignado ningun valor "+id2.getText());	
+					Procesador.println(0,"Linea "+id2.getLine()+": La variable no tiene asignado ningun valor "+id2.getText());	
 				}
 				
 				if(contenido.matches("[0-9~.]*"))
@@ -1022,7 +1021,7 @@ sentenciaFOR
 	  				}	
 			}
 			else 
-				Error.visualizarError(1,id2.getLine(),"ERROR: la variable no ha sido declarada "+id2.getText());
+				Procesador.println(0,"Linea "+id2.getLine()+": la variable no ha sido declarada "+id2.getText());
 			
 			}
 			
@@ -1073,7 +1072,7 @@ impr_base returns [String respuesta=null]
 				
 				if(contenido.compareTo("") == 0)
 				{
-					Error.visualizarError(1,id.getLine(),"ERROR: La variable "+id.getText()+" no tiene asignado ningun valor.");	
+					Procesador.println(0,"Linea "+id.getLine()+": La variable "+id.getText()+" no tiene asignado ningun valor.");	
 				}
 				else
 				{
@@ -1091,7 +1090,7 @@ impr_base returns [String respuesta=null]
 				}
 			}
 			else // No está declarado
-				Error.visualizarError(1,id.getLine(),"ERROR: la variable no ha sido declarada "+id.getText());
+				Procesador.println(0,"Linea "+id.getLine()+": la variable no ha sido declarada "+id.getText());
 	} )
 	;
 
