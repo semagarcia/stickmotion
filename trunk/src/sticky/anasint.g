@@ -44,7 +44,7 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 		  if(res)
 		  	Procesador.println(1, "Variable \""+i1.getText()+"\" ha sido declarada");
 		  else
-		  	Procesador.println(0, "Variable \""+i1.getText()+"\" no ha sido declarada, ya existe");
+		  	Procesador.println(0, "Linea "+i1.getLine()+": Variable \""+i1.getText()+"\" no ha sido declarada, ya existe");
 		}
 		
 		//Alternativa 2
@@ -54,7 +54,7 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 				if(res)
 		  			Procesador.println(1, "Variable \""+i3.getText()+"\" ha sido declarada con valor "+x);
 		  		else 
-		  			Procesador.println(0, "Variable \""+i3.getText()+"\" no ha sido declarada, ya existe");
+		  			Procesador.println(0, "Linea "+i3.getLine()+": Variable \""+i3.getText()+"\" no ha sido declarada, ya existe");
 		
 			}
 		//Alternativa 3
@@ -65,7 +65,7 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 						if(res)
 		  					Procesador.println(1, "Variable \""+i4.getText()+"\" ha sido declarada");
 		  				else 
-		  					Procesador.println(0, "Variable \""+i4.getText()+"\" no ha sido declarada, ya existe");
+		  					Procesador.println(0,"Linea "+i4.getLine()+": Variable \""+i4.getText()+"\" no ha sido declarada, ya existe");
 						Token tok;
 						for(int j=0; j < lista.size(); j++)
 						{
@@ -74,7 +74,7 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 								if(res)
 		  							Procesador.println(1, "Variable \""+tok.getText()+"\" ha sido declarada");
 		  						else 
-		  							Procesador.println(0, "Variable \""+tok.getText()+"\" no ha sido declarada, ya existe");
+		  							Procesador.println(0, "Linea "+tok.getLine()+": Variable \""+tok.getText()+"\" no ha sido declarada, ya existe");
 						}
 					}
 					
@@ -92,7 +92,7 @@ asignacion
 			if(tablaSimbolos.set(i2,respuesta))	
 				Procesador.println(1, "Asignacion a la variable \""+i2.getText()+"\": "+respuesta);
 			else 
-				Procesador.println(0, "Asignacion no realizada, no existe la variable \""+i2.getText()+"\"");
+				Procesador.println(0, "Linea "+i2.getLine()+": Asignacion no realizada, no existe la variable \""+i2.getText()+"\"");
 	} ;
 //////////////////////////////////////////////////////////////////////////////////
 
