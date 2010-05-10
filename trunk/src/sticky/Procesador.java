@@ -13,6 +13,7 @@ public abstract class Procesador {
 
   public static void main(String[] args) {
 
+    debugMode = 2;
     try {
 
       FileInputStream fis = new FileInputStream("codigo.stk");
@@ -54,13 +55,8 @@ public abstract class Procesador {
     // debugLevel == 0 -> Mensajes de error
     // debugLevel > 0 -> Mensajes Debug <debugLevel>.
     if (debugLevel > 0) {
-      if (debugLevel <= debugMode) {
+      if (debugLevel <= debugMode)
         str = "DEBUG " + debugLevel + ": " + str;
-        output += str + '\n';
-        System.out.println(output);
-      }
-    } else if (debugLevel == 0) {
-      str = "ERROR: " + str;
       output += str + '\n';
       System.out.println(output);
     } else {

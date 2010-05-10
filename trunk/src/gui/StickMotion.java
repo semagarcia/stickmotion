@@ -25,7 +25,7 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
 /**
  * Clase principal de entrada - Aplicación gráfica
  * 
- * @author sema
+ * @author semaa
  */
 public class StickMotion extends javax.swing.JFrame {
   private Object editorTextArea;
@@ -46,7 +46,7 @@ public class StickMotion extends javax.swing.JFrame {
     initComponents();
 
     /* Inicio de otros componentes */
-    // editorsticky.DefaultSyntaxKit.initKit();
+    editorsticky.DefaultSyntaxKit.initKit();
     editor.setContentType("text/sticky");
 
     /* Por defecto, el icono de guardar aparece deshabilitado */
