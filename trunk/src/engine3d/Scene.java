@@ -10,7 +10,9 @@ import javax.vecmath.Vector3f;
 
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
-// this class loads all the scene in a simple universe
+/**
+ * This class loads all the scene in a simple universe
+ */
 public class Scene {
 
   // Stickman
@@ -22,9 +24,7 @@ public class Scene {
   BranchGroup sceneGroup;
 
   /**
-   * 
    * Constructor for the class Scene
-   * 
    */
   public Scene() {
 
@@ -51,7 +51,9 @@ public class Scene {
     simpleU.addBranchGraph(sceneGroup);
   }
 
-  // returns the scene
+  /**
+   * Creates the scene and returns it
+   */
   public BranchGroup createSceneGraph() {
 
     // creates the objects root
@@ -117,7 +119,9 @@ public class Scene {
     return objRoot;
   }
 
-  // creates the light
+  /**
+   * Creates the light and returns it
+   */
   private DirectionalLight getLight() {
     Color3f light_color = new Color3f(1.0f, 1.0f, 1.0f);
     Vector3f light_direction = new Vector3f(8.0f, -7.0f, -12.0f); // set the
@@ -139,9 +143,15 @@ public class Scene {
    * Method for animating the rotation of a SMGroup in spherical coordinates
    * 
    * @param group
+   *          SMgroup where the transformations are applied
    * @param azimuth
+   *          angle of azimuth in spherical coordinates (rotation around the Z
+   *          axis)
    * @param inclination
+   *          angle of inclination in spherical coordinates (rotation around the
+   *          X axis)
    * @param duration
+   *          time for the animation to occur
    */
   public void rotateSMGroup(SMGroup group, float azimuth, float inclination,
       long duration) {
@@ -149,43 +159,146 @@ public class Scene {
     group.addRotationAnim(duration, time, 0, 0, 0, 0, azimuth);
   }
 
+  /**
+   * Method for rotating the head of the stickman
+   * 
+   * @param azimuth
+   *          angle of azimuth in spherical coordinates (rotation around the Z
+   *          axis)
+   * @param inclination
+   *          angle of inclination in spherical coordinates (rotation around the
+   *          X axis)
+   * @param duration
+   *          time for the animation to occur
+   */
   public void rotateHead(float azimuth, float inclination, long duration) {
     rotateSMGroup(steve.head, azimuth, inclination, duration);
   }
 
+  /**
+   * Method for rotating the right arm of the stickman
+   * 
+   * @param azimuth
+   *          angle of azimuth in spherical coordinates (rotation around the Z
+   *          axis)
+   * @param inclination
+   *          angle of inclination in spherical coordinates (rotation around the
+   *          X axis)
+   * @param duration
+   *          time for the animation to occur
+   */
   public void rotateRArm(float azimuth, float inclination, long duration) {
     rotateSMGroup(steve.rArm, azimuth, inclination, duration);
   }
 
+  /**
+   * Method for rotating the left arm of the stickman
+   * 
+   * @param azimuth
+   *          angle of azimuth in spherical coordinates (rotation around the Z
+   *          axis)
+   * @param inclination
+   *          angle of inclination in spherical coordinates (rotation around the
+   *          X axis)
+   * @param duration
+   *          time for the animation to occur
+   */
   public void rotateLArm(float azimuth, float inclination, long duration) {
     rotateSMGroup(steve.lArm, azimuth, inclination, duration);
   }
 
+  /**
+   * Method for rotating the right leg of the stickman
+   * 
+   * @param azimuth
+   *          angle of azimuth in spherical coordinates (rotation around the Z
+   *          axis)
+   * @param inclination
+   *          angle of inclination in spherical coordinates (rotation around the
+   *          X axis)
+   * @param duration
+   *          time for the animation to occur
+   */
   public void rotateRLeg(float azimuth, float inclination, long duration) {
     rotateSMGroup(steve.rLeg, azimuth, inclination, duration);
   }
 
+  /**
+   * Method for rotating the left leg of the stickman
+   * 
+   * @param azimuth
+   *          angle of azimuth in spherical coordinates (rotation around the Z
+   *          axis)
+   * @param inclination
+   *          angle of inclination in spherical coordinates (rotation around the
+   *          X axis)
+   * @param duration
+   *          time for the animation to occur
+   */
   public void rotateLLeg(float azimuth, float inclination, long duration) {
     rotateSMGroup(steve.lLeg, azimuth, inclination, duration);
   }
 
-  // ///
+  /**
+   * Method for flexing the right arm of the stickman
+   * 
+   * @param angle
+   *          angle for the articulation to flex
+   * @param duration
+   *          time for the animation to occur
+   */
   public void flexRArm(float angle, long duration) {
     rotateSMGroup(steve.rArm.fore, 0, angle, duration);
   }
 
+  /**
+   * Method for flexing the left arm of the stickman
+   * 
+   * @param angle
+   *          angle for the articulation to flex
+   * @param duration
+   *          time for the animation to occur
+   */
   public void flexLArm(float angle, long duration) {
     rotateSMGroup(steve.lArm.fore, 0, angle, duration);
   }
 
+  /**
+   * Method for flexing the right leg of the stickman
+   * 
+   * @param angle
+   *          angle for the articulation to flex
+   * @param duration
+   *          time for the animation to occur
+   */
   public void flexRLeg(float angle, long duration) {
     rotateSMGroup(steve.rLeg.fore, 0, angle, duration);
   }
 
+  /**
+   * Method for flexing the left leg of the stickman
+   * 
+   * @param angle
+   *          angle for the articulation to flex
+   * @param duration
+   *          time for the animation to occur
+   */
   public void flexLLeg(float angle, long duration) {
     rotateSMGroup(steve.lLeg.fore, 0, angle, duration);
   }
 
+  /**
+   * Method for rotating the stickman
+   * 
+   * @param azimuth
+   *          angle of azimuth in spherical coordinates (rotation around the Z
+   *          axis)
+   * @param inclination
+   *          angle of inclination in spherical coordinates (rotation around the
+   *          X axis)
+   * @param duration
+   *          time for the animation to occur
+   */
   public void rotateStickman(float azimuth, float inclination, long duration) {
     rotateSMGroup(steve, azimuth, inclination, duration);
   }
@@ -194,6 +307,12 @@ public class Scene {
     steve.addPositionAnim(duration, time, 0, -Math.PI / 2, 0, 0, distance);
   }
 
+  /**
+   * Method for incrementing the timer
+   * 
+   * @param step
+   *          number of miliseconds to increment the time
+   */
   public void addTime(long step) {
     time += step;
   }
