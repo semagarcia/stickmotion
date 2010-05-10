@@ -1,0 +1,15 @@
+CAMBIOS
+- Debug: indicar la línea de error.
+- Division por 0: Tomarla como error o asignar un valor nulo.
+- Al sumar, por ejemplo, booleano y aritmético, dar el error y no tomar el primer valor encontrado.
+- Números negativos en los bucles.
+
+MEJORA
+- Al hacer doble click en el debug, ir a la línea en el código correspondiente.
+- Añadir a depuración el valor final de los bucles o condicón para saber que resultado da.
+
+DOCUMENTACIÓN FINAL
+- Apartado con la gramática
+- Pruebas (con capturas)
+- Concusiones
+- Autoevaluacion y nota que nos merecemos.
