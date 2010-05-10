@@ -28,7 +28,7 @@ class Anasint extends Parser;
 	sentencia: (simple FIN_INSTRUCCION) | bucle ; //O una sentencia simple con ; o un bucle, que no lleva ; para acabar (si sus intrucciones)
 	
 	simple {String valor; Object valor2;}: declaracion | asignacion | eliminar_var | valor=imprimir { Procesador.println(-1,valor); } | valor2=expr_incremento; //Esto permitirá usar ; para salir del greedy, ya que ; no se pide aquí
-	bucle: sentenciaIF | sentenciaWHILE | sentenciaFOR;
+	bucle: sentenciaIF | sentenciaWHILE | sentenciaFOR | sentenciaSWITCH;
 	
 	//Para declarar variables hay diferentes alternativas:
 	//1. Se declara una variable sin inicializarse.
@@ -876,22 +876,43 @@ evaluarExpresion returns [Object respuesta = null]:
         ;
     
     
-	/*
-	sentenciaSwitch {Object resultado;} :
-	SWITCH PAR_IZQ resultado=expresionOR PAR_DER LLAVE_IZQ 
-	(casosSwitch[resultado])*
-	LLAVE_DER
-	{
-	System.out.println("switch");
-	};
-
+	sentenciaSWITCH {Object resultado; int flag; int acumulador = 0; int contador = 0;} :
+	SWITCH PAR_IZQ (resultado=expresionOR) PAR_DER LLAVE_IZQ
+	(flag = casosSwitch[resultado] {acumulador += flag; contador++;})* (DEFAULT DOBLE_PUNTO {Procesador.println(2, "Valor de acumulador: "+acumulador);} LLAVE_IZQ
+	({ acumulador == contador}? (sentencia)* LLAVE_DER //si flag == 0 no se ha ejecutado ningun caso
+    |{ acumulador < contador }? (options{greedy=false;}:.)+ LLAVE_DER )
+	END_CASE FIN_INSTRUCCION)? LLAVE_DER
+	;
 	
-	casosSwitch [Object resultado] {Object res_eva;}: CASE res_eva = expresionOR DOBLE_PUNTO LLAVE_IZQ 
-	({resultado == res_eva}? (sentencia)* LLAVE_DER
-    |{resultado != res_eva}? (options{greedy=false;}:.)+ LLAVE_DER
-    )	
+	
+	casosSwitch [Object resultado] returns [int n=0] {Object res_eva; String cadena1 = null; String cadena2 = null;}: CASE (res_eva = expresionOR) 
+	DOBLE_PUNTO LLAVE_IZQ {
+		//Intancias de distintos tipos de datos
+		Object numero = (Integer)2;
+		Object bool = (Boolean)true;
+		Object cadena = (String)"cadena";
+		
+		//Paso a cadenas los resultados de las dos evaluaciones (Sólo para comparar antes del greedy, para que no de error al obtener el dato de un objeto del que no conocemos su tipo
+		if(resultado.getClass() == numero.getClass())
+			cadena1 = String.valueOf(((Integer)resultado).intValue());
+		else if(resultado.getClass() == bool.getClass())
+			cadena1 = String.valueOf(((Boolean)resultado).booleanValue());
+		else 
+			cadena1 = resultado.toString();
+		
+		if(res_eva.getClass() == numero.getClass())
+			cadena2 = String.valueOf(((Integer)res_eva).intValue());
+		else if(res_eva.getClass() == bool.getClass())
+			cadena2 = String.valueOf(((Boolean)res_eva).booleanValue());
+		else 
+			cadena2 = res_eva.toString();
+	
+	}
+	
+	({(cadena2.toString()).compareTo(cadena1.toString()) == 0}? (sentencia)* {n=0;} LLAVE_DER
+    |{(cadena2.toString()).compareTo(cadena1.toString()) != 0}? (options{greedy=false;}:.)+ {n=1;} LLAVE_DER )	
 	END_CASE FIN_INSTRUCCION ;
-	*/
+	
 
 eliminar_var {String res;}: SUP id:IDENT
 	{
