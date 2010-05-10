@@ -1027,7 +1027,7 @@ public class StickMotion extends javax.swing.JFrame {
     // Acción cuando el usuario clickee en Interpretar (menú y atajo teclado)
 
     // Load the Scene
-    engine3d.Scene scene = new engine3d.Scene();
+    scene = new engine3d.Scene();
 
     /*
      * scene.setTime(1000); // Going right scene.rotateStickman((float) (Math.PI
