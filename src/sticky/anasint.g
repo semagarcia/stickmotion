@@ -27,7 +27,7 @@ class Anasint extends Parser;
 	
 	sentencia: (simple FIN_INSTRUCCION) | bucle ; //O una sentencia simple con ; o un bucle, que no lleva ; para acabar (si sus intrucciones)
 	
-	simple {String valor; Object valor2;}: declaracion | asignacion | eliminar_var | valor=imprimir { Procesador.println(-1,valor); } | valor2=expr_incremento ; //Esto permitirá usar ; para salir del greedy, ya que ; no se pide aquí
+	simple {String valor; Object valor2;}: declaracion | asignacion | eliminar_var | valor=imprimir { Procesador.println(-1,valor); } | valor2=expr_incremento; //Esto permitirá usar ; para salir del greedy, ya que ; no se pide aquí
 	bucle: sentenciaIF | sentenciaWHILE | sentenciaFOR;
 	
 	//Para declarar variables hay diferentes alternativas:
@@ -436,7 +436,6 @@ expr_base returns [Object resultado = null]:
 	  				}
 	  			else //es una cadena
 	  			{
-	  				
 	  				resultado = new String(contenido.toString());
 	  			}
 				}
@@ -877,23 +876,22 @@ evaluarExpresion returns [Object respuesta = null]:
         ;
     
     
-	
-	//Javi: Condiciones usadas en estructuras condicionales o bucles.
-	
-	
-/*
-	// Javi: Definición de sentencia SWITCH-CASE
-	sentenciaSwitch [HashMap vars]: SWITCH PAR_IZQ variable PAR_DER LLAVE_IZQ (casosSwitch[vars])* LLAVE_DER
+	/*
+	sentenciaSwitch {Object resultado;} :
+	SWITCH PAR_IZQ resultado=expresionOR PAR_DER LLAVE_IZQ 
+	(casosSwitch[resultado])*
+	LLAVE_DER
 	{
-		Procesador.println("Switch-Case");
-	} ;
+	System.out.println("switch");
+	};
+
 	
-	casosSwitch [HashMap vars]: (CASE variable | DEFAULT ) DOBLE_PUNTO LLAVE_IZQ instrucciones[vars] LLAVE_DER END_CASE FIN_INSTRUCCION;
-	
-	//Definicion de funciones
-/*	funcion {HashMap vars=new HashMap();}: DEF IDENT PAR_IZQ (declaracion[vars] (SEPARA declaracion[vars])*)? PAR_DER LLAVE_IZQ instrucciones[vars] LLAVE_DER;
-<<<<<<< .mine
-*/
+	casosSwitch [Object resultado] {Object res_eva;}: CASE res_eva = expresionOR DOBLE_PUNTO LLAVE_IZQ 
+	({resultado == res_eva}? (sentencia)* LLAVE_DER
+    |{resultado != res_eva}? (options{greedy=false;}:.)+ LLAVE_DER
+    )	
+	END_CASE FIN_INSTRUCCION ;
+	*/
 
 eliminar_var {String res;}: SUP id:IDENT
 	{
@@ -961,8 +959,8 @@ sentenciaFOR
     	int numero = 0;
     } :
     	//1
-	(B_FOR PAR_IZQ IDENT FIN_INSTRUCCION evaluarExpresion FIN_INSTRUCCION ENTERO FIN_INSTRUCCION PAR_DER LLAVE_IZQ) =>
-	B_FOR PAR_IZQ id:IDENT FIN_INSTRUCCION expresion = evaluarExpresion FIN_INSTRUCCION n:ENTERO FIN_INSTRUCCION PAR_DER LLAVE_IZQ
+	(B_FOR PAR_IZQ IDENT FIN_INSTRUCCION evaluarExpresion FIN_INSTRUCCION ENTERO PAR_DER LLAVE_IZQ) =>
+	B_FOR PAR_IZQ id:IDENT FIN_INSTRUCCION expresion = evaluarExpresion FIN_INSTRUCCION n:ENTERO PAR_DER LLAVE_IZQ
 	{
 		b = ((Boolean)expresion).booleanValue();
 		
@@ -998,8 +996,8 @@ sentenciaFOR
 	
 	|
 		//2
-	(B_FOR PAR_IZQ IDENT FIN_INSTRUCCION evaluarExpresion FIN_INSTRUCCION ENTERO FIN_INSTRUCCION PAR_DER) => 
-	B_FOR PAR_IZQ id2:IDENT FIN_INSTRUCCION expresion = evaluarExpresion FIN_INSTRUCCION n2:ENTERO FIN_INSTRUCCION PAR_DER
+	(B_FOR PAR_IZQ IDENT FIN_INSTRUCCION evaluarExpresion FIN_INSTRUCCION ENTERO PAR_DER) => 
+	B_FOR PAR_IZQ id2:IDENT FIN_INSTRUCCION expresion = evaluarExpresion FIN_INSTRUCCION n2:ENTERO PAR_DER
 	{
 		b = ((Boolean)expresion).booleanValue();
 		

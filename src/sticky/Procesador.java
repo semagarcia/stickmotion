@@ -9,7 +9,7 @@ import antlr.ANTLRException;
 public abstract class Procesador {
 
   private static String output = "";
-  private static int debugMode = 2; // Por defecto 2 (lo muestra todo)
+  private static int debugMode = 1; // Por defecto 2 (lo muestra todo)
 
   public static void main(String[] args) {
 
