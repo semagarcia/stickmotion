@@ -1,0 +1,38 @@
+tiempo establece miliseconds
+	gui.StickMotion.scene.setTime(long miliseconds);
+
+tiempo avanza miliseconds
+	gui.StickMotion.scene.addTime(long miliseconds);
+
+avanzar distance duration
+	gui.StickMotion.scene.moveForwardStickman(float distance, long duration);
+
+girar STICKMAN azimuth inclination duration
+	gui.StickMotion.scene.rotateStickman(float azimuth, float inclination, long duration);
+
+girar CABEZA azimuth inclination duration
+	gui.StickMotion.scene.rotateHead(float azimuth, float inclination, long duration);
+
+girar BRAZO DER azimuth inclination duration
+	gui.StickMotion.scene.rotateRArm(float azimuth, float inclination, long duration);
+
+girar BRAZO IZQ azimuth inclination duration
+	gui.StickMotion.scene.rotateLArm(float azimuth, float inclination, long duration);
+
+flexionar BRAZO DER angle duration
+	gui.StickMotion.scene.flexRArm(float angle, long duration);
+
+flexionar BRAZO IZQ angle duration
+	gui.StickMotion.scene.flexLArm(float angle, long duration);
+
+girar PIERNA DER azimuth inclination duration
+	gui.StickMotion.scene.rotateRLeg(float azimuth, float inclination, long duration);
+
+girar PIERNA IZQ azimuth inclination duration
+	gui.StickMotion.scene.rotateLLeg(float azimuth, float inclination, long duration);
+
+flexionar PIERNA DER angle duration
+	gui.StickMotion.scene.flexRLeg(float angle, long duration);
+
+flexionar PIERNA IZQ angle duration
+	gui.StickMotion.scene.flexLLeg(float angle, long duration);
