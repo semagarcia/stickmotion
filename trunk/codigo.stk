@@ -146,16 +146,16 @@ si(variable2++ != 3)
 
 //Prueba de bucle "para" con y sin corchetes
 var bucle = 1;
-para(bucle;bucle < 10;2;) 
+para(bucle;bucle < 10;2) 
 	mostrar("Este es el valor de bucle: "+bucle);
 
 bucle = 1;
-para(bucle;bucle < 10;2;)  {
+para(bucle;bucle < 10;2)  {
 	mostrar("Este es el valor de bucle: "+bucle);
 	}
 
-//Prueba de switch (con corchetes en todo, tal como indica la gramática, pero con "defecto" optativo) 
-var pepe = "HOLAs";
+//Prueba de switch (con corchetes en todo, tal como indica la gramatica, pero con "defecto" optativo) 
+pepe = "HOLAs";
 
 opcion (pepe) {
     caso 2: {
