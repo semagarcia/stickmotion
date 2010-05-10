@@ -9,6 +9,7 @@ Fichero codigo.stk => Codigo Sticky
 - Prueba de primitiva mostrar
 - Pruebas de "si" (todas las posibilidad de corchetes)
 - Pruebas de "mientras" (con o sin corchetes)
+- Prueba de "opcion" (switch) 
 
 */
 
@@ -152,4 +153,29 @@ bucle = 1;
 para(bucle;bucle < 10;2;)  {
 	mostrar("Este es el valor de bucle: "+bucle);
 	}
+
+//Prueba de switch (con corchetes en todo, tal como indica la gramática, pero con "defecto" optativo) 
+var pepe = "HOLAs";
+
+opcion (pepe) {
+    caso 2: {
+        mostrar("Caso 2");
+        }fincaso;
+    caso 3: {
+        mostrar("Caso 3");
+        }fincaso;
+    caso VERDAD: {
+        mostrar("Caso 4");
+        }fincaso;
+    
+    caso "HOLA": {
+        mostrar("Caso 5");
+        }fincaso;
+    
+    defecto: {
+        mostrar("pepito");
+        } fincaso;
+    
+    }
+    
 $
