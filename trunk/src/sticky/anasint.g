@@ -27,7 +27,7 @@ class Anasint extends Parser;
 	
 	sentencia: (simple FIN_INSTRUCCION) | bucle ; //O una sentencia simple con ; o un bucle, que no lleva ; para acabar (si sus intrucciones)
 	
-	simple {String valor; Object valor2;}: declaracion | asignacion | eliminar_var | valor=imprimir { Procesador.println(-1,valor); } | valor2=expr_incremento; //Esto permitirá usar ; para salir del greedy, ya que ; no se pide aquí
+	simple {String valor; Object valor2;}: declaracion | asignacion | eliminar_var | funcion_sticky | valor=imprimir { Procesador.println(-1,valor); } | valor2=expr_incremento; //Esto permitirá usar ; para salir del greedy, ya que ; no se pide aquí
 	bucle: sentenciaIF | sentenciaWHILE | sentenciaFOR | sentenciaSWITCH;
 	
 	//Para declarar variables hay diferentes alternativas:
@@ -932,6 +932,105 @@ eliminar_var {String res;}: SUP id:IDENT
 		  else 
 		  	Procesador.println(0, "Linea "+id.getLine()+": Variable \""+id.getText()+"\" no ha sido eliminada, no existe");
 	};
+	
+funcion_sticky: f_tiempo | f_avanzar | f_flexionar | f_girar;
+
+f_tiempo {Object mseg;}: TIEMPO (est:ESTABLECE|AVANZA) mseg=expresionOR
+{
+	//Convert mseg Object to Long.
+		//Instance of different kind of types.
+		Object numero = (Integer)2;
+		Object flotante = (Double)2.2;
+		String conversion = null;
+		int mseg_int = 0;
+		float mseg_float = 0;
+		boolean flag_int = false;
+		
+		//Paso a cadenas los resultados de las dos evaluaciones (Sólo para comparar antes del greedy, para que no de error al obtener el dato de un objeto del que no conocemos su tipo
+		if(mseg.getClass() == numero.getClass()) {
+			conversion = String.valueOf(((Integer)mseg).intValue());
+			mseg_int = Integer.parseInt(conversion);
+			flag_int = true;
+		}
+		if(mseg.getClass() == flotante.getClass()) {
+			conversion = String.valueOf(((Double)mseg).floatValue());
+			mseg_float = Float.valueOf(conversion).floatValue();
+		}
+
+	//Procesador.println(1,"Entrando tiempo sticky. "+"Conversion: "+ mseg_nuevo + " Tipo:");
+
+	//If option is ESTABLECE, function "tiempo establece" is called.
+	if(est != null) {
+		Procesador.println(1,"FSticky -> tiempo establece.");
+		if(flag_int)
+			gui.StickMotion.scene.setTime(mseg_int);
+		//else
+			//gui.StickMotion.scene.setTime(mseg_float);
+	}// Else "tiempo avanza" is called.
+	else {
+		Procesador.println(1,"FSticky -> tiempo avanza.");
+		gui.StickMotion.scene.addTime(mseg_int);
+	}
+};
+
+f_avanzar: AVANZAR
+{
+	Procesador.println(1,"Entrando avanzar sticky.");
+	gui.StickMotion.scene.moveForwardStickman(5, 1000);
+};
+
+f_flexionar {Object angulo; Object duracion; String tipo; String lado;}: FLEXIONAR (brazo:BRAZO | PIERNA) (der:DER | IZQ) angulo=expresionOR
+{
+	Procesador.println(1,"Entrando flexionar sticky.");
+	
+	//Object flotante = (Double)2.2;
+	//if(angulo.getClass() == flotante.getClass())
+			//res = String.valueOf(((Double)angulo).floatValue());
+
+	//if BRAZO is selected, stiky's amr is moved, else PIERNA has been written and it will be moved.
+	if(brazo != null) {
+		//if DER is chosen, right arm is moved
+		if (der != null) {
+			Procesador.println(1,"FSticky --> Brazo Derecho.");
+			gui.StickMotion.scene.flexRArm((float)Math.PI, 10000);
+		}
+		else {
+			Procesador.println(1,"FSticky --> Brazo Izquierdo.");
+			gui.StickMotion.scene.flexLArm((float)Math.PI, 5000);
+		}
+	}
+	else {
+		//if DER is chosen, right leg is moved
+		if (der != null) {
+			Procesador.println(1,"FSticky --> Pierna Derecha.");
+			gui.StickMotion.scene.flexRLeg((float)Math.PI, 10000);
+		}
+		else {
+			Procesador.println(1,"FSticky --> Pierna Izquierda.");
+			gui.StickMotion.scene.flexLLeg((float)Math.PI, 5000);
+		}
+	}
+};
+
+f_girar: GIRAR (stick:STICKMAN | cab:CABEZA | bra:BRAZO | PIERNA) (der:DER | IZQ)?
+{
+	Procesador.println(1,"Entrando girar sticky.");
+	
+	if(stick != null)
+		gui.StickMotion.scene.rotateStickman(3, 3, 1000);
+	else if(cab != null)
+		gui.StickMotion.scene.rotateHead(3, 3, 1000);
+	else if(bra != null)
+		if( der != null )
+			gui.StickMotion.scene.rotateRArm(3, 3, 1000);
+		else
+			gui.StickMotion.scene.rotateLArm(3, 3, 1000);
+	else
+		if( der != null )
+			gui.StickMotion.scene.rotateRLeg(3, 3, 1000);
+		else
+			gui.StickMotion.scene.rotateLLeg(3, 3, 1000);
+};
 
 fin_interprete:
 	{
