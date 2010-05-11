@@ -42,7 +42,7 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 		{ 
 		  boolean res=tablaSimbolos.put(i1);
 		  if(res)
-		  	Procesador.println(1, "Variable \""+i1.getText()+"\" ha sido declarada");
+		  	Procesador.println(1, "Linea "+i1.getLine()+": Variable \""+i1.getText()+"\" ha sido declarada");
 		  else
 		  	Procesador.println(0, "Linea "+i1.getLine()+": Variable \""+i1.getText()+"\" no ha sido declarada, ya existe");
 		}
@@ -52,7 +52,7 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 			{			
 				boolean res = tablaSimbolos.put(i3,x);	// modifico el valor en la tabla de simbolos
 				if(res)
-		  			Procesador.println(1, "Variable \""+i3.getText()+"\" ha sido declarada con valor "+x);
+		  			Procesador.println(1, "Linea "+i3.getLine()+": Variable \""+i3.getText()+"\" ha sido declarada con valor "+x);
 		  		else 
 		  			Procesador.println(0, "Linea "+i3.getLine()+": Variable \""+i3.getText()+"\" no ha sido declarada, ya existe");
 		
@@ -63,7 +63,7 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 						// Tenemos que insertar cada identificador encontrado en la tabla de simbolos
 						boolean res = tablaSimbolos.put(i4);
 						if(res)
-		  					Procesador.println(1, "Variable \""+i4.getText()+"\" ha sido declarada");
+		  					Procesador.println(1,"Linea "+i4.getLine()+": Variable \""+i4.getText()+"\" ha sido declarada");
 		  				else 
 		  					Procesador.println(0,"Linea "+i4.getLine()+": Variable \""+i4.getText()+"\" no ha sido declarada, ya existe");
 						Token tok;
@@ -72,7 +72,7 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 								tok = (Token)lista.get(j); // obtengo un identificador de la lista
 								res = tablaSimbolos.put(tok);
 								if(res)
-		  							Procesador.println(1, "Variable \""+tok.getText()+"\" ha sido declarada");
+		  							Procesador.println(1, "Linea "+tok.getLine()+": Variable \""+tok.getText()+"\" ha sido declarada");
 		  						else 
 		  							Procesador.println(0, "Linea "+tok.getLine()+": Variable \""+tok.getText()+"\" no ha sido declarada, ya existe");
 						}
@@ -90,7 +90,7 @@ asignacion
 	
 	{		
 			if(tablaSimbolos.set(i2,respuesta))	
-				Procesador.println(1, "Asignacion a la variable \""+i2.getText()+"\": "+respuesta);
+				Procesador.println(1, "Linea "+i2.getLine()+": Asignacion a la variable \""+i2.getText()+"\": "+respuesta);
 			else 
 				Procesador.println(0, "Linea "+i2.getLine()+": Asignacion no realizada, no existe la variable \""+i2.getText()+"\"");
 	} ;
@@ -275,19 +275,23 @@ expr returns [Object resultado = null]
 	  {
 	  	if(e1 instanceof Integer && e3 instanceof Integer)
 	  	{
-	  		int valor1 = new Integer(e1.toString()).intValue();
-	  		int valor2 = new Integer(e3.toString()).intValue();
+	  		double valor1 = new Double(e1.toString()).floatValue();
+	  		double valor2 = new Double(e3.toString()).floatValue();
 	  		
 	  		if((valor2 !=0) && (valor1 != 0))
 	  		{
-	  				resultado = new Integer(valor1/valor2);
+	  				
+	  				resultado = new Double(valor1/valor2); 
 	  				e1=resultado;
 	  		}
-	  		else
+	  		else {
 	  			Procesador.println(0,"Linea "+linea2.getLine()+": División por 0");
+	  			resultado = null;
+	  		}
 	  	}
 	  	else
 	  	{
+	  		
 	  		if(e1 instanceof String || e3 instanceof String)
 	  		{
 	  			Procesador.println(0,"Linea "+linea2.getLine()+": No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
@@ -407,6 +411,7 @@ expr_base returns [Object resultado = null]:
 		|n5:CADENA {resultado = new String( n5.getText()); }
 		|(IDENT) => id:IDENT
 		{
+			
 			if(tablaSimbolos.existeSimbolo(id.getText()))
 			{
 				String contenido = tablaSimbolos.getContenidoSimbolo(id.getText());
@@ -417,7 +422,7 @@ expr_base returns [Object resultado = null]:
 				}
 				else {
 				//Si no es una cadena (si lleva " matches devuelve false)
-				if(contenido.matches("[0-9.]+|true|false"))
+				if(contenido.matches("(-)?[0-9.]+|true|false"))
 	  				{
 	  				//Si lleva true o false es un booleano
 	  				if(contenido.matches("true|false"))
@@ -832,11 +837,11 @@ evaluarExpresion returns [Object respuesta = null]:
 //4 -> if de la forma si (VERDAD) hola = 1; sino { hola=2; }
 	sentenciaIF {Object o; boolean b=false;} : 
 		(IF PAR_IZQ (evaluarExpresion) PAR_DER LLAVE_IZQ) => //1
-		IF PAR_IZQ (o=evaluarExpresion) PAR_DER LLAVE_IZQ
+		IF id:PAR_IZQ (o=evaluarExpresion) PAR_DER LLAVE_IZQ
         {
                 if (o.getClass() == Boolean.class)
                            b = ((Boolean)o).booleanValue();
-                else Procesador.println(0, " IF");
+                else Procesador.println(0, "Linea "+id.getLine()+":ERROR IF");
         }
         ({b==true}? (sentencia)* LLAVE_DER
         | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
@@ -853,11 +858,11 @@ evaluarExpresion returns [Object respuesta = null]:
         )?
         |
         (IF PAR_IZQ (evaluarExpresion) PAR_DER) => 			//2
-         IF PAR_IZQ (o=evaluarExpresion) PAR_DER 
+         id2: IF PAR_IZQ (o=evaluarExpresion) PAR_DER 
         {
                 if (o.getClass() == Boolean.class)
                            b = ((Boolean)o).booleanValue();
-                else Procesador.println(0, " IF");
+                else Procesador.println(0, "Linea "+id2.getLine()+":ERROR IF");
         }
         ({b==true}? sentencia 
         | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION)
@@ -891,12 +896,15 @@ evaluarExpresion returns [Object respuesta = null]:
 		Object numero = (Integer)2;
 		Object bool = (Boolean)true;
 		Object cadena = (String)"cadena";
+		Object flotante = (Double)2.2;
 		
 		//Paso a cadenas los resultados de las dos evaluaciones (Sólo para comparar antes del greedy, para que no de error al obtener el dato de un objeto del que no conocemos su tipo
 		if(resultado.getClass() == numero.getClass())
 			cadena1 = String.valueOf(((Integer)resultado).intValue());
 		else if(resultado.getClass() == bool.getClass())
 			cadena1 = String.valueOf(((Boolean)resultado).booleanValue());
+		else if(resultado.getClass() == flotante.getClass())
+			cadena1 = String.valueOf(((Double)resultado).floatValue());
 		else 
 			cadena1 = resultado.toString();
 		
@@ -904,6 +912,8 @@ evaluarExpresion returns [Object respuesta = null]:
 			cadena2 = String.valueOf(((Integer)res_eva).intValue());
 		else if(res_eva.getClass() == bool.getClass())
 			cadena2 = String.valueOf(((Boolean)res_eva).booleanValue());
+		else if(res_eva.getClass() == flotante.getClass())
+			cadena2 = String.valueOf(((Double)res_eva).floatValue());
 		else 
 			cadena2 = res_eva.toString();
 	
@@ -918,9 +928,9 @@ eliminar_var {String res;}: SUP id:IDENT
 	{
 		  res=tablaSimbolos.delSimbolo(id);
 		  if(res.compareTo(id.getText()) == 0)
-		  	Procesador.println(1, "Variable \""+id.getText()+"\" ha sido eliminada");
+		  	Procesador.println(1, "Linea "+id.getLine()+": Variable \""+id.getText()+"\" ha sido eliminada");
 		  else 
-		  	Procesador.println(0, "Variable \""+id.getText()+"\" no ha sido eliminada, no existe");
+		  	Procesador.println(0, "Linea "+id.getLine()+": Variable \""+id.getText()+"\" no ha sido eliminada, no existe");
 	};
 
 fin_interprete:

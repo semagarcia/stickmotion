@@ -59,6 +59,10 @@ public abstract class Procesador {
         str = "DEBUG " + debugLevel + ": " + str;
       output += str + '\n';
       System.out.println(output);
+    } else if (debugLevel == 0) {
+      str = "ERROR" + ": " + str;
+      output += str + '\n';
+      System.out.println(output);
     } else {
       // Este es necesario para la primitiva mostrar(), para que no se imprima
       // ni Error ni Debug delante
