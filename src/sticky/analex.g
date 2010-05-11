@@ -32,6 +32,10 @@ class Analex extends Lexer;
 		//Movimientos Stickman
 		GIRAR="girar";
 		FLEXIONAR="flexionar";
+		TIEMPO="tiempo";
+		AVANZAR="avanzar";
+		ESTABLECE="establece";
+		AVANZA="avanza";
 		CABEZA="CABEZA";
 		BRAZO="BRAZO";
 		PIERNA="PIERNA";
