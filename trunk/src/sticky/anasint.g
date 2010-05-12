@@ -940,32 +940,29 @@ f_tiempo {Object mseg;}: TIEMPO (est:ESTABLECE|AVANZA) mseg=expresionOR
 	//Convert mseg Object to Long.
 		//Instance of different kind of types.
 		Object numero = (Integer)2;
-		Object flotante = (Double)2.2;
+		//Object flotante = (Double)2.2;
 		String conversion = null;
 		int mseg_int = 0;
-		float mseg_float = 0;
-		boolean flag_int = false;
+		//float mseg_float = 0;
+		//boolean flag_int = false;
 		
 		//Paso a cadenas los resultados de las dos evaluaciones (Sólo para comparar antes del greedy, para que no de error al obtener el dato de un objeto del que no conocemos su tipo
 		if(mseg.getClass() == numero.getClass()) {
 			conversion = String.valueOf(((Integer)mseg).intValue());
 			mseg_int = Integer.parseInt(conversion);
-			flag_int = true;
 		}
+		/*
 		if(mseg.getClass() == flotante.getClass()) {
 			conversion = String.valueOf(((Double)mseg).floatValue());
 			mseg_float = Float.valueOf(conversion).floatValue();
-		}
+		}*/
 
-	//Procesador.println(1,"Entrando tiempo sticky. "+"Conversion: "+ mseg_nuevo + " Tipo:");
+	Procesador.println(1,"Entrando tiempo sticky. "+"mseg_int: "+ mseg_int);
 
 	//If option is ESTABLECE, function "tiempo establece" is called.
 	if(est != null) {
 		Procesador.println(1,"FSticky -> tiempo establece.");
-		if(flag_int)
-			gui.StickMotion.scene.setTime(mseg_int);
-		//else
-			//gui.StickMotion.scene.setTime(mseg_float);
+		gui.StickMotion.scene.setTime(mseg_int);
 	}// Else "tiempo avanza" is called.
 	else {
 		Procesador.println(1,"FSticky -> tiempo avanza.");
@@ -973,13 +970,23 @@ f_tiempo {Object mseg;}: TIEMPO (est:ESTABLECE|AVANZA) mseg=expresionOR
 	}
 };
 
-f_avanzar: AVANZAR
+f_avanzar {Object param1 = null; Object param2 = null;}: AVANZAR 
+		 (n1:REAL{param1 = new Float(n1.getText());}  
+		| n2:ENTERO {param1 = new Integer(n2.getText());} ) 
+		n3:ENTERO{param2 = new Integer(n3.getText());}
+//n1:REAL{param1 = new Float(n1.getText());} n2:ENTERO{param2 = new Integer(n2.getText());}
 {
+	//resultado = new Integer(n1.getText());
 	Procesador.println(1,"Entrando avanzar sticky.");
-	gui.StickMotion.scene.moveForwardStickman(5, 1000);
+	if(n1 != null)
+		gui.StickMotion.scene.moveForwardStickman((Float)param1, (Integer)param2);
+	else
+		gui.StickMotion.scene.moveForwardStickman((Integer)param1, (Integer)param2);
 };
 
-f_flexionar {Object angulo; Object duracion; String tipo; String lado;}: FLEXIONAR (brazo:BRAZO | PIERNA) (der:DER | IZQ) angulo=expresionOR
+f_flexionar {Object param1 = null; Object param2 = null;}: FLEXIONAR (brazo:BRAZO | PIERNA) (der:DER | IZQ) 
+		n1:REAL{param1 = new Float(n1.getText());}
+		n2:ENTERO{param2 = new Integer(n2.getText());}
 {
 	Procesador.println(1,"Entrando flexionar sticky.");
 	
@@ -992,44 +999,48 @@ f_flexionar {Object angulo; Object duracion; String tipo; String lado;}: FLEXION
 		//if DER is chosen, right arm is moved
 		if (der != null) {
 			Procesador.println(1,"FSticky --> Brazo Derecho.");
-			gui.StickMotion.scene.flexRArm((float)Math.PI, 10000);
+			gui.StickMotion.scene.flexRArm((Float)param1, (Integer)param2);
 		}
 		else {
 			Procesador.println(1,"FSticky --> Brazo Izquierdo.");
-			gui.StickMotion.scene.flexLArm((float)Math.PI, 5000);
+			gui.StickMotion.scene.flexLArm((Float)param1, (Integer)param2);
 		}
 	}
 	else {
 		//if DER is chosen, right leg is moved
 		if (der != null) {
 			Procesador.println(1,"FSticky --> Pierna Derecha.");
-			gui.StickMotion.scene.flexRLeg((float)Math.PI, 10000);
+			gui.StickMotion.scene.flexRLeg((Float)param1, (Integer)param2);
 		}
 		else {
 			Procesador.println(1,"FSticky --> Pierna Izquierda.");
-			gui.StickMotion.scene.flexLLeg((float)Math.PI, 5000);
+			gui.StickMotion.scene.flexLLeg((Float)param1, (Integer)param2);
 		}
 	}
 };
 
-f_girar: GIRAR (stick:STICKMAN | cab:CABEZA | bra:BRAZO | PIERNA) (der:DER | IZQ)?
+f_girar {Object param1 = null; Object param2 = null; Object param3 = null;}: 
+		GIRAR (stick:STICKMAN | cab:CABEZA | bra:BRAZO | PIERNA) (der:DER | IZQ)?
+		n1:REAL{param1 = new Float(n1.getText());}
+		n2:REAL{param2 = new Float(n2.getText());}
+		n3:ENTERO{param3 = new Integer(n3.getText());}
 {
 	Procesador.println(1,"Entrando girar sticky.");
 	
 	if(stick != null)
-		gui.StickMotion.scene.rotateStickman(3, 3, 1000);
+		gui.StickMotion.scene.rotateStickman((Float)param1, (Float)param2, (Integer)param3);
 	else if(cab != null)
-		gui.StickMotion.scene.rotateHead(3, 3, 1000);
+		gui.StickMotion.scene.rotateHead((Float)param1, (Float)param2, (Integer)param3);
 	else if(bra != null)
 		if( der != null )
-			gui.StickMotion.scene.rotateRArm(3, 3, 1000);
+			gui.StickMotion.scene.rotateRArm((Float)param1, (Float)param2, (Integer)param3);
 		else
-			gui.StickMotion.scene.rotateLArm(3, 3, 1000);
+			gui.StickMotion.scene.rotateLArm((Float)param1, (Float)param2, (Integer)param3);
 	else
 		if( der != null )
-			gui.StickMotion.scene.rotateRLeg(3, 3, 1000);
+			gui.StickMotion.scene.rotateRLeg((Float)param1, (Float)param2, (Integer)param3);
 		else
-			gui.StickMotion.scene.rotateLLeg(3, 3, 1000);
+			gui.StickMotion.scene.rotateLLeg((Float)param1, (Float)param2, (Integer)param3);
 };
 
 fin_interprete:
