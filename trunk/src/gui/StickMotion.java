@@ -24,7 +24,6 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
  * Main class for the Application - Graphical User Interface
  */
 public class StickMotion extends javax.swing.JFrame {
-  private Object editorTextArea;
   // Variable for the action management (undo and redo)
   private final javax.swing.undo.UndoManager undoRedoManager;
   // Variable for storing if the actual document has been saved
@@ -41,6 +40,8 @@ public class StickMotion extends javax.swing.JFrame {
   public StickMotion() {
     initComponents();
 
+    scene = new engine3d.Scene(loadCanvas3D());
+
     /* Begining of the code section for the other components */
     editorsticky.DefaultSyntaxKit.initKit();
     editor.setContentType("text/sticky");
@@ -52,7 +53,6 @@ public class StickMotion extends javax.swing.JFrame {
     undoRedoManager = new javax.swing.undo.UndoManager();
     editor.getDocument().addUndoableEditListener(undoRedoManager);
 
-    // loadScene();
   } // End of StickMotion() constructor
 
   /**
@@ -70,8 +70,6 @@ public class StickMotion extends javax.swing.JFrame {
   /**
    * This method is called from within the constructor to initialize the form.
    */
-  // <editor-fold defaultstate="collapsed"
-  // desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
 
     areaApp = new javax.swing.JPanel();
@@ -905,10 +903,7 @@ public class StickMotion extends javax.swing.JFrame {
   /* --------------------------------------------------------------------- */
   // Menú StickMotion
   private void menuBarFileMenuDeselected(javax.swing.event.MenuEvent evt) { // Stablishes
-                                                                            // the
-                                                                            // state
-                                                                            // as
-                                                                            // Ready
+    // the state as Ready
     currentStatusLabel.setText("Preparado");
   }
 
@@ -926,14 +921,7 @@ public class StickMotion extends javax.swing.JFrame {
   }
 
   private void optionFileInterpreterMouseEntered(java.awt.event.MouseEvent evt) { // When
-                                                                                  // the
-                                                                                  // "Interpretar"
-                                                                                  // option
-                                                                                  // is
-                                                                                  // pressed,
-                                                                                  // launch
-                                                                                  // the
-                                                                                  // parser
+    // the "Interpretar" option is pressed, launch the parser
     currentStatusLabel.setText("Lanza el intérprete de Sticky");
   }
 
@@ -1001,46 +989,28 @@ public class StickMotion extends javax.swing.JFrame {
   /* --------------------------- MENU STICKMOTION ------------------------ */
   /* --------------------------------------------------------------------- */
 
-  private void iconNewDocActionPerformed(java.awt.event.ActionEvent evt) { // When
-                                                                           // the
-                                                                           // icon
-                                                                           // of
-                                                                           // new
-                                                                           // document
-                                                                           // is
-                                                                           // pressed
+  private void iconNewDocActionPerformed(java.awt.event.ActionEvent evt) {
+    // When the icon of new document is pressed
     optionFileNewActionPerformed(evt);
   }
 
-  private void iconLoadStkActionPerformed(java.awt.event.ActionEvent evt) { // when
-                                                                            // the
-                                                                            // icon
-                                                                            // for
-                                                                            // opening
-                                                                            // a
-                                                                            // new
-                                                                            // file
-                                                                            // is
-                                                                            // pressed
+  private void iconLoadStkActionPerformed(java.awt.event.ActionEvent evt) {
+    // When the icon for opening a new file is pressed
     optionFileLoadActionPerformed(evt);
   }
 
-  private void iconSaveStkActionPerformed(java.awt.event.ActionEvent evt) { // when
-                                                                            // the
-                                                                            // save
-                                                                            // button
-                                                                            // is
-                                                                            // pressed
+  private void iconSaveStkActionPerformed(java.awt.event.ActionEvent evt) {
+    // When the save button is pressed
     optionFileSaveActionPerformed(evt);
   }
 
   private void optionFileSaveAsActionPerformed(java.awt.event.ActionEvent evt) { // Save
-                                                                                 // the
-                                                                                 // file
-                                                                                 // showing
-                                                                                 // the
-                                                                                 // Save
-                                                                                 // dialog
+    // the
+    // file
+    // showing
+    // the
+    // Save
+    // dialog
     javax.swing.JFileChooser saveAs = new javax.swing.JFileChooser();
     int opc = saveAs.showSaveDialog(this); // Show the dialog
 
@@ -1053,10 +1023,10 @@ public class StickMotion extends javax.swing.JFrame {
 
   private void optionFileInterpreterActionPerformed(
       java.awt.event.ActionEvent evt) { // Action to trigger when the user
-                                        // starts the Interpretation
+    // starts the Interpretation
 
     // Load the Scene
-    scene = new engine3d.Scene();
+    scene.reset();
 
     // Run the language processor with the content of the "editor", and show the
     // output of it
@@ -1071,34 +1041,26 @@ public class StickMotion extends javax.swing.JFrame {
 
     editorResults.setText(sticky.Procesador.run(editor.getText(), debugMode));
 
-    scene.start(loadCanvas3D());
+    scene.start();
 
   }
 
   private void iconInterpreterActionPerformed(java.awt.event.ActionEvent evt) { // When
-                                                                                // the
-                                                                                // taskbar
-                                                                                // button
-                                                                                // is
-                                                                                // pressed
+    // the
+    // taskbar
+    // button
+    // is
+    // pressed
     optionFileInterpreterActionPerformed(evt);
   }
 
-  private void iconExitActionPerformed(java.awt.event.ActionEvent evt) { // When
-                                                                         // the
-                                                                         // exit
-                                                                         // button
-                                                                         // is
-                                                                         // pressed
+  private void iconExitActionPerformed(java.awt.event.ActionEvent evt) {
+    // When the exit button is pressed
     optionFileExitActionPerformed(evt); // Exists the application
   }
 
   private void optionFileNewActionPerformed(java.awt.event.ActionEvent evt) { // When
-                                                                              // new
-                                                                              // document
-                                                                              // button
-                                                                              // is
-                                                                              // pressed
+    // new document button is pressed
     // If there are unsaved changes and it's not blank (there's code)
     if (!documentSaved && documentModified && !editor.getText().equals("")) {
       ImageIcon icon = new ImageIcon(this.getClass().getResource(
@@ -1116,10 +1078,10 @@ public class StickMotion extends javax.swing.JFrame {
         editor.setText(""); // a new file is created (it's cleared)
       } else if (opc == JOptionPane.YES_OPTION && nameFile.equals("")) {
         optionFileSaveAsActionPerformed(evt); // The saving file method is
-                                              // called
+        // called
         editor.setText(""); // a new file is created (it's cleared)
       } else if (opc == JOptionPane.NO_OPTION) // If the "No" is not pressed,
-                                               // clear
+        // clear
         editor.setText(""); // a new file is created (it's cleared)
       // If the dialog window is closed or the cancel button is pressed, dont do
       // anything
@@ -1130,15 +1092,7 @@ public class StickMotion extends javax.swing.JFrame {
   }
 
   private void optionFileLoadActionPerformed(java.awt.event.ActionEvent evt) { // Abre
-                                                                               // un
-                                                                               // fichero
-                                                                               // .stk
-                                                                               // y
-                                                                               // lo
-                                                                               // carga
-                                                                               // en
-                                                                               // el
-                                                                               // editor
+    // un fichero .stk y lo carga en el editor
     javax.swing.JFileChooser openAs = new javax.swing.JFileChooser();
     openAs.setFileSelectionMode(javax.swing.JFileChooser.FILES_AND_DIRECTORIES);
     // openAs.setAcceptAllFileFilterUsed(true);
@@ -1193,13 +1147,13 @@ public class StickMotion extends javax.swing.JFrame {
   }
 
   private void optionFileSaveActionPerformed(java.awt.event.ActionEvent evt) { // Guarda
-                                                                               // el
-                                                                               // codigo
-                                                                               // del
-                                                                               // editor
-                                                                               // en
-                                                                               // un
-                                                                               // fichero
+    // el
+    // codigo
+    // del
+    // editor
+    // en
+    // un
+    // fichero
     // Documento abierto, modificado y sin guardar dichos cambios
     if (!documentSaved && documentModified && !nameFile.equals(""))
       saveStk(); // Guarda directamente con el mismo nombre
@@ -1209,18 +1163,18 @@ public class StickMotion extends javax.swing.JFrame {
   }
 
   private void optionFileExitActionPerformed(java.awt.event.ActionEvent evt) { // Preguntar
-                                                                               // antes
-                                                                               // de
-                                                                               // salir
-                                                                               // si
-                                                                               // hay
-                                                                               // algo
-                                                                               // abierto
-                                                                               // y
-                                                                               // si
-                                                                               // se
-                                                                               // quiere
-                                                                               // guardar
+    // antes
+    // de
+    // salir
+    // si
+    // hay
+    // algo
+    // abierto
+    // y
+    // si
+    // se
+    // quiere
+    // guardar
     System.exit(0);
   }
 
@@ -1229,30 +1183,30 @@ public class StickMotion extends javax.swing.JFrame {
   /* --------------------------------------------------------------------- */
 
   private void iconUndoActionPerformed(java.awt.event.ActionEvent evt) { // Si
-                                                                         // el
-                                                                         // usuario
-                                                                         // pincha
-                                                                         // desde
-                                                                         // el
-                                                                         // icono,
-                                                                         // llamamos
-                                                                         // a su
-                                                                         // función
-                                                                         // manejadora
+    // el
+    // usuario
+    // pincha
+    // desde
+    // el
+    // icono,
+    // llamamos
+    // a su
+    // función
+    // manejadora
     optionEditUndoActionPerformed(evt);
   }
 
   private void iconRedoActionPerformed(java.awt.event.ActionEvent evt) { // Si
-                                                                         // el
-                                                                         // usuario
-                                                                         // pincha
-                                                                         // desde
-                                                                         // el
-                                                                         // icono,
-                                                                         // llamamos
-                                                                         // a su
-                                                                         // función
-                                                                         // manejadora
+    // el
+    // usuario
+    // pincha
+    // desde
+    // el
+    // icono,
+    // llamamos
+    // a su
+    // función
+    // manejadora
     optionEditRedoActionPerformed(evt);
   }
 
@@ -1299,12 +1253,12 @@ public class StickMotion extends javax.swing.JFrame {
   /* --------------------------------------------------------------------- */
 
   private void optionLoopWhileActionPerformed(java.awt.event.ActionEvent evt) { // Insertar
-                                                                                // el
-                                                                                // código
-                                                                                // correspondiente
-                                                                                // al
-                                                                                // bucle
-                                                                                // mientras
+    // el
+    // código
+    // correspondiente
+    // al
+    // bucle
+    // mientras
     String condition = JOptionPane
         .showInputDialog("Introduzca la condición del bucle:");
 
@@ -1318,12 +1272,12 @@ public class StickMotion extends javax.swing.JFrame {
   }
 
   private void optionLoopForActionPerformed(java.awt.event.ActionEvent evt) { // Insertar
-                                                                              // el
-                                                                              // código
-                                                                              // correspondiente
-                                                                              // al
-                                                                              // bucle
-                                                                              // para
+    // el
+    // código
+    // correspondiente
+    // al
+    // bucle
+    // para
     String var = JOptionPane
         .showInputDialog("¿Qué variable deseas para iterar?");
 
@@ -1337,12 +1291,12 @@ public class StickMotion extends javax.swing.JFrame {
   }
 
   private void optionCondIfActionPerformed(java.awt.event.ActionEvent evt) { // Insertar
-                                                                             // el
-                                                                             // código
-                                                                             // correspondiente
-                                                                             // al
-                                                                             // condicional
-                                                                             // Si
+    // el
+    // código
+    // correspondiente
+    // al
+    // condicional
+    // Si
     // Definimos las posibles opciones que se ofrecen al usuario
     String[] options = { "if", "if - else", "if{} - else{}" };
     // Mostramos ahora el cuadro de diálogo convenientemente "castingzado"
@@ -1372,51 +1326,51 @@ public class StickMotion extends javax.swing.JFrame {
   }
 
   private void optionBasicAntArmActionPerformed(java.awt.event.ActionEvent evt) { // TODO
-                                                                                  // add
-                                                                                  // your
-                                                                                  // handling
-                                                                                  // code
-                                                                                  // here:
+    // add
+    // your
+    // handling
+    // code
+    // here:
   }
 
   private void optionBasicArmActionPerformed(java.awt.event.ActionEvent evt) { // TODO
-                                                                               // add
-                                                                               // your
-                                                                               // handling
-                                                                               // code
-                                                                               // here:
+    // add
+    // your
+    // handling
+    // code
+    // here:
   }
 
   private void optionBasicNekActionPerformed(java.awt.event.ActionEvent evt) { // TODO
-                                                                               // add
-                                                                               // your
-                                                                               // handling
-                                                                               // code
-                                                                               // here:
+    // add
+    // your
+    // handling
+    // code
+    // here:
   }
 
   private void optionBasicBodyActionPerformed(java.awt.event.ActionEvent evt) { // TODO
-                                                                                // add
-                                                                                // your
-                                                                                // handling
-                                                                                // code
-                                                                                // here:
+    // add
+    // your
+    // handling
+    // code
+    // here:
   }
 
   private void optionBasicLegsActionPerformed(java.awt.event.ActionEvent evt) { // TODO
-                                                                                // add
-                                                                                // your
-                                                                                // handling
-                                                                                // code
-                                                                                // here:
+    // add
+    // your
+    // handling
+    // code
+    // here:
   }
 
   private void optionBasicKneesActionPerformed(java.awt.event.ActionEvent evt) { // TODO
-                                                                                 // add
-                                                                                 // your
-                                                                                 // handling
-                                                                                 // code
-                                                                                 // here:
+    // add
+    // your
+    // handling
+    // code
+    // here:
   }
 
   /* -------------------------------------------------------------------- */
@@ -1424,67 +1378,67 @@ public class StickMotion extends javax.swing.JFrame {
   /* -------------------------------------------------------------------- */
 
   private void optionHelpHelpActionPerformed(java.awt.event.ActionEvent evt) { // Cuando
-                                                                               // se
-                                                                               // pulse
-                                                                               // en
-                                                                               // Ayuda,
-                                                                               // mostrar
-                                                                               // el
-                                                                               // diágolo
-                                                                               // correspondiente
+    // se
+    // pulse
+    // en
+    // Ayuda,
+    // mostrar
+    // el
+    // diágolo
+    // correspondiente
     Help Helpy = new Help(this, documentSaved);
     Helpy.setModal(true); // La hacemos modal
     Helpy.setVisible(true); // Mostramos la ventana de diálogo
   }
 
   private void optionHelpStickyActionPerformed(java.awt.event.ActionEvent evt) { // Cuando
-                                                                                 // se
-                                                                                 // pulse
-                                                                                 // sobre
-                                                                                 // Acerca
-                                                                                 // de
-                                                                                 // Sticky
+    // se
+    // pulse
+    // sobre
+    // Acerca
+    // de
+    // Sticky
     AboutSticky Sticky = new AboutSticky(this, documentSaved);
     Sticky.setModal(true); // La hacemos modal
     Sticky.setVisible(true); // Mostramos la ventana de diálogo
   }
 
   private void optionHelpAboutActionPerformed(java.awt.event.ActionEvent evt) { // Cuando
-                                                                                // quiera
-                                                                                // ver
-                                                                                // los
-                                                                                // créditos,hacemos
-                                                                                // visible
-                                                                                // dicha
-                                                                                // clase
+    // quiera
+    // ver
+    // los
+    // créditos,hacemos
+    // visible
+    // dicha
+    // clase
     AboutStickMotion Credits = new AboutStickMotion(this, documentSaved);
     Credits.setModal(true); // La hacemos modal
     Credits.setVisible(true); // Mostramos la ventana de diálogo
   }
 
   private void iconAboutActionPerformed(java.awt.event.ActionEvent evt) { // Acción
-                                                                          // al
-                                                                          // pinchar
-                                                                          // en
-                                                                          // el
-                                                                          // icono
-                                                                          // de
-                                                                          // acerca
-                                                                          // de
-                                                                          // stickmotion
+    // al
+    // pinchar
+    // en
+    // el
+    // icono
+    // de
+    // acerca
+    // de
+    // stickmotion
     optionHelpAboutActionPerformed(evt);
   }
 
   private void iconHelpActionPerformed(java.awt.event.ActionEvent evt) { // Cuando
-                                                                         // se
-                                                                         // pulse
-                                                                         // en
-                                                                         // el
-                                                                         // icono,
-                                                                         // llamar
-                                                                         // al
-                                                                         // método
-                                                                         // correspondiente
+    // se
+    // pulse
+    // en
+    // el
+    // icono,
+    // llamar
+    // al
+    // método
+    // correspondiente
     optionHelpHelpActionPerformed(evt);
   }
 
@@ -1518,11 +1472,11 @@ public class StickMotion extends javax.swing.JFrame {
   }
 
   private void editorKeyTyped(java.awt.event.KeyEvent evt) { // Cuando se
-                                                             // modifica el
-                                                             // contenido del
-                                                             // editor se
-                                                             // dispara este
-                                                             // evento
+    // modifica el
+    // contenido del
+    // editor se
+    // dispara este
+    // evento
     documentModified = true; // Se ha modificado el contenido del editor
     documentSaved = false; // Dichos cambios no se han guardado
     iconSaveStk.setEnabled(true); // Habilitamos el icono de guardar
