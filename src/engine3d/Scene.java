@@ -16,24 +16,32 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
 public class Scene {
 
   // Stickman
-  Stickman steve;
+  private Stickman steve;
   // Time
-  long time;
+  private long time;
 
   // Group containing the whole scene
-  BranchGroup sceneGroup;
+  private BranchGroup sceneGroup;
+
+  // 3D Universe that will load the Scene
+  private SimpleUniverse simpleU;
+
+  // Canvas where the universe will be drawn
+  private final Canvas3D canvas3D;
 
   /**
    * Constructor for the class Scene
    */
-  public Scene() {
+  public Scene(Canvas3D canvas3D) {
+
+    this.canvas3D = canvas3D;
 
     // Initializes the time counter
-    time = 1000;
+    setTime(1000);
 
     // Creates the scene and universe
     sceneGroup = createSceneGraph();
-
+    simpleU = new SimpleUniverse();
   }
 
   /**
@@ -41,14 +49,29 @@ public class Scene {
    * 
    * @arg canvas3D
    */
-  public void start(Canvas3D canvas3D) {
-    SimpleUniverse simpleU = new SimpleUniverse(canvas3D);
+  public void start() {
 
     // Set the viewport for the universe
     simpleU.getViewingPlatform().setNominalViewingTransform();
 
     // Associate the scene to the universe to start the animation
     simpleU.addBranchGraph(sceneGroup);
+  }
+
+  /**
+   * Clean the tree of animations
+   */
+  public void reset() {
+
+    // Initializes the time counter
+    setTime(1000);
+
+    // Remove the previous universe and recreate a new one
+    simpleU.cleanup();
+    simpleU = new SimpleUniverse(canvas3D);
+
+    // Creates the scene and universe
+    sceneGroup = createSceneGraph();
   }
 
   /**
@@ -69,53 +92,6 @@ public class Scene {
     objRoot.addChild(steve);
     steve.scale(0.3, 0.3, 0.3);
 
-    // A couple of animation examples
-
-    // setTime(1000);
-    // // Crappy walking animation
-    // for (int i = 0; i < 20; i++) {
-    // // Move right Leg forward (z rot)
-    // rotateRLeg(0, (float) (Math.PI / 3), 500);
-    // // Move left Leg backwards (z rot)
-    // rotateLLeg(0, (float) -(Math.PI / 3), 500);
-    // // Flex foreLegs
-    // flexRLeg((float) Math.PI / 3, 500);
-    // flexLLeg((float) Math.PI / 3, 500);
-    // // Next second
-    // addTime(500);
-    // // Un-Flex foreLegs
-    // flexRLeg((float) -Math.PI / 3, 500);
-    // flexLLeg((float) -Math.PI / 3, 500);
-    // // Move right Leg backwards (z rot)
-    // rotateRLeg(0, (float) -(Math.PI / 3), 500);
-    // // Move left Leg forward (z rot)
-    // rotateLLeg(0, (float) (Math.PI / 3), 500);
-    // addTime(500);
-    // }
-    //
-    // int d = 500;
-    // setTime(1000);
-    // // Rotate the arms to move sideways
-    // rotateRArm((float) Math.PI / 2, 0, 50);
-    // rotateLArm((float) Math.PI / 2, 0, 50);
-    // // Try to fly
-    // for (int i = 0; i < 100; i++) {
-    // // raise arms
-    // rotateRArm(0, (float) Math.PI / 2, d);
-    // rotateLArm(0, (float) Math.PI / 2, d);
-    // // flex forearms
-    // flexRArm((float) Math.PI / 3, d);
-    // flexLArm((float) Math.PI / 3, d);
-    // // next step
-    // addTime(d);
-    // // un-Flex forearms
-    // flexRArm((float) -Math.PI / 3, d);
-    // flexLArm((float) -Math.PI / 3, d);
-    // // Low both Arms
-    // rotateRArm(0, (float) -Math.PI / 2, d);
-    // rotateLArm(0, (float) -Math.PI / 2, d);
-    // addTime(d);
-    // }
     return objRoot;
   }
 
@@ -124,12 +100,8 @@ public class Scene {
    */
   private DirectionalLight getLight() {
     Color3f light_color = new Color3f(1.0f, 1.0f, 1.0f);
-    Vector3f light_direction = new Vector3f(8.0f, -7.0f, -12.0f); // set the
-    // position
-    // depending
-    // on the
-    // objects
-    // position
+    Vector3f light_direction = new Vector3f(8.0f, -7.0f, -12.0f);
+    // set the position depending on the objects position
     DirectionalLight directional_light = new DirectionalLight(light_color,
         light_direction);
     BoundingSphere bounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0),
