@@ -1,8 +1,35 @@
-tiempo establece
+tiempo establece 6000;
 
-flexionar ....
+girar BRAZO DER;
+flexionar PIERNA IZQ 2;
+girar CABEZA;
+girar STICKMAN;
 
-tiempo avanza
+avanzar;
+$
 
-girar ....
+ -------------------
 
+tiempo establece 2000;
+
+avanzar 2.3 4000;
+
+$
+
+---------------------
+
+tiempo establece 3000;
+
+flexionar BRAZO IZQ 3.4 5000;
+flexionar PIERNA DER 4.5 7000;
+girar STICKMAN 3.2 2.3 4000;
+
+
+tiempo avanza 5000;
+
+flexionar BRAZO IZQ 3.4 5000;
+flexionar PIERNA DER 4.5 7000;
+girar STICKMAN 2.3 4.5 5000;
+avanzar 4 4000;
+
+$
