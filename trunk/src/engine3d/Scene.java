@@ -14,7 +14,6 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
  * This class loads all the scene in a simple universe
  */
 public class Scene {
-
   // Stickman
   private Stickman steve;
   // Time
@@ -41,7 +40,7 @@ public class Scene {
 
     // Creates the scene and universe
     sceneGroup = createSceneGraph();
-    simpleU = new SimpleUniverse();
+
   }
 
   /**
@@ -50,7 +49,6 @@ public class Scene {
    * @arg canvas3D
    */
   public void start() {
-
     // Set the viewport for the universe
     simpleU.getViewingPlatform().setNominalViewingTransform();
 
@@ -67,7 +65,8 @@ public class Scene {
     setTime(1000);
 
     // Remove the previous universe and recreate a new one
-    simpleU.cleanup();
+    if (simpleU != null)
+      simpleU.cleanup();
     simpleU = new SimpleUniverse(canvas3D);
 
     // Creates the scene and universe
