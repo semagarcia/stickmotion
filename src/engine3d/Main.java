@@ -27,6 +27,8 @@ public class Main extends Applet {
 
     Scene scene = new Scene(canvas3D);
 
+    scene.reset();
+
     // A couple of animation examples
 
     scene.setTime(1000);
