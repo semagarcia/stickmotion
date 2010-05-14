@@ -935,112 +935,112 @@ eliminar_var {String res;}: SUP id:IDENT
 	
 funcion_sticky: f_tiempo | f_avanzar | f_flexionar | f_girar;
 
-f_tiempo {Object mseg;}: TIEMPO (est:ESTABLECE|AVANZA) mseg=expresionOR
+f_tiempo {Object res1;}: TIEMPO (est:ESTABLECE|AVANZA) res1=expr_base
 {
-	//Convert mseg Object to Long.
-		//Instance of different kind of types.
-		Object numero = (Integer)2;
-		//Object flotante = (Double)2.2;
-		String conversion = null;
-		int mseg_int = 0;
-		//float mseg_float = 0;
-		//boolean flag_int = false;
-		
-		//Paso a cadenas los resultados de las dos evaluaciones (Sólo para comparar antes del greedy, para que no de error al obtener el dato de un objeto del que no conocemos su tipo
-		if(mseg.getClass() == numero.getClass()) {
-			conversion = String.valueOf(((Integer)mseg).intValue());
-			mseg_int = Integer.parseInt(conversion);
-		}
-		/*
-		if(mseg.getClass() == flotante.getClass()) {
-			conversion = String.valueOf(((Double)mseg).floatValue());
-			mseg_float = Float.valueOf(conversion).floatValue();
-		}*/
+	// Convert to correct format in order to call the function
+	String cadena1 = res1.toString();
+	float res1_float = Float.parseFloat(cadena1);
+	int res1_int = Math.round(res1_float);
 
-	Procesador.println(1,"Entrando tiempo sticky. "+"mseg_int: "+ mseg_int);
+	Procesador.println(1,"Entrando tiempo sticky. "+"res1_int: "+ res1_int);
 
 	//If option is ESTABLECE, function "tiempo establece" is called.
 	if(est != null) {
 		Procesador.println(1,"FSticky -> tiempo establece.");
-		gui.StickMotion.scene.setTime(mseg_int);
+		gui.StickMotion.scene.setTime(res1_int);
 	}// Else "tiempo avanza" is called.
 	else {
 		Procesador.println(1,"FSticky -> tiempo avanza.");
-		gui.StickMotion.scene.addTime(mseg_int);
+		gui.StickMotion.scene.addTime(res1_int);
 	}
 };
 
-f_avanzar {Object param1 = null; Object param2 = null;}: AVANZAR 
-		 (n1:REAL{param1 = new Float(n1.getText());}  
-		| n2:ENTERO {param1 = new Integer(n2.getText());} ) 
-		n3:ENTERO{param2 = new Integer(n3.getText());}
-//n1:REAL{param1 = new Float(n1.getText());} n2:ENTERO{param2 = new Integer(n2.getText());}
+f_avanzar {Object res1; Object res2;}: AVANZAR 
+		res1=expr_base
+		res2=expr_base
 {
-	//resultado = new Integer(n1.getText());
 	Procesador.println(1,"Entrando avanzar sticky.");
-	if(n1 != null)
-		gui.StickMotion.scene.moveForwardStickman((Float)param1, (Integer)param2);
-	else
-		gui.StickMotion.scene.moveForwardStickman((Integer)param1, (Integer)param2);
+	
+	// Convert to correct format in order to call the function
+	String cadena1 = res1.toString(); 
+	float res1_float = Float.parseFloat(cadena1);
+	String cadena2 = res2.toString(); 
+	float res2_float = Float.parseFloat(cadena2);
+	int res2_int = Math.round(res2_float);
+	
+	gui.StickMotion.scene.moveForwardStickman(res1_float, res2_int);
 };
 
-f_flexionar {Object param1 = null; Object param2 = null;}: FLEXIONAR (brazo:BRAZO | PIERNA) (der:DER | IZQ) 
-		n1:REAL{param1 = new Float(n1.getText());}
-		n2:ENTERO{param2 = new Integer(n2.getText());}
+f_flexionar {Object res1; Object res2;}: FLEXIONAR (brazo:BRAZO | PIERNA) (der:DER | IZQ) 
+		res1=expr_base
+		res2=expr_base
 {
 	Procesador.println(1,"Entrando flexionar sticky.");
 	
-	//Object flotante = (Double)2.2;
-	//if(angulo.getClass() == flotante.getClass())
-			//res = String.valueOf(((Double)angulo).floatValue());
+	// Convert to correct format in order to call the function
+	String cadena1 = res1.toString(); 
+	float res1_float = Float.parseFloat(cadena1);
+	String cadena2 = res2.toString(); 
+	float res2_float = Float.parseFloat(cadena2);
+	int res2_int = Math.round(res2_float);
 
 	//if BRAZO is selected, stiky's amr is moved, else PIERNA has been written and it will be moved.
 	if(brazo != null) {
 		//if DER is chosen, right arm is moved
 		if (der != null) {
 			Procesador.println(1,"FSticky --> Brazo Derecho.");
-			gui.StickMotion.scene.flexRArm((Float)param1, (Integer)param2);
+			gui.StickMotion.scene.flexRArm(res1_float, res2_int);
 		}
 		else {
 			Procesador.println(1,"FSticky --> Brazo Izquierdo.");
-			gui.StickMotion.scene.flexLArm((Float)param1, (Integer)param2);
+			gui.StickMotion.scene.flexLArm(res1_float, res2_int);
 		}
 	}
 	else {
 		//if DER is chosen, right leg is moved
 		if (der != null) {
 			Procesador.println(1,"FSticky --> Pierna Derecha.");
-			gui.StickMotion.scene.flexRLeg((Float)param1, (Integer)param2);
+			gui.StickMotion.scene.flexRLeg(res1_float, res2_int);
 		}
 		else {
 			Procesador.println(1,"FSticky --> Pierna Izquierda.");
-			gui.StickMotion.scene.flexLLeg((Float)param1, (Integer)param2);
+			gui.StickMotion.scene.flexLLeg(res1_float, res2_int);
 		}
 	}
 };
 
-f_girar {Object param1 = null; Object param2 = null; Object param3 = null;}: 
+f_girar {Object res1; Object res2; Object res3;}: 
 		GIRAR (stick:STICKMAN | cab:CABEZA | bra:BRAZO | PIERNA) (der:DER | IZQ)?
-		n1:REAL{param1 = new Float(n1.getText());}
-		n2:REAL{param2 = new Float(n2.getText());}
-		n3:ENTERO{param3 = new Integer(n3.getText());}
+		res1=expr_base
+		res2=expr_base
+		res3=expr_base
+		
 {
+	// Convert to correct format in order to call the function
+	String cadena1 = res1.toString(); 
+	float res1_float = Float.parseFloat(cadena1);
+	String cadena2 = res2.toString(); 
+	float res2_float = Float.parseFloat(cadena2);
+	String cadena3 = res3.toString(); 
+	float res3_float = Float.parseFloat(cadena3);
+	int res3_int = Math.round(res3_float);
+
 	Procesador.println(1,"Entrando girar sticky.");
 	
 	if(stick != null)
-		gui.StickMotion.scene.rotateStickman((Float)param1, (Float)param2, (Integer)param3);
+		gui.StickMotion.scene.rotateStickman(res1_float, res2_float, res3_int);
 	else if(cab != null)
-		gui.StickMotion.scene.rotateHead((Float)param1, (Float)param2, (Integer)param3);
+		gui.StickMotion.scene.rotateHead(res1_float, res2_float, res3_int);
 	else if(bra != null)
 		if( der != null )
-			gui.StickMotion.scene.rotateRArm((Float)param1, (Float)param2, (Integer)param3);
+			gui.StickMotion.scene.rotateRArm(res1_float, res2_float, res3_int);
 		else
-			gui.StickMotion.scene.rotateLArm((Float)param1, (Float)param2, (Integer)param3);
+			gui.StickMotion.scene.rotateLArm(res1_float, res2_float, res3_int);
 	else
 		if( der != null )
-			gui.StickMotion.scene.rotateRLeg((Float)param1, (Float)param2, (Integer)param3);
+			gui.StickMotion.scene.rotateRLeg(res1_float, res2_float, res3_int);
 		else
-			gui.StickMotion.scene.rotateLLeg((Float)param1, (Float)param2, (Integer)param3);
+			gui.StickMotion.scene.rotateLLeg(res1_float, res2_float, res3_int);
 };
 
 fin_interprete:
