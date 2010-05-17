@@ -52,6 +52,27 @@ avanzar (-1) 4000;
 
 $
 
+---------ESTABLE !!! -------------------
+
+tiempo establece (3000.4);
+
+var pepe = 2;
+
+girar STICKMAN (2+2, pepe, 2000);
+girar CABEZA (2.3, 3, 2000);
+girar PIERNA DER (2.3, 3-1, 2000);
+flexionar BRAZO IZQ (3 , 2000.3);
+flexionar PIERNA DER (4.5 ,2000);
+avanzar (1.5 , 2000.3);
+
+tiempo avanza (5000);
+girar STICKMAN (5, pepe, 3000);
+avanzar (3 , 1000);
+
+
+$
+
+
 -------------------------
 
 //Haciendo el pino
@@ -82,4 +103,3 @@ girar PIERNA DER 0 (3.14/8) 1000;
 tiempo avanza 1000;
 girar STICKMAN (-3.14/2) 0 1000;
 
-$

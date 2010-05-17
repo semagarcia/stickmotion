@@ -935,7 +935,7 @@ eliminar_var {String res;}: SUP id:IDENT
 	
 funcion_sticky: f_tiempo | f_avanzar | f_flexionar | f_girar;
 
-f_tiempo {Object res1;}: TIEMPO (est:ESTABLECE|AVANZA) res1=expr_base
+f_tiempo {Object res1;}: TIEMPO (est:ESTABLECE|AVANZA) PAR_IZQ res1=expr_aritmetica PAR_DER
 {
 	// Convert to correct format in order to call the function
 	String cadena1 = res1.toString();
@@ -955,9 +955,9 @@ f_tiempo {Object res1;}: TIEMPO (est:ESTABLECE|AVANZA) res1=expr_base
 	}
 };
 
-f_avanzar {Object res1; Object res2;}: AVANZAR 
-		res1=expr_base
-		res2=expr_base
+f_avanzar {Object res1; Object res2;}: AVANZAR PAR_IZQ
+		res1=expr_aritmetica SEPARA
+		res2=expr_aritmetica PAR_DER 
 {
 	Procesador.println(1,"Entrando avanzar sticky.");
 	
@@ -972,8 +972,7 @@ f_avanzar {Object res1; Object res2;}: AVANZAR
 };
 
 f_flexionar {Object res1; Object res2;}: FLEXIONAR (brazo:BRAZO | PIERNA) (der:DER | IZQ) 
-		res1=expr_base
-		res2=expr_base
+		PAR_IZQ res1=expr_aritmetica SEPARA res2=expr_aritmetica PAR_DER
 {
 	Procesador.println(1,"Entrando flexionar sticky.");
 	
@@ -1011,9 +1010,7 @@ f_flexionar {Object res1; Object res2;}: FLEXIONAR (brazo:BRAZO | PIERNA) (der:D
 
 f_girar {Object res1; Object res2; Object res3;}: 
 		GIRAR (stick:STICKMAN | cab:CABEZA | bra:BRAZO | PIERNA) (der:DER | IZQ)?
-		res1=expr_base
-		res2=expr_base
-		res3=expr_base
+		PAR_IZQ res1=expr_aritmetica SEPARA res2=expr_aritmetica SEPARA	res3=expr_aritmetica PAR_DER
 		
 {
 	// Convert to correct format in order to call the function
@@ -1045,7 +1042,7 @@ f_girar {Object res1; Object res2; Object res3;}:
 
 fin_interprete:
 	{
-		Procesador.println(-1,"...FINALIZANDO STICKY...");	
+		Procesador.println(-1,"...FINALIZANDO STICKY...");
 	}
 	FIN_INTERPRETE
 	{
