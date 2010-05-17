@@ -51,3 +51,35 @@ tiempo avanza 5000;
 avanzar (-1) 4000;
 
 $
+
+-------------------------
+
+//Haciendo el pino
+girar STICKMAN (3.14/2) 0 1000;
+tiempo avanza 1000;
+girar BRAZO IZQ 0 (-3.1) 1000;
+girar BRAZO DER 0 3.1 1000;
+girar STICKMAN 0 (-3.14) 1000;
+flexionar PIERNA IZQ (3.14/8) 500;
+flexionar PIERNA DER (3.14/8) 500;
+girar PIERNA IZQ 0 (3.14/8) 1000;
+girar PIERNA DER 0 (-3.14/8) 1000;
+flexionar PIERNA IZQ (3.14/8) 500;
+flexionar PIERNA DER (3.14/8) 500;
+tiempo avanza 1000;
+flexionar BRAZO IZQ (3.14/8) 500;
+flexionar BRAZO DER (-3.14/8) 500;
+tiempo avanza 300;
+girar STICKMAN 0 (-3.14) 1000;
+flexionar BRAZO IZQ (-3.14/8) 500;
+flexionar BRAZO DER (3.14/8) 500;
+girar BRAZO IZQ 0 3.1 1500;
+girar BRAZO DER 0 (-3.1) 1500;
+flexionar PIERNA IZQ (-3.14/4) 500;
+flexionar PIERNA DER (-3.14/4) 500;
+girar PIERNA IZQ 0 (-3.14/8) 1000;
+girar PIERNA DER 0 (3.14/8) 1000;
+tiempo avanza 1000;
+girar STICKMAN (-3.14/2) 0 1000;
+
+$
