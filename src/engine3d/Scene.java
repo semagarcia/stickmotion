@@ -274,10 +274,6 @@ public class Scene {
     rotateSMGroup(steve, azimuth, inclination, duration);
   }
 
-  public void moveForwardStickman(float distance, long duration) {
-    steve.addPositionAnim(duration, time, 0, -Math.PI / 2, 0, 0, distance);
-  }
-
   /**
    * Method for displacing the stickman
    * 
