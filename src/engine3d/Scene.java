@@ -126,8 +126,8 @@ public class Scene {
    */
   public void rotateSMGroup(SMGroup group, float azimuth, float inclination,
       long duration) {
-    group.addRotationAnim(duration, time, 0, 0, Math.PI / 2, 0, inclination);
     group.addRotationAnim(duration, time, 0, 0, 0, 0, azimuth);
+    group.addRotationAnim(duration, time, 0, 0, Math.PI / 2, 0, inclination);
   }
 
   /**
