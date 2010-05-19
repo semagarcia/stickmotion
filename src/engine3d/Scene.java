@@ -279,6 +279,27 @@ public class Scene {
   }
 
   /**
+   * Method for displacing the stickman
+   * 
+   * @param x
+   *          distance over the X axis that the stickman will be displaced
+   * @param y
+   *          distance over the Y axis that the stickman will be displaced
+   * @param z
+   *          distance over the Z axis that the stickman will be displaced
+   * @param duration
+   *          time for the animation to occur
+   */
+  public void moveStickman(float x, float y, float z, long duration) {
+    if (x != 0)
+      steve.addPositionAnim(duration, time, -Math.PI / 2, 0, 0, 0, x);
+    if (y != 0)
+      steve.addPositionAnim(duration, time, 0, -Math.PI / 2, 0, 0, y);
+    if (z != 0)
+      steve.addPositionAnim(duration, time, 0, 0, -Math.PI / 2, 0, z);
+  }
+
+  /**
    * Method for incrementing the timer
    * 
    * @param step
