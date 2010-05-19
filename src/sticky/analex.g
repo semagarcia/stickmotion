@@ -34,6 +34,7 @@ class Analex extends Lexer;
 		FLEXIONAR="flexionar";
 		TIEMPO="tiempo";
 		AVANZAR="avanzar";
+		MOVER="mover";
 		ESTABLECE="establece";
 		AVANZA="avanza";
 		CABEZA="CABEZA";
@@ -48,6 +49,9 @@ class Analex extends Lexer;
 		
 		//Impresión por pantalla
 		IMPRIMIR="mostrar";
+		
+		//Otras variables
+		PI = "PI";
 		
 		//Definicion de funciones
 		//	DEF="def";

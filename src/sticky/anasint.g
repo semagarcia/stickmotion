@@ -14,6 +14,8 @@ class Anasint extends Parser;
 	}
 	{
 		TablaSimbolos tablaSimbolos= new TablaSimbolos();
+		//CONSTANT
+		double const_pi = Math.PI;
 	}
 
 	instrucciones 
@@ -25,7 +27,7 @@ class Anasint extends Parser;
 	: (sentencia)* fin_interprete; //Una o varias sentencias, y finaliza
 	
 	
-	sentencia: (simple FIN_INSTRUCCION) | bucle ; //O una sentencia simple con ; o un bucle, que no lleva ; para acabar (si sus intrucciones)
+	sentencia: (simple FIN_INSTRUCCION) | bucle; //O una sentencia simple con ; o un bucle, que no lleva ; para acabar (si sus intrucciones)
 	
 	simple {String valor; Object valor2;}: declaracion | asignacion | eliminar_var | funcion_sticky | valor=imprimir { Procesador.println(-1,valor); } | valor2=expr_incremento; //Esto permitirá usar ; para salir del greedy, ya que ; no se pide aquí
 	bucle: sentenciaIF | sentenciaWHILE | sentenciaFOR | sentenciaSWITCH;
@@ -409,6 +411,7 @@ expr_base returns [Object resultado = null]:
 		|n3:VERDADERO {resultado = new Boolean(true);}
 		|n4:FALSO {resultado = new Boolean(false);}
 		|n5:CADENA {resultado = new String( n5.getText()); }
+		|n6:PI { resultado = new Double(const_pi); Procesador.println(1,"PI declarada: "+ resultado); } //PI
 		|(IDENT) => id:IDENT
 		{
 			
@@ -933,7 +936,7 @@ eliminar_var {String res;}: SUP id:IDENT
 		  	Procesador.println(0, "Linea "+id.getLine()+": Variable \""+id.getText()+"\" no ha sido eliminada, no existe");
 	};
 	
-funcion_sticky: f_tiempo | f_avanzar | f_flexionar | f_girar;
+funcion_sticky: f_tiempo | f_mover | f_flexionar | f_girar;
 
 f_tiempo {Object res1;}: TIEMPO (est:ESTABLECE|AVANZA) PAR_IZQ res1=expr_aritmetica PAR_DER
 {
@@ -955,20 +958,29 @@ f_tiempo {Object res1;}: TIEMPO (est:ESTABLECE|AVANZA) PAR_IZQ res1=expr_aritmet
 	}
 };
 
-f_avanzar {Object res1; Object res2;}: AVANZAR PAR_IZQ
+
+f_mover {Object res1; Object res2; Object res3; Object res4;}: MOVER STICKMAN PAR_IZQ
 		res1=expr_aritmetica SEPARA
-		res2=expr_aritmetica PAR_DER 
+		res2=expr_aritmetica SEPARA
+		res3=expr_aritmetica SEPARA
+		res4=expr_aritmetica PAR_DER 
 {
-	Procesador.println(1,"Entrando avanzar sticky.");
+	Procesador.println(1,"Entrando mover sticky.");
 	
 	// Convert to correct format in order to call the function
+	
 	String cadena1 = res1.toString(); 
 	float res1_float = Float.parseFloat(cadena1);
 	String cadena2 = res2.toString(); 
 	float res2_float = Float.parseFloat(cadena2);
-	int res2_int = Math.round(res2_float);
+	String cadena3 = res3.toString(); 
+	float res3_float = Float.parseFloat(cadena3);
+	String cadena4 = res4.toString(); 
+	float res4_float = Float.parseFloat(cadena4);
+	int res4_int = Math.round(res4_float);
 	
-	gui.StickMotion.scene.moveForwardStickman(res1_float, res2_int);
+	gui.StickMotion.scene.moveStickman(res1_float, res2_float, res3_float, res4_int);
+	
 };
 
 f_flexionar {Object res1; Object res2;}: FLEXIONAR (brazo:BRAZO | PIERNA) (der:DER | IZQ) 
