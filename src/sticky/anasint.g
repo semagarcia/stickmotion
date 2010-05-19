@@ -987,22 +987,22 @@ f_flexionar {Object res1; Object res2;}: FLEXIONAR (brazo:BRAZO | PIERNA) (der:D
 	if(brazo != null) {
 		//if DER is chosen, right arm is moved
 		if (der != null) {
-			Procesador.println(1,"FSticky --> Brazo Derecho.");
+			Procesador.println(1,"FSticky --> Brazo Derecho "+res1_float+"º / "+res2_int+" secs.");
 			gui.StickMotion.scene.flexRArm(res1_float, res2_int);
 		}
 		else {
-			Procesador.println(1,"FSticky --> Brazo Izquierdo.");
+			Procesador.println(1,"FSticky --> Brazo Izquierdo "+res1_float+"rad / "+res2_int+" secs.");
 			gui.StickMotion.scene.flexLArm(res1_float, res2_int);
 		}
 	}
 	else {
 		//if DER is chosen, right leg is moved
 		if (der != null) {
-			Procesador.println(1,"FSticky --> Pierna Derecha.");
+			Procesador.println(1,"FSticky --> Pierna Derecha "+res1_float+"º / "+res2_int+" secs.");
 			gui.StickMotion.scene.flexRLeg(res1_float, res2_int);
 		}
 		else {
-			Procesador.println(1,"FSticky --> Pierna Izquierda.");
+			Procesador.println(1,"FSticky --> Pierna Izquierda "+res1_float+"º / "+res2_int+" secs.");
 			gui.StickMotion.scene.flexLLeg(res1_float, res2_int);
 		}
 	}
@@ -1024,20 +1024,27 @@ f_girar {Object res1; Object res2; Object res3;}:
 
 	Procesador.println(1,"Entrando girar sticky.");
 	
-	if(stick != null)
+	if(stick != null) {
+		Procesador.println(1,"Gira Stickman ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
 		gui.StickMotion.scene.rotateStickman(res1_float, res2_float, res3_int);
-	else if(cab != null)
+	} else if(cab != null) {
+		Procesador.println(1,"Gira Cabeza ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
 		gui.StickMotion.scene.rotateHead(res1_float, res2_float, res3_int);
-	else if(bra != null)
-		if( der != null )
+	} else if(bra != null)
+		if( der != null ) {
+			Procesador.println(1,"Gira Brazo Derecho ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
 			gui.StickMotion.scene.rotateRArm(res1_float, res2_float, res3_int);
-		else
+		} else {
+			Procesador.println(1,"Gira Brazo Izquierdo ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
 			gui.StickMotion.scene.rotateLArm(res1_float, res2_float, res3_int);
-	else
-		if( der != null )
+		} else 
+		if( der != null ) {
+			Procesador.println(1,"Gira Pierna Derecha ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
 			gui.StickMotion.scene.rotateRLeg(res1_float, res2_float, res3_int);
-		else
+		} else {
+			Procesador.println(1,"Gira Pierna Izquierda ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
 			gui.StickMotion.scene.rotateLLeg(res1_float, res2_float, res3_int);
+		}
 };
 
 fin_interprete:
