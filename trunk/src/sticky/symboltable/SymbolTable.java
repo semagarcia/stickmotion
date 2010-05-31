@@ -1,4 +1,4 @@
-package sticky.tablasimbolos;
+package sticky.symboltable;
 
 import java.util.ArrayList;
 
@@ -12,7 +12,7 @@ import antlr.Token;
  * 
  */
 
-public class TablaSimbolos {
+public class SymbolTable {
 
   private final ArrayList<Simbolo> tabla; // Contenedor ArrayList que representa
 
@@ -22,7 +22,7 @@ public class TablaSimbolos {
    * Constructor de la clase TablaSimbolos que inicializa los datos necesarios
    * para la clase.
    */
-  public TablaSimbolos() {
+  public SymbolTable() {
     tabla = new ArrayList<Simbolo>();
 
   }

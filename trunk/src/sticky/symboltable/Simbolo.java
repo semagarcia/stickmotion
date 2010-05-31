@@ -1,4 +1,4 @@
-package sticky.tablasimbolos;
+package sticky.symboltable;
 
 /**
  * Clase perteneciente al paquete tablasimbolos. Representa a un simbolo de la
