@@ -7,8 +7,7 @@
 package gui;
 
 /**
- * 
- * @author sema
+ * Dialog for "About StickMotion"
  */
 public class AboutStickMotion extends javax.swing.JDialog {
 
@@ -239,6 +238,8 @@ public class AboutStickMotion extends javax.swing.JDialog {
   }// GEN-LAST:event_backButtonActionPerformed
 
   /**
+   * Main Method
+   * 
    * @param args
    *          the command line arguments
    */
