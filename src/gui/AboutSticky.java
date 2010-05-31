@@ -12,8 +12,7 @@
 package gui;
 
 /**
- * 
- * @author sema
+ * Dialog for "About Sticky"
  */
 public class AboutSticky extends javax.swing.JDialog {
 
@@ -138,12 +137,19 @@ public class AboutSticky extends javax.swing.JDialog {
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
+  /**
+   * Method to execute when the "Back" button is clicked
+   * 
+   * @param evt
+   */
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
-    // Cuando se pulse sobre el botón Volver
+    // When the "Volver" button is pressed
     setVisible(false);
   }// GEN-LAST:event_jButton1ActionPerformed
 
   /**
+   * Main method
+   * 
    * @param args
    *          the command line arguments
    */
