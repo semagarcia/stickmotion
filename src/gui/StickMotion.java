@@ -32,6 +32,8 @@ public class StickMotion extends javax.swing.JFrame {
   private boolean documentModified = false;
   // Variable for storing the filename of the file opened
   private String nameFile = new String("");
+  // Creation of the thread
+  InterpreterThread myThread;
 
   // Variable for storing the 3D scene
   public static engine3d.Scene scene;
@@ -96,6 +98,7 @@ public class StickMotion extends javax.swing.JFrame {
     iconCut = new javax.swing.JButton();
     separatorEdit_Sticky = new javax.swing.JToolBar.Separator();
     iconInterpreter = new javax.swing.JButton();
+    iconStop = new javax.swing.JButton();
     separatorSticky_Help = new javax.swing.JToolBar.Separator();
     iconHelp = new javax.swing.JButton();
     iconAbout = new javax.swing.JButton();
@@ -107,6 +110,7 @@ public class StickMotion extends javax.swing.JFrame {
     optionFileSaveAs = new javax.swing.JMenuItem();
     optionFileSeparator1 = new javax.swing.JPopupMenu.Separator();
     optionFileInterpreter = new javax.swing.JMenuItem();
+    optionFileStop = new javax.swing.JMenuItem();
     optionFileSeparator2 = new javax.swing.JPopupMenu.Separator();
     optionFileExit = new javax.swing.JMenuItem();
     menuBarEdit = new javax.swing.JMenu();
@@ -414,7 +418,21 @@ public class StickMotion extends javax.swing.JFrame {
         iconInterpreterActionPerformed(evt);
       }
     });
+
+    iconStop.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+        "/gui/images/cancel.png")));
+    iconStop.setToolTipText("Detiene la interpretación del código");
+    iconStop.setFocusable(false);
+    iconStop.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+    iconStop.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+    iconStop.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        iconInterpreterActionPerformed(evt);
+      }
+    });
+
     toolBar.add(iconInterpreter);
+    toolBar.add(iconStop);
     toolBar.add(separatorSticky_Help);
 
     iconHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource(
@@ -532,7 +550,24 @@ public class StickMotion extends javax.swing.JFrame {
             optionFileInterpreterActionPerformed(evt);
           }
         });
+
+    optionFileStop.setAccelerator(javax.swing.KeyStroke.getKeyStroke(
+        java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
+    optionFileStop.setText("Detener");
+    optionFileStop.setToolTipText("Detiene la ejecución del editor");
+    optionFileStop.addMouseListener(new java.awt.event.MouseAdapter() {
+      @Override
+      public void mouseEntered(java.awt.event.MouseEvent evt) {
+        optionFileStopMouseEntered(evt);
+      }
+    });
+    optionFileStop.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        optionFileStopActionPerformed(evt);
+      }
+    });
     menuBarFile.add(optionFileInterpreter);
+    menuBarFile.add(optionFileStop);
     menuBarFile.add(optionFileSeparator2);
 
     optionFileExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(
@@ -925,6 +960,19 @@ public class StickMotion extends javax.swing.JFrame {
     currentStatusLabel.setText("Lanza el intérprete de Sticky");
   }
 
+  @SuppressWarnings("deprecation")
+  private void optionFileStopMouseEntered(java.awt.event.MouseEvent evt) { // When
+    myThread.stop();
+  }
+
+  public void enablePlay() {
+    iconStop.setEnabled(true);
+  }
+
+  public void disablePlay() {
+    iconStop.setEnabled(false);
+  }
+
   private void optionFileExitMouseEntered(java.awt.event.MouseEvent evt) {
     currentStatusLabel
         .setText("Cierra la aplicación y sale de ella... ¿Es eso lo que quieres?");
@@ -1039,19 +1087,25 @@ public class StickMotion extends javax.swing.JFrame {
     // ... (the higher the level, the more detailed the info will be)
     int debugMode = 2;
 
-    editorResults.setText(sticky.Processor.run(editor.getText(), debugMode));
-
+    // habilitar boton stop <-------------------------
+    myThread = new InterpreterThread();
+    myThread.interpreter(this, editor.getText(), debugMode);
     scene.start();
-
   }
 
-  private void iconInterpreterActionPerformed(java.awt.event.ActionEvent evt) { // When
-    // the
-    // taskbar
-    // button
-    // is
-    // pressed
+  public void setResults(String results) {
+    // show the results of the interpreter in the application
+    editorResults.setText(results);
+  }
+
+  private void iconInterpreterActionPerformed(java.awt.event.ActionEvent evt) {
     optionFileInterpreterActionPerformed(evt);
+  }
+
+  @SuppressWarnings("deprecation")
+  private void optionFileStopActionPerformed(java.awt.event.ActionEvent evt) {
+    myThread.stop();
+    disablePlay();
   }
 
   private void iconExitActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1508,6 +1562,7 @@ public class StickMotion extends javax.swing.JFrame {
   private javax.swing.JButton iconExit;
   private javax.swing.JButton iconHelp;
   private javax.swing.JButton iconInterpreter;
+  private javax.swing.JButton iconStop;
   private javax.swing.JButton iconLoadStk;
   private javax.swing.JButton iconNewDoc;
   private javax.swing.JButton iconPaste;
@@ -1540,6 +1595,7 @@ public class StickMotion extends javax.swing.JFrame {
   private javax.swing.JMenuItem optionEditUndo;
   private javax.swing.JMenuItem optionFileExit;
   private javax.swing.JMenuItem optionFileInterpreter;
+  private javax.swing.JMenuItem optionFileStop;
   private javax.swing.JMenuItem optionFileLoad;
   private javax.swing.JMenuItem optionFileNew;
   private javax.swing.JMenuItem optionFileSave;
