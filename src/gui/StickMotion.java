@@ -1039,7 +1039,7 @@ public class StickMotion extends javax.swing.JFrame {
     // ... (the higher the level, the more detailed the info will be)
     int debugMode = 2;
 
-    editorResults.setText(sticky.Procesador.run(editor.getText(), debugMode));
+    editorResults.setText(sticky.Processor.run(editor.getText(), debugMode));
 
     scene.start();
 
