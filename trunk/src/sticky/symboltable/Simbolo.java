@@ -1,27 +1,23 @@
 package sticky.symboltable;
 
 /**
- * Clase perteneciente al paquete tablasimbolos. Representa a un simbolo de la
- * tabla de simbolos.
- * 
- * @author GrupoStickman
+ * Class representing a symbol from the symbol table
  * 
  */
 class Simbolo {
 
-  private String nombre; // Variable String que contiene el nombre del simbolo
-  private String contenido; // Variable String que contiene el contenido del
-
-  // simbolo.
+  /** Name of the symbol */
+  private String nombre;
+  /** Content of the symbol */
+  private String contenido;
 
   /**
-   * Constructor de la clase Simbolo que inicializa los datos necesarios de la
-   * clase.
+   * Constructor for Symbol class for initilizing the needed data
    * 
    * @param n
-   *          Objeto tipo String que contiene el nombre del simbolo.
+   *          String containing the symbol name
    * @param c
-   *          Objeto tipo String que contiene el contenido del simbolo.
+   *          Object containing the symbol content
    */
   Simbolo(String n, String c) {
     nombre = new String(n);
@@ -32,8 +28,7 @@ class Simbolo {
   }
 
   /**
-   * Constructor de la clase Simbolo que inicializa los datos necesarios de la
-   * clase.
+   * Empty constructor for Symbol class
    */
   Simbolo() {
     nombre = new String();
@@ -51,28 +46,28 @@ class Simbolo {
   }
 
   /**
-   * Funcion que devuelve el nombre del simbolo.
+   * Returns the symbol name
    * 
-   * @return nombre Objeto tipo String de la clase Simbolo.
+   * @return nombre String containing the symbol name
    */
   String getNombre() {
     return nombre;
   }
 
   /**
-   * Funcion que asigna el contenido del simbolo.
+   * Sets the symbol content
    * 
    * @param c
-   *          Objeto tipo String que contiene el contenido del s�mbolo.
+   *          String containing the symbol content
    */
   void setContenido(String c) {
     contenido = c;
   }
 
   /**
-   * Funcion que devuelve el contenido del simbolo.
+   * Returns the symbol content
    * 
-   * @return contenido Objeto tipo String que contiene el contenido del s�mbolo.
+   * @return String containing the symbol content
    */
   String getContenido() {
     return contenido;

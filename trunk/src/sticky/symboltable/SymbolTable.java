@@ -5,22 +5,20 @@ import java.util.ArrayList;
 import antlr.Token;
 
 /**
- * Clase perteneciente al paquete tablasimbolos, que representa la tabla de
- * simbolos del analizador
- * 
- * @author GrupoStickman
+ * Class representing the table of symbols that will be used by the Parser
+ * (Anasint)
  * 
  */
 
 public class SymbolTable {
 
-  private final ArrayList<Simbolo> tabla; // Contenedor ArrayList que representa
-
-  // a la tabla de simbolos
+  /**
+   * ArrayList container that stores the symbol table
+   */
+  private final ArrayList<Simbolo> tabla;
 
   /**
-   * Constructor de la clase TablaSimbolos que inicializa los datos necesarios
-   * para la clase.
+   * Constructor of the class SymbolTable that initializes the needed data
    */
   public SymbolTable() {
     tabla = new ArrayList<Simbolo>();
@@ -28,22 +26,17 @@ public class SymbolTable {
   }
 
   /**
-   * Inserta un simbolo en la tabla de simbolos
+   * Inserts a symbol in the symbol table
    * 
    * @param token
-   *          variable tipo token a insertar en la tabla de simbolos
-   * @param tipovariable
-   *          variable tipo String que contiene el tipo de simbolo a insertar.
-   * @return true, si la operacion se ha realizado correctamente o false en caso
-   *         contrario.
+   *          "Token" typed variable to insert in the symbol table
    */
   public boolean put(Token token) {
-    // Comprobamos si el token que vamos a introducir en la tabla de simbolos
-    // Ya existe
+    // Check if the token to add to the table exists already
     if (existeSimbolo(token.getText()))
       return false;
     else {
-      // Añadimos el simbolo a la tabla
+      // Add the symbol to the table
       tabla.add(new Simbolo(token.getText(), null));
       return true;
     }
@@ -51,28 +44,25 @@ public class SymbolTable {
   }
 
   /**
-   * Inserta un simbolo en la tabla de simbolos con un valor cuyo valor le ha
-   * sido dado en su declaracion.
+   * Inserts a symbol in the symbol table with a value asigned at declaration
+   * time
    * 
    * @param token
-   *          variable tipo Token que contiene el token del simbolo.
-   * @param tipovariable
-   *          variable tipo String que contiene el tipo del simbolo.
-   * @param valor
-   *          Objeto tipo Object que contiene el valor del simbolo
-   * @return true si la operacion se realiza correctamente y false en caso
-   *         contrario.
+   *          "Token" typed parameter that contains the symbol token
+   * @param value
+   *          "Objet" typed parameter that contains the symbol value
+   * @return true if the operation ends successfully, false otherwise
    */
 
-  public boolean put(Token token, Object valor) {
+  public boolean put(Token token, Object value) {
 
-    // Comprobamos si existe el simbolo en la tabla de simbolos
+    // Check if the token to add to the table exists already
     if (existeSimbolo(token.getText()))
       return false;
     else {
       // La asignacion es correcta podemos almacenar la variable en la tabla de
       // simbolos
-      Simbolo s = new Simbolo(token.getText(), new String(valor.toString()));
+      Simbolo s = new Simbolo(token.getText(), new String(value.toString()));
       tabla.add(s);
       return true;
 
@@ -80,81 +70,75 @@ public class SymbolTable {
   }
 
   /**
-   * Inserta un simbolo en la tabla de simbolos.
+   * Inserts a symbol in the symbol table
    * 
-   * @param nombre
-   *          variable tipo Token que contiene el simbolo a insertar en la tabla
-   *          de simbolos
-   * @param tipovariable
-   *          variable tipo Object que contiene el tipo de simbolo a insertar en
-   *          la tabla de simbolos
-   * @return devuelve TRUE cuando el proceso se ha realizado correctamente y
-   *         FALSE en caso contrario
+   * @param name
+   *          "Token" parameter that contains the symbol to insert
+   * @param variableType
+   *          "Object" typed parameter that contains the symbol type of the
+   *          symbol to insert
+   * @return true if the operation ends successfully, false otherwise
    */
-  public boolean put(String nombre, Object tipovariable) {
-    // Comprobamos si la variable que vamos a introducir ya esta declarada en la
-    // tabla
-    if (existeSimbolo(nombre))
+  public boolean put(String name, Object variableType) {
+    // Check if the variable to add to the table exists already
+    if (existeSimbolo(name))
       return false;
     else {
-      tabla.add(new Simbolo(nombre, ""));
+      tabla.add(new Simbolo(name, ""));
       return true;
     }
   }
 
   /**
-   * Modifica el valor de un simbolo.
+   * Modifies the value of a symbol
    * 
    * @param token
-   *          Objeto tipo token que indica el token del simbolo.
-   * @param valor
-   *          Objeto tipo Object que contiene el valor del simbolo.
-   * @return true si la operaciion se realiza correctamente y false en caso
-   *         contrario.
+   *          "Token" typed parameter that contains the token of the symbol
+   * @param value
+   *          "Object" typed parameter that contains the symbol value
+   * @return true if the operation ends successfully, false otherwise
    */
-  public boolean set(Token token, Object valor) {
-    // Comprobamos si el simbolo existe en la tabla de simbolos
+  public boolean set(Token token, Object value) {
+    // Check if the symbol to add to the table exists already
     if (existeSimbolo(token.getText()) == false)
       return false;
     else {
       Simbolo simbolo = getSimbolo(token);
 
-      simbolo.setContenido(valor.toString());
+      simbolo.setContenido(value.toString());
       return true;
     }
   }
 
   /**
-   * Devuelve el contenido de un simbolo de la tabla de simbolos, cuyo nombre
-   * viene designado por la variable String nombre pasada al metodo.
+   * Returns the content of the symbol whith the given name in the symbol table
    * 
-   * @param nombre
-   *          variable tipo String que contiene el nombre del simbolo.
-   * @return variable String que contiene el contenido del simbolo.
+   * @param name
+   *          "String" containing the symbol name
+   * @return String contained in the symbol
    */
-  public String getContenidoSimbolo(String nombre) {
+  public String getContenidoSimbolo(String name) {
     String contenido = "";
 
     for (int i = 0; i < tabla.size(); i++)
-      if (nombre.compareTo(tabla.get(i).getNombre()) == 0)
+      if (name.compareTo(tabla.get(i).getNombre()) == 0)
         contenido = tabla.get(i).getContenido();
 
     return contenido;
   }
 
   /**
-   * Busca un simbolo en la tabla de simbolos.
+   * Searches for a symbol in the symbol table
    * 
-   * @param nombre
-   *          variable tipo String que contiene el nombre del simbolo.
-   * @return true, si la operacion se ha realizado correctamente o false en caso
-   *         contrario.
+   * @param name
+   *          "String" containing the symbol name
+   * @return true if the operation ends successfully, false otherwise
    */
-  public boolean existeSimbolo(String nombre) {
+  public boolean existeSimbolo(String name) {
     boolean existe = false;
 
     for (int i = 0; i < tabla.size(); i++)
-      if (nombre.compareTo(tabla.get(i).getNombre()) == 0)
+      if (name.compareTo(tabla.get(i).getNombre()) == 0)
         existe = true;
 
     return existe;
@@ -164,9 +148,11 @@ public class SymbolTable {
    * Devuelve un simbolo de la tabla de simbolos designado por el parametro
    * token
    * 
+   * Returns a symbol from the symbol table designed by the given token
+   * 
    * @param token
-   *          Objeto tipo Token que designa el token del simbolo
-   * @return El simbolo de la tabla de simbolos
+   *          "Token" that designs the symbol to return
+   * @return Symbol from the symbol table to return
    */
   public Simbolo getSimbolo(Token token) {
     Simbolo simbolo = null;
@@ -179,6 +165,13 @@ public class SymbolTable {
     return simbolo;
   }
 
+  /**
+   * Method for deleting a symbol from the symbol table
+   * 
+   * @param token
+   *          "Token" that designs the symbol to return
+   * @return Name of the symbol. If the symbol was not found it returns null
+   */
   public String delSimbolo(Token token) {
     Simbolo simbolo = null;
     String nombre = token.getText();
