@@ -6,7 +6,7 @@ import java.io.InputStream;
 
 import antlr.ANTLRException;
 
-public abstract class Procesador {
+public abstract class Processor {
 
   private static String output = "";
   private static int debugMode = 1; // Por defecto 2 (lo muestra todo)
