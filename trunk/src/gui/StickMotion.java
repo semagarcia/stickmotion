@@ -427,7 +427,7 @@ public class StickMotion extends javax.swing.JFrame {
     iconStop.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
     iconStop.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        iconInterpreterActionPerformed(evt);
+        optionFileStopActionPerformed(evt);
       }
     });
 
@@ -1088,13 +1088,18 @@ public class StickMotion extends javax.swing.JFrame {
     int debugMode = 2;
 
     // habilitar boton stop <-------------------------
-    myThread = new InterpreterThread();
-    myThread.interpreter(this, editor.getText(), debugMode);
-    scene.start();
+
+    myThread = new InterpreterThread(this, editor.getText(), debugMode);
+    myThread.start();
   }
 
+  /**
+   * shows the results of the interpreter in the application
+   * 
+   * @param results
+   */
   public void setResults(String results) {
-    // show the results of the interpreter in the application
+
     editorResults.setText(results);
   }
 
@@ -1105,7 +1110,7 @@ public class StickMotion extends javax.swing.JFrame {
   @SuppressWarnings("deprecation")
   private void optionFileStopActionPerformed(java.awt.event.ActionEvent evt) {
     myThread.stop();
-    disablePlay();
+    enablePlay();
   }
 
   private void iconExitActionPerformed(java.awt.event.ActionEvent evt) {
