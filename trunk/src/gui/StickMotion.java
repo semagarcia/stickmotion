@@ -1025,6 +1025,10 @@ public class StickMotion extends javax.swing.JFrame {
     // ... (the higher the level, the more detailed the info will be)
 
     disablePlay(); // enable the Stop button
+    setResults("Procesando el código...\n"
+        + "Los resultados se mostrarán al finalizar.\n"
+        + "Puede pulsar el botón de Parada para cancelar la ejecución.\n"
+        + "Compruebe que no existan bucles infinitos.");
     myThread = new InterpreterThread(this, editor.getText(), debugMode);
     myThread.start();
   }
