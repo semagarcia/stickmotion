@@ -44,18 +44,11 @@ class Analex extends Lexer;
 		IZQ="IZQ";
 		DER="DER";
 		
-		//Inclusion de codigo
-		INCLUIR="incluir";
-		
 		//Impresión por pantalla
 		IMPRIMIR="mostrar";
 		
 		//Otras variables
 		PI = "PI";
-		
-		//Definicion de funciones
-		//	DEF="def";
-
 				
 	}
 
@@ -87,7 +80,7 @@ class Analex extends Lexer;
 	VERDADERO : "VERDAD";
 	FALSO : "FALSO";
 	
-	//Javi: Dos Puntos
+	//Dos Puntos
 	DOBLE_PUNTO: ':'; 
 	
 	//Llaves

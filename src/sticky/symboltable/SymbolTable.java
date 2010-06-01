@@ -15,13 +15,13 @@ public class SymbolTable {
   /**
    * ArrayList container that stores the symbol table
    */
-  private final ArrayList<Simbolo> tabla;
+  private final ArrayList<Symbol> tabla;
 
   /**
    * Constructor of the class SymbolTable that initializes the needed data
    */
   public SymbolTable() {
-    tabla = new ArrayList<Simbolo>();
+    tabla = new ArrayList<Symbol>();
 
   }
 
@@ -37,7 +37,7 @@ public class SymbolTable {
       return false;
     else {
       // Add the symbol to the table
-      tabla.add(new Simbolo(token.getText(), null));
+      tabla.add(new Symbol(token.getText(), null));
       return true;
     }
 
@@ -62,7 +62,7 @@ public class SymbolTable {
     else {
       // La asignacion es correcta podemos almacenar la variable en la tabla de
       // simbolos
-      Simbolo s = new Simbolo(token.getText(), new String(value.toString()));
+      Symbol s = new Symbol(token.getText(), new String(value.toString()));
       tabla.add(s);
       return true;
 
@@ -84,7 +84,7 @@ public class SymbolTable {
     if (existeSimbolo(name))
       return false;
     else {
-      tabla.add(new Simbolo(name, ""));
+      tabla.add(new Symbol(name, ""));
       return true;
     }
   }
@@ -99,11 +99,11 @@ public class SymbolTable {
    * @return true if the operation ends successfully, false otherwise
    */
   public boolean set(Token token, Object value) {
-    // Check if the symbol to add to the table exists already
+    // Check if the symbol to add to the table already exists
     if (existeSimbolo(token.getText()) == false)
       return false;
     else {
-      Simbolo simbolo = getSimbolo(token);
+      Symbol simbolo = getSimbolo(token);
 
       simbolo.setContenido(value.toString());
       return true;
@@ -154,8 +154,8 @@ public class SymbolTable {
    *          "Token" that designs the symbol to return
    * @return Symbol from the symbol table to return
    */
-  public Simbolo getSimbolo(Token token) {
-    Simbolo simbolo = null;
+  public Symbol getSimbolo(Token token) {
+    Symbol simbolo = null;
     String nombre = token.getText();
 
     for (int i = 0; i < tabla.size(); i++)
@@ -173,7 +173,7 @@ public class SymbolTable {
    * @return Name of the symbol. If the symbol was not found it returns null
    */
   public String delSimbolo(Token token) {
-    Simbolo simbolo = null;
+    Symbol simbolo = null;
     String nombre = token.getText();
 
     for (int i = 0; i < tabla.size(); i++)

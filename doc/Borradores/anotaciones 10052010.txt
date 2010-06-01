@@ -1,12 +1,12 @@
 CAMBIOS
-- Debug: indicar la línea de error.
-- Division por 0: Tomarla como error o asignar un valor nulo.
+- Debug: indicar la línea de error. HECHO
+- Division por 0: Tomarla como error o asignar un valor nulo. HECHO, asigna 0.
 - Al sumar, por ejemplo, booleano y aritmético, dar el error y no tomar el primer valor encontrado.
 - Números negativos en los bucles.
 
 MEJORA
 - Al hacer doble click en el debug, ir a la línea en el código correspondiente.
-- Añadir a depuración el valor final de los bucles o condicón para saber que resultado da.
+- Añadir a depuración el valor final de los bucles o condicón para saber que resultado da. HECHO
 
 DOCUMENTACIÓN FINAL
 - Apartado con la gramática
