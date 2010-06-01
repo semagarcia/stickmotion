@@ -1022,9 +1022,7 @@ public class StickMotion extends javax.swing.JFrame {
     // debugMode == 2 -> Shows errors and debug level 1 and 2
     // ... (the higher the level, the more detailed the info will be)
 
-    // habilitar boton stop <-------------------------
-
-    disablePlay();
+    disablePlay(); // enable the Stop button
     myThread = new InterpreterThread(this, editor.getText(), debugMode);
     myThread.start();
   }
@@ -1083,7 +1081,7 @@ public class StickMotion extends javax.swing.JFrame {
           "Documento con cambios",
           javax.swing.JOptionPane.YES_NO_CANCEL_OPTION,
           javax.swing.JOptionPane.WARNING_MESSAGE, icon);
-      // Ahora analizamos el resultado
+      // Now let's check the result
       if (opc == JOptionPane.YES_OPTION && !nameFile.equals("")) { // Save
         saveStk(); // Saves directly because the filename already exists
         editor.setText(""); // a new file is created (it's cleared)
@@ -1097,7 +1095,7 @@ public class StickMotion extends javax.swing.JFrame {
       // If the dialog window is closed or the cancel button is pressed, dont do
       // anything
 
-      // También hay que limpiar el área de resultados
+      // We also have to clean the result area
       editorResults.setText("");
     }
   }
@@ -1111,16 +1109,16 @@ public class StickMotion extends javax.swing.JFrame {
     javax.swing.JFileChooser openAs = new javax.swing.JFileChooser();
     openAs.setFileSelectionMode(javax.swing.JFileChooser.FILES_AND_DIRECTORIES);
     // openAs.setAcceptAllFileFilterUsed(true);
-    int opc = openAs.showOpenDialog(this); // Se muestra el diálogo
+    int opc = openAs.showOpenDialog(this); // The dialog is shown
 
-    // Definición de variables temporales
+    // Temporal variables definition
     String content = "", line = "";
 
-    // Ahora comprobamos si ha pulsado sobre aceptar
+    // Now let's check if it "OK" button was pressed
     if (opc == javax.swing.JFileChooser.APPROVE_OPTION) {
-      // Si se ha pulsado, obtenemos la ruta absoluta al archivo
+      // If it was, get the absolute path of the file
       nameFile = openAs.getSelectedFile().getAbsolutePath();
-      // Ahora comprobamos si es una extensión válida de fichero (.stk)
+      // Now check if it's a valid file extension (.stk)
       if (!nameFile.endsWith(".stk")) {
         // Error e = new Error(this, true);
         // e.setVisible(true);
@@ -1128,37 +1126,37 @@ public class StickMotion extends javax.swing.JFrame {
         documentSaved = true; // documento en su estado actual, guardado
         documentModified = false; // documento no modificado, actualizado
 
-        // El objeto FileReader lee desde un fichero de texto
+        // The FileReader object reads from a text file
         FileReader fr = null;
-        // El objeto BufferedReader permite leer líneas completas
+        // The BufferedReader object allows for reading complete lines
         BufferedReader br = null;
 
-        // Leemos el archivo y lo insertamos en el editor
+        // We read the file and insert it in the editor
         try {
-          // Apertura del fichero y vamos leyendo línea a línea
+          // Let's open the file and read it line by line
           fr = new FileReader(nameFile);
           br = new BufferedReader(fr);
 
-          // Lectura línea línea del fichero hasta llegar a EOF
+          // Reading line by line till reaching EOF
           while ((line = br.readLine()) != null)
-            // Debemos insertar el salto de línea a mano
+            // We should insert the carrier return manually
             content += (line + '\n');
         } catch (Exception e) {
           e.printStackTrace();
         } finally {
-          // En finally cerramos el fichero, asegurando que se cierra tanto
-          // si todo va bien como si salta una excepcion.
+          // Here we close the file, assuring that it closes even if an exepcion
+          // was triggered
           try {
             if (null != fr)
               fr.close();
           } catch (Exception e2) {
             e2.printStackTrace();
           }
-        } // fin finally
-        // Una vez leído el contenido, lo insertamos en el editor
+        } // end of finally
+        // Once the content is read, we insert it in the editor
         editor.setText(content);
-      } // fin else
-    } // fin if(opc == x)
+      } // end of else
+    } // end of if(opc == x)
   }
 
   /**
@@ -1170,10 +1168,10 @@ public class StickMotion extends javax.swing.JFrame {
   private void optionFileSaveActionPerformed(java.awt.event.ActionEvent evt) {
     if (!documentSaved && documentModified && !nameFile.equals(""))
       // Documento abierto, modificado y sin guardar dichos cambios
-      saveStk(); // Guarda directamente con el mismo nombre
-    // Documento nuevo que será guardado por primera vez
+      saveStk(); // Stores directly with the same name
+    // New document that will be closed the first time
     else if (!documentSaved && documentModified && nameFile.equals(""))
-      optionFileSaveAsActionPerformed(evt); // Para guardar por primera vez
+      optionFileSaveAsActionPerformed(evt); // For storing the first time
   }
 
   /**
@@ -1232,17 +1230,20 @@ public class StickMotion extends javax.swing.JFrame {
     editor.paste();
   }
 
+  /** Clean the text area */
   private void optionEditClearActionPerformed(java.awt.event.ActionEvent evt) {
-    editor.setText(""); // Limpiamos el área de texto
+    editor.setText("");
   }
 
+  /** Undo if it can be done */
   private void optionEditUndoActionPerformed(java.awt.event.ActionEvent evt) {
-    if (undoRedoManager.canUndo()) // Si se puede deshacer
+    if (undoRedoManager.canUndo())
       undoRedoManager.undo();
   }
 
+  /** Redo if it can be done */
   private void optionEditRedoActionPerformed(java.awt.event.ActionEvent evt) {
-    if (undoRedoManager.canRedo()) // Si se puede rehacer
+    if (undoRedoManager.canRedo())
       undoRedoManager.redo();
   }
 
@@ -1287,15 +1288,14 @@ public class StickMotion extends javax.swing.JFrame {
    */
   private void optionCondIfActionPerformed(java.awt.event.ActionEvent evt) {
     String[] options = { "if", "if - else", "if{} - else{}" };
-    // Mostramos ahora el cuadro de diálogo convenientemente "castingzado"
+    // Let's show the dialog box conveniently "casting-ized"
     String opc = (String) JOptionPane.showInputDialog(null,
         "Seleccione el tipo de construcción if",
         "Insercción de estructura condicional", JOptionPane.QUESTION_MESSAGE,
-        null, options, // Las posibles opciones (array)
-        options[2]); // La opción por defecto
+        null, options, // possible options (array)
+        options[2]); // default option
 
-    // Buscamos ahora el patrón seleccionado (no podemos insertarlo
-    // directamente)
+    // Let's search not the selected pattern (can't be directly inserted)
     String si = new String();
     if (opc.equals(options[0])) // if
       si = "si()\n\t";
@@ -1304,7 +1304,7 @@ public class StickMotion extends javax.swing.JFrame {
     else if (opc.equals(options[2])) // if - else multimlínea
       si = "si() {\n\n} sino {\n\n}";
 
-    // Ahora insertamos la construcción if terminada en la posición especificada
+    // Now let's insert the completed "if" construction in the right place
     Caret pos = editor.getCaret();
     try {
       editor.getDocument().insertString(pos.getDot(), si, null);
@@ -1316,11 +1316,11 @@ public class StickMotion extends javax.swing.JFrame {
   private void optionDebugModeActionPerformed(java.awt.event.ActionEvent evt) {
     String[] debug = { "0 - Sólo errores", "1 - Información básica",
         "2 - Información auxiliar" };
-    // Mostramos ahora el cuadro de diálogo convenientemente "castingzado"
+    // Let's show the dialog box conveniently "casting-ized"
     String opc = (String) JOptionPane.showInputDialog(null,
         "¿Qué nivel de depuración deseas?", "Depurador de StickMotion",
         JOptionPane.QUESTION_MESSAGE, null, debug, debug[0]);
-    // if the user press scape, this fragment catch the exception
+    // if the user press scape, this fragment will catch the exception
     try {
       debugMode = Integer.parseInt(opc.substring(0, 1));
     } catch (java.lang.NullPointerException esc) {
@@ -1336,8 +1336,8 @@ public class StickMotion extends javax.swing.JFrame {
    */
   private void optionHelpHelpActionPerformed(java.awt.event.ActionEvent evt) {
     Help Helpy = new Help(this, documentSaved);
-    Helpy.setModal(true); // La hacemos modal
-    Helpy.setVisible(true); // Mostramos la ventana de diálogo
+    Helpy.setModal(true); // makes it modal
+    Helpy.setVisible(true); // will show the dialog window
   }
 
   /**
@@ -1345,8 +1345,8 @@ public class StickMotion extends javax.swing.JFrame {
    */
   private void optionHelpStickyActionPerformed(java.awt.event.ActionEvent evt) {
     AboutSticky Sticky = new AboutSticky(this, documentSaved);
-    Sticky.setModal(true); // La hacemos modal
-    Sticky.setVisible(true); // Mostramos la ventana de diálogo
+    Sticky.setModal(true); // makes it modal
+    Sticky.setVisible(true); // will show the dialog window
   }
 
   /**
@@ -1354,8 +1354,8 @@ public class StickMotion extends javax.swing.JFrame {
    */
   private void optionHelpAboutActionPerformed(java.awt.event.ActionEvent evt) {
     AboutStickMotion Credits = new AboutStickMotion(this, documentSaved);
-    Credits.setModal(true); // La hacemos modal
-    Credits.setVisible(true); // Mostramos la ventana de diálogo
+    Credits.setModal(true); // makes it modal
+    Credits.setVisible(true); // will show the dialog window
   }
 
   /**
@@ -1390,17 +1390,17 @@ public class StickMotion extends javax.swing.JFrame {
       e.printStackTrace();
     } finally {
       try {
-        // Nuevamente aprovechamos el finally para asegurarnos el cierre
+        // Now we use "finally" to ensure the closing
         if (null != f)
           f.close();
       } catch (Exception e2) {
         e2.printStackTrace();
       }
     }
-    // Modificamos los flags correspondientes
-    documentModified = false; // Fichero sin modificaciones actuales
-    documentSaved = true; // Fichero guardado
-    iconSaveStk.setEnabled(false); // No se puede guardar, es actual.
+    // Modify the proper flags
+    documentModified = false; // File without modifications, currently
+    documentSaved = true; // Saved file
+    iconSaveStk.setEnabled(false); // It can't be saved, it's already updated
   }
 
   /**
@@ -1410,9 +1410,9 @@ public class StickMotion extends javax.swing.JFrame {
    * @param evt
    */
   private void editorKeyTyped(java.awt.event.KeyEvent evt) {
-    documentModified = true; // Se ha modificado el contenido del editor
-    documentSaved = false; // Dichos cambios no se han guardado
-    iconSaveStk.setEnabled(true); // Habilitamos el icono de guardar
+    documentModified = true; // The content of the editor has been modified
+    documentSaved = false; // There are unsaved changes
+    iconSaveStk.setEnabled(true); // Enable the save icon
   }
 
   /**

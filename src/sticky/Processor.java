@@ -93,11 +93,9 @@ public abstract class Processor {
    *          Message to show if the given menu level is active
    */
   public static void println(int debugLevel, String str) {
-    // debugLevel<0 -> Información vital (Mensajes de inicio y fin de sticky y
-    // primitiva
-    // mostrar() )
-    // debugLevel == 0 -> Mensajes de error
-    // debugLevel > 0 -> Mensajes Debug <debugLevel>.
+    // debugLevel<0 -> Vital Information (start/end messages and mostrar())
+    // debugLevel == 0 -> Error messages
+    // debugLevel > 0 -> Debug messages <debugLevel>.
     if (debugLevel > 0) {
       if (debugLevel <= debugMode)
         str = "DEBUG " + debugLevel + ": " + str;
@@ -108,8 +106,8 @@ public abstract class Processor {
       output += str + '\n';
       System.out.println(output);
     } else {
-      // Este es necesario para la primitiva mostrar(), para que no se imprima
-      // ni Error ni Debug delante
+      // This is needed for mostrar() built-in function, so that ERROR and DEBUG
+      // is not printed
       output += str + '\n';
       System.out.println(output);
     }
