@@ -1,14 +1,3 @@
-/*
- * To change this template, choose Tools | Templates and open the template in
- * the editor.
- */
-
-/*
- * Help.java
- * 
- * Created on 26-abr-2010, 12:54:43
- */
-
 package gui;
 
 /**
@@ -43,7 +32,7 @@ public class Help extends javax.swing.JDialog {
         .createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
 
     labelImageHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-        "/gui/images/helpImage.png"))); // NOI18N
+        "/gui/images/helpImage.png")));
 
     javax.swing.GroupLayout imagePanelLayout = new javax.swing.GroupLayout(
         imagePanel);
@@ -65,7 +54,7 @@ public class Help extends javax.swing.JDialog {
     textLabel2.setText("en el CD proporcionado o en el manual impreso.");
 
     backButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-        "/gui/images/next2.png"))); // NOI18N
+        "/gui/images/next2.png")));
     backButton.setText("¡Volver!");
     backButton.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -129,12 +118,17 @@ public class Help extends javax.swing.JDialog {
             javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
     pack();
-  }// </editor-fold>//GEN-END:initComponents
+  }
 
-  private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_backButtonActionPerformed
+  /**
+   * Method for hiding the panel when the "back" button is pressed
+   * 
+   * @param evt
+   */
+  private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {
     // Cuando se pulse sobre el botón Volver
     setVisible(false);
-  }// GEN-LAST:event_backButtonActionPerformed
+  }
 
   /**
    * Main Methos
@@ -157,13 +151,10 @@ public class Help extends javax.swing.JDialog {
     });
   }
 
-  // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton backButton;
   private javax.swing.JPanel imagePanel;
   private javax.swing.JLabel labelImageHelp;
   private javax.swing.JLabel textLabel1;
   private javax.swing.JLabel textLabel2;
   private javax.swing.JPanel textPanel;
-  // End of variables declaration//GEN-END:variables
-
 }
