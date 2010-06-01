@@ -23,10 +23,14 @@ public abstract class Processor {
       anasint.instrucciones();
 
     } catch (ANTLRException ae) {
+      Processor.println(0, ae.getMessage());
       System.err.println(ae.getMessage());
+
     } catch (FileNotFoundException fnfe) {
+      Processor.println(0, fnfe.getMessage());
       System.err.println("No se encontró el fichero");
     }
+
   }
 
   public static String run(String code, int debug) {
@@ -43,6 +47,7 @@ public abstract class Processor {
       anasint.instrucciones();
 
     } catch (ANTLRException ae) {
+      Processor.println(0, ae.getMessage());
       System.err.println(ae.getMessage());
     }
     return output;
