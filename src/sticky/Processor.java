@@ -29,6 +29,8 @@ public abstract class Processor {
     } catch (FileNotFoundException fnfe) {
       Processor.println(0, fnfe.getMessage());
       System.err.println("No se encontró el fichero");
+    } catch (Exception e) {
+      System.err.println(e.getMessage());
     }
 
   }
@@ -49,6 +51,8 @@ public abstract class Processor {
     } catch (ANTLRException ae) {
       Processor.println(0, ae.getMessage());
       System.err.println(ae.getMessage());
+    } catch (Exception e) {
+      System.err.println(e.getMessage());
     }
     return output;
   }

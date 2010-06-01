@@ -863,7 +863,10 @@ expr_relacional returns [Object respuesta = null]
 
 evaluar_expr returns [Object respuesta = null]: 
 	respuesta = expr_or {Processor.println(2, "Evaluar expresion: "+ respuesta);};
-
+	exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+		 }
 
 
 ////////////////////// SENTENCIAS IF //////////////////////////////////////////////
@@ -1183,8 +1186,14 @@ sentencia_while
 	(B_WHILE PAR_IZQ evaluar_expr PAR_DER LLAVE_IZQ) =>   //1
 	B_WHILE PAR_IZQ expresion = evaluar_expr PAR_DER LLAVE_IZQ
 	{
-		b = ((Boolean)expresion).booleanValue();
-				
+		try {
+			if (expresion != null)
+				b = ((Boolean)expresion).booleanValue();
+			else
+				b = false;
+		}	catch (Exception e) {
+		 Processor.println(0, "En línea " + ": " + e.toString() );
+		}			
 	} 
 	({b==true}? (sentencia)* LLAVE_DER {rewind(marker);}
     | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
@@ -1193,7 +1202,14 @@ sentencia_while
 	(B_WHILE PAR_IZQ evaluar_expr PAR_DER) =>   //2
 	B_WHILE PAR_IZQ expresion = evaluar_expr PAR_DER
 	{
-		b = ((Boolean)expresion).booleanValue();
+		try {
+			if (expresion != null)
+				b = ((Boolean)expresion).booleanValue();
+			else
+				b = false;
+		}	catch (Exception e) {
+		 Processor.println(0, "En línea " + ": " + e.toString() );
+		}		
 				
 	} 
 		({b==true}? sentencia {rewind(marker);}
