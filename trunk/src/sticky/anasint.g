@@ -12,10 +12,22 @@ class Anasint extends Parser;
 	options {
 		k=2; 
 	}
+	
 	{
 		SymbolTable tablaSimbolos= new SymbolTable();
 		//CONSTANT
 		double const_pi = Math.PI;
+		//Exception function
+		void mostrarExcepcion(RecognitionException re)
+		{
+			Processor.println(0,"En línea " + re.getLine() + " funcion:" + re.getMessage());
+			reportError(re);
+			try {
+    			consume(); //Consumir el token problemático
+	    		consumeUntil(FIN_INSTRUCCION);
+			} catch (Exception e) {
+			}
+		}
 	}
 
 	instrucciones 
@@ -25,22 +37,28 @@ class Anasint extends Parser;
 	} 
 	
 	: (sentencia)* fin_interprete; //Una o varias sentencias, y finaliza
-	
-	
-	sentencia: (simple FIN_INSTRUCCION) | bucle; //O una sentencia simple con ; o un bucle, que no lleva ; para acabar (si sus intrucciones)
-	
+	sentencia: (simple fi:FIN_INSTRUCCION)	| bucle; //O una sentencia simple con ; o un bucle, que no lleva ; para acabar (si sus intrucciones)
+	exception
+ 		catch [RecognitionException re] {
+	    	mostrarExcepcion(re);
+		 }
+
 	simple {String valor; Object valor2;}: declaracion | asignacion | eliminar_var | funcion_sticky | valor=imprimir { Processor.println(-1,valor); } | valor2=expr_incremento; //Esto permitirá usar ; para salir del greedy, ya que ; no se pide aquí
+	exception
+ 			catch [RecognitionException re] {
+ 				mostrarExcepcion(re);
+		}
 	bucle: sentenciaIF | sentenciaWHILE | sentenciaFOR | sentenciaSWITCH;
-	
+
 	//Para declarar variables hay diferentes alternativas:
 	//1. Se declara una variable sin inicializarse.
-	//2. Se declara una variable y si inicializa.
+	//2. Se declara una variable y si inicializa. 
 	//3. Se declara más de una variable.
 	// NOTA: NO se permite inicialización de variables mientras se declara más de una.
 
 declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}:
 	(	//Alternativa 1
-		(VAR IDENT FIN_INSTRUCCION) => VAR i1:IDENT
+		(var1:VAR IDENT FIN_INSTRUCCION) => VAR i1:IDENT
 		{ 
 		  boolean res=tablaSimbolos.put(i1);
 		  if(res)
@@ -48,9 +66,8 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 		  else
 		  	Processor.println(0, "Linea "+i1.getLine()+": Variable \""+i1.getText()+"\" no ha sido declarada, ya existe");
 		}
-		
 		//Alternativa 2
-		|(VAR IDENT OP_ASIG expresionOR) =>VAR i3:IDENT OP_ASIG (x=expresionOR) 
+		|(VAR IDENT OP_ASIG expresionOR) => VAR i3:IDENT OP_ASIG (x=expresionOR) 
 			{			
 				boolean res = tablaSimbolos.put(i3,x);	// modifico el valor en la tabla de simbolos
 				if(res)
@@ -60,7 +77,7 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 		
 			}
 		//Alternativa 3
-		|(VAR IDENT (SEPARA IDENT)*) => VAR i4:IDENT (SEPARA i3_alt:IDENT {lista.add(i3_alt);} )* 
+		|(VAR IDENT (SEPARA IDENT)*) => var4:VAR i4:IDENT (SEPARA i3_alt:IDENT {lista.add(i3_alt);} )* 
 					{
 						// Tenemos que insertar cada identificador encontrado en la tabla de simbolos
 						boolean res = tablaSimbolos.put(i4);
@@ -79,10 +96,15 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 		  							Processor.println(0, "Linea "+tok.getLine()+": Variable \""+tok.getText()+"\" no ha sido declarada, ya existe");
 						}
 					}
+
 					
 	);
+	exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+		 }
 
-
+		
 ///////////////////// REGLAS PARA LAS ASIGNACIONES DE VARIABLES //////////////////
 
 asignacion 
@@ -96,6 +118,10 @@ asignacion
 			else 
 				Processor.println(0, "Linea "+i2.getLine()+": Asignacion no realizada, no existe la variable \""+i2.getText()+"\"");
 	} ;
+	exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+		 }
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -143,6 +169,10 @@ expr_aritmetica returns[Object resultado = null]
 		
 	})*
 	;
+	exception
+ 		catch [RecognitionException re] {
+			mostrarExcepcion(re);
+		 }
 	
 
 expr_mod returns [Object resultado = null]
@@ -457,6 +487,11 @@ expr_base returns [Object resultado = null]:
 		| (PAR_IZQ expr_aritmetica PAR_DER) => PAR_IZQ (resultado = expr_aritmetica) PAR_DER
 		| (PAR_IZQ expresionOR PAR_DER) => PAR_IZQ (resultado = expresionOR) PAR_DER
 		;
+		exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+		 }
+
 
 expr_incremento returns [Object resultado = null]:
 (IDENT OP_INC) => id2:IDENT OP_INC
@@ -543,6 +578,7 @@ expr_incremento returns [Object resultado = null]:
 				
 		}	;
 
+
 expresionOR returns [Object resultado = null]
 {Object exp1 = null; Object exp2=null; Object exp3=null;}: 
 	exp1= expresionXOR
@@ -570,6 +606,10 @@ expresionOR returns [Object resultado = null]
 			}
 	  }	)*
 	;
+	exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+		 }
 
 expresionXOR returns [Object resultado = null]
 {Object exp1 = null; Object exp2=null; Object exp3=null;}: 
@@ -833,6 +873,7 @@ expr_relacional returns [Object respuesta = null]
 evaluarExpresion returns [Object respuesta = null]: 
 	respuesta = expresionOR {Processor.println(2, "Evaluar expresion: "+ respuesta);};
 
+
 ////////////////////// SENTENCIAS IF //////////////////////////////////////////////
 //1 -> if de la forma si (VERDAD) { hola = 1; } sino { hola = 2; var otra; }
 //2 -> if de la forma si (VERDAD) hola = 1; sino hola=2;
@@ -882,7 +923,11 @@ evaluarExpresion returns [Object respuesta = null]:
         )
         )?
         ;
-    
+       	exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+		 }
+		
     
 	sentenciaSWITCH {Object resultado; int flag; int acumulador = 0; int contador = 0;} :
 	SWITCH PAR_IZQ (resultado=expresionOR) PAR_DER LLAVE_IZQ
@@ -891,6 +936,10 @@ evaluarExpresion returns [Object respuesta = null]:
     |{ acumulador < contador }? (options{greedy=false;}:.)+ LLAVE_DER )
 	END_CASE FIN_INSTRUCCION)? LLAVE_DER
 	;
+	exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+		 }
 	
 	
 	casosSwitch [Object resultado] returns [int n=0] {Object res_eva; String cadena1 = null; String cadena2 = null;}: CASE (res_eva = expresionOR) 
@@ -929,37 +978,56 @@ evaluarExpresion returns [Object respuesta = null]:
 
 eliminar_var {String res;}: SUP id:IDENT
 	{
+		try {
 		  res=tablaSimbolos.delSimbolo(id);
 		  if(res.compareTo(id.getText()) == 0)
 		  	Processor.println(1, "Linea "+id.getLine()+": Variable \""+id.getText()+"\" ha sido eliminada");
 		  else 
 		  	Processor.println(0, "Linea "+id.getLine()+": Variable \""+id.getText()+"\" no ha sido eliminada, no existe");
+		} catch(Exception e) {
+			Processor.println(0, "En línea " + id.getLine() + ": " + e.toString() );
+		}
 	};
+	exception
+ 		catch [RecognitionException re] {
+	    	mostrarExcepcion(re);
+		 }
 	
 funcion_sticky: f_tiempo | f_mover | f_flexionar | f_girar;
 
-f_tiempo {Object res1;}: TIEMPO (est:ESTABLECE|AVANZA) PAR_IZQ res1=expr_aritmetica PAR_DER
+f_tiempo {Object res1;}: tiempo:TIEMPO (est:ESTABLECE|AVANZA) PAR_IZQ res1=expr_aritmetica PAR_DER
 {
 	// Convert to correct format in order to call the function
 	String cadena1 = res1.toString();
-	float res1_float = Float.parseFloat(cadena1);
-	int res1_int = Math.round(res1_float);
+	try {
+		float res1_float = Float.parseFloat(cadena1);
+		int res1_int = Math.round(res1_float);
 
-	Processor.println(1,"Entrando tiempo sticky. "+"res1_int: "+ res1_int);
+		Processor.println(1,"Entrando tiempo sticky. "+"res1_int: "+ res1_int);
 
-	//If option is ESTABLECE, function "tiempo establece" is called.
-	if(est != null) {
-		Processor.println(1,"FSticky -> tiempo establece.");
-		gui.StickMotion.scene.setTime(res1_int);
-	}// Else "tiempo avanza" is called.
-	else {
-		Processor.println(1,"FSticky -> tiempo avanza.");
-		gui.StickMotion.scene.addTime(res1_int);
+		//If option is ESTABLECE, function "tiempo establece" is called.
+		if(est != null) {
+			Processor.println(1,"FSticky -> tiempo establece.");
+			gui.StickMotion.scene.setTime(res1_int);
+		}// Else "tiempo avanza" is called.
+		else {
+			Processor.println(1,"FSticky -> tiempo avanza.");
+			gui.StickMotion.scene.addTime(res1_int);
+		}
+	}catch (NumberFormatException nfe) {
+		 Processor.println(0, "En línea " + tiempo.getLine() + ": El parámetro debe ser un número." );
+	} 
+	catch (Exception e) {
+		 Processor.println(0, "En línea " + tiempo.getLine() + ": " + e.toString() );
 	}
 };
+	exception
+ 		catch [RecognitionException re] {
+	    	mostrarExcepcion(re);
+		 }
 
 
-f_mover {Object res1; Object res2; Object res3; Object res4;}: MOVER STICKMAN PAR_IZQ
+f_mover {Object res1; Object res2; Object res3; Object res4;}: mover:MOVER STICKMAN PAR_IZQ
 		res1=expr_aritmetica SEPARA
 		res2=expr_aritmetica SEPARA
 		res3=expr_aritmetica SEPARA
@@ -968,32 +1036,44 @@ f_mover {Object res1; Object res2; Object res3; Object res4;}: MOVER STICKMAN PA
 	Processor.println(1,"Entrando mover sticky.");
 	
 	// Convert to correct format in order to call the function
+	// Exception in Java.
+	try {
+		String cadena1 = res1.toString(); 
+		float res1_float = Float.parseFloat(cadena1);
+		String cadena2 = res2.toString(); 
+		float res2_float = Float.parseFloat(cadena2);
+		String cadena3 = res3.toString(); 
+		float res3_float = Float.parseFloat(cadena3);
+		String cadena4 = res4.toString(); 
+		float res4_float = Float.parseFloat(cadena4);
+		int res4_int = Math.round(res4_float);
 	
-	String cadena1 = res1.toString(); 
-	float res1_float = Float.parseFloat(cadena1);
-	String cadena2 = res2.toString(); 
-	float res2_float = Float.parseFloat(cadena2);
-	String cadena3 = res3.toString(); 
-	float res3_float = Float.parseFloat(cadena3);
-	String cadena4 = res4.toString(); 
-	float res4_float = Float.parseFloat(cadena4);
-	int res4_int = Math.round(res4_float);
-	
-	gui.StickMotion.scene.moveStickman(res1_float, res2_float, res3_float, res4_int);
-	
-};
+		gui.StickMotion.scene.moveStickman(res1_float, res2_float, res3_float, res4_int);
+	}catch (NumberFormatException nfe) {
+		 Processor.println(0, "En línea " + mover.getLine() + ": El parámetro debe ser un número." );
+	} 
+	catch (Exception e) {
+		 Processor.println(0, "En línea " + mover.getLine() + ": " + e.toString() );
+	}
+};	// Exception in ANTLR.
+	exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+	}
 
-f_flexionar {Object res1; Object res2;}: FLEXIONAR (brazo:BRAZO | PIERNA) (der:DER | IZQ) 
+f_flexionar {Object res1; Object res2;}: flex:FLEXIONAR (brazo:BRAZO | PIERNA) (der:DER | IZQ) 
 		PAR_IZQ res1=expr_aritmetica SEPARA res2=expr_aritmetica PAR_DER
 {
 	Processor.println(1,"Entrando flexionar sticky.");
 	
-	// Convert to correct format in order to call the function
-	String cadena1 = res1.toString(); 
-	float res1_float = Float.parseFloat(cadena1);
-	String cadena2 = res2.toString(); 
-	float res2_float = Float.parseFloat(cadena2);
-	int res2_int = Math.round(res2_float);
+	try {
+		// Convert to correct format in order to call the function
+		String cadena1 = res1.toString(); 
+		float res1_float = Float.parseFloat(cadena1);
+		String cadena2 = res2.toString(); 
+		float res2_float = Float.parseFloat(cadena2);
+		int res2_int = Math.round(res2_float);
+
 
 	//if BRAZO is selected, stiky's amr is moved, else PIERNA has been written and it will be moved.
 	if(brazo != null) {
@@ -1013,29 +1093,43 @@ f_flexionar {Object res1; Object res2;}: FLEXIONAR (brazo:BRAZO | PIERNA) (der:D
 			Processor.println(1,"FSticky --> Pierna Derecha "+res1_float+"º / "+res2_int+" secs.");
 			gui.StickMotion.scene.flexRLeg(res1_float, res2_int);
 		}
-		else {
+		else { 
 			Processor.println(1,"FSticky --> Pierna Izquierda "+res1_float+"º / "+res2_int+" secs.");
 			gui.StickMotion.scene.flexLLeg(res1_float, res2_int);
-		}
+		}	
+	}
+	}catch (NumberFormatException nfe) {
+		 Processor.println(0, "En línea " + flex.getLine() + ": El parámetro debe ser un número." );
+	} 
+	catch (Exception e) {
+		 Processor.println(0, "En línea " + flex.getLine() + ": " + e.toString() );
 	}
 };
+	exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+	}
 
 f_girar {Object res1; Object res2; Object res3;}: 
-		GIRAR (stick:STICKMAN | cab:CABEZA | bra:BRAZO | PIERNA) (der:DER | IZQ)?
+		girar:GIRAR (stick:STICKMAN | cab:CABEZA | bra:BRAZO | PIERNA) (der:DER | IZQ)?
 		PAR_IZQ res1=expr_aritmetica SEPARA res2=expr_aritmetica SEPARA	res3=expr_aritmetica PAR_DER
 		
 {
-	// Convert to correct format in order to call the function
-	String cadena1 = res1.toString(); 
-	float res1_float = Float.parseFloat(cadena1);
-	String cadena2 = res2.toString(); 
-	float res2_float = Float.parseFloat(cadena2);
-	String cadena3 = res3.toString(); 
-	float res3_float = Float.parseFloat(cadena3);
-	int res3_int = Math.round(res3_float);
+	try {
+		// Convert to correct format in order to call the function
+		String cadena1 = res1.toString(); 
+		float res1_float = Float.parseFloat(cadena1);
+		String cadena2 = res2.toString(); 
+		float res2_float = Float.parseFloat(cadena2);
+		String cadena3 = res3.toString(); 
+		float res3_float = Float.parseFloat(cadena3);
+		int res3_int = Math.round(res3_float);
+
 
 	Processor.println(1,"Entrando girar sticky.");
+
 	
+
 	if(stick != null) {
 		Processor.println(1,"Gira Stickman ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
 		gui.StickMotion.scene.rotateStickman(res1_float, res2_float, res3_int);
@@ -1050,25 +1144,36 @@ f_girar {Object res1; Object res2; Object res3;}:
 			Processor.println(1,"Gira Brazo Izquierdo ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
 			gui.StickMotion.scene.rotateLArm(res1_float, res2_float, res3_int);
 		} else 
-		if( der != null ) {
-			Processor.println(1,"Gira Pierna Derecha ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
-			gui.StickMotion.scene.rotateRLeg(res1_float, res2_float, res3_int);
-		} else {
-			Processor.println(1,"Gira Pierna Izquierda ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
-			gui.StickMotion.scene.rotateLLeg(res1_float, res2_float, res3_int);
-		}
+			if( der != null ) {
+				Processor.println(1,"Gira Pierna Derecha ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
+				gui.StickMotion.scene.rotateRLeg(res1_float, res2_float, res3_int);
+			} else {
+				Processor.println(1,"Gira Pierna Izquierda ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
+				gui.StickMotion.scene.rotateLLeg(res1_float, res2_float, res3_int);
+			}
+	}catch (NumberFormatException nfe) {
+		 Processor.println(0, "En línea " + girar.getLine() + ": El parámetro debe ser un número." );
+	} 
+	catch (Exception e) {
+		 Processor.println(0, "En línea " + girar.getLine() + ": " + e.toString() );
+	}
 };
+	exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+	}
 
 fin_interprete:
-	{
-		Processor.println(-1,"...FINALIZANDO STICKY...");
-	}
-	FIN_INTERPRETE
+	fin:FIN_INTERPRETE
 	{
 		consumeUntil(Token.EOF_TYPE);
 		consume();
-		
+		Processor.println(-1,"...FINALIZANDO STICKY...");
 	};
+	exception[fin]
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+		 }
 
 
 //1 -> while de la forma mientras (VERDAD) { hola = 1; hola = 2; var otra; }
@@ -1100,6 +1205,11 @@ sentenciaWHILE
 		({b==true}? sentencia {rewind(marker);}
         | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION )
 	;
+	exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+		 }
+		
 
 
 //Permite bucles-for de la forma:	
@@ -1189,18 +1299,27 @@ sentenciaFOR
     | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION) 
 	
 	;
-	
+	exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+		 }
+
 imprimir returns [String respuesta=null]
 { String expr1; String expr2;}:
-IMPRIMIR PAR_IZQ
-expr1 = impr_base { respuesta = expr1;}
-(OP_SUM expr2 = impr_base
-{
-	respuesta = new String(expr1+expr2);
-	expr1 = respuesta;
+	impr:IMPRIMIR PAR_IZQ
+	expr1 = impr_base { respuesta = expr1;}
+	(OP_SUM expr2 = impr_base
+	{
+		respuesta = new String(expr1+expr2);
+		expr1 = respuesta;
 	
-})* PAR_DER
-;
+	})* PAR_DER
+;// ANTLR Exception.
+	exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+	}
+
 
 impr_base returns [String respuesta=null]
 {Object e;}:
@@ -1247,6 +1366,8 @@ impr_base returns [String respuesta=null]
 			else // No está declarado
 				Processor.println(0,"Linea "+id.getLine()+": la variable no ha sido declarada "+id.getText());
 	} )
-	;
-
-		
+	;	// ANTLR Exception.
+	exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+ 		}

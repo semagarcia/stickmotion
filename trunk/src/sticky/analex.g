@@ -62,7 +62,7 @@ class Analex extends Lexer;
 	//Salto de linea
 	protected NL: ('\n' |
 		("\r\n")=>
-			"\r\n" |
+			"\r\n" | 
 			'\r')
 		{newline();};
 
