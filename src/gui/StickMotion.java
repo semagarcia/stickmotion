@@ -1057,8 +1057,11 @@ public class StickMotion extends javax.swing.JFrame {
     if (myThread != null) {
       myThread.stop();
       myThread = null;
+      // Show the output of the processing until now
       setResults(Processor.getOutput()
           + "\n El procesamiento fue cancelado por el usuario.");
+      // Perform the animations added until now
+      StickMotion.scene.start();
       enablePlay();
     }
   }
