@@ -35,8 +35,8 @@ class Anasint extends Parser;
 		Processor.println(-1,"...INICIANDO STICKY...");		
 	} 
 	
-	: (sentencia)* fin_interprete; //Una o varias sentencias, y finaliza
-	sentencia: (simple fi:FIN_INSTRUCCION)	| bucle; //O una sentencia simple con ; o un bucle, que no lleva ; para acabar (si sus intrucciones)
+	: (sentencia)* fin_interprete; //One or more sentences, and ends
+	sentencia: (simple fi:FIN_INSTRUCCION) | bucle; //Either one simple sentence with ; or loop, that no needs it;
 	exception
  		catch [RecognitionException re] {
 	    	mostrarExcepcion(re);
@@ -52,14 +52,14 @@ class Anasint extends Parser;
 		}
 	
 
-	//Para declarar variables hay diferentes alternativas:
-	//1. Se declara una variable sin inicializarse.
-	//2. Se declara una variable y si inicializa. 
-	//3. Se declara más de una variable.
+	//In order to declare variables we have three options
+	//1. Declare variable without initialization
+	//2. Declare a variable with initialization
+	//3. Declare more than one variable
 	// NOTA: NO se permite inicialización de variables mientras se declara más de una.
 
 declaracion {Object x = null; ArrayList lista = new ArrayList();}:
-	(	//Alternativa 1
+	(	//Option 1
 		(var1:VAR IDENT FIN_INSTRUCCION) => VAR i1:IDENT
 		{ 
 		  boolean res=tablaSimbolos.put(i1);
@@ -68,7 +68,7 @@ declaracion {Object x = null; ArrayList lista = new ArrayList();}:
 		  else
 		  	Processor.println(0, "Linea "+i1.getLine()+": Variable \""+i1.getText()+"\" no ha sido declarada, ya existe");
 		}
-		//Alternativa 2
+		//Option 2
 		|(VAR IDENT OP_ASIG expr_or) =>VAR i3:IDENT OP_ASIG (x=expr_or) 
 
 			{			
@@ -1242,7 +1242,7 @@ sentencia_for
 		b = ((Boolean)expresion).booleanValue();
 		
 		if(hecho == false) {
-		//Obtiene el valor de la variable id
+		//Get value from variable id
 		if(tablaSimbolos.existeSimbolo(id.getText()))
 			{
 				String contenido = tablaSimbolos.getContenidoSimbolo(id.getText());
@@ -1265,7 +1265,7 @@ sentencia_for
 			
 		numero = numero + Integer.parseInt(n.getText());
 			
-		//Guarda el valor 
+		//Saves the value
 		tablaSimbolos.set(id, numero);
 	} 
 	({b==true}? (sentencia)* LLAVE_DER {rewind(marker);}
@@ -1279,7 +1279,7 @@ sentencia_for
 		b = ((Boolean)expresion).booleanValue();
 		
 		if(hecho == false) {
-		//Obtiene el valor de la variable id
+		//Get value for id variable
 		if(tablaSimbolos.existeSimbolo(id2.getText()))
 			{
 				String contenido = tablaSimbolos.getContenidoSimbolo(id2.getText());
@@ -1302,7 +1302,7 @@ sentencia_for
 			
 		numero = numero + Integer.parseInt(n2.getText());
 			
-		//Guarda el valor 
+		//Saves the value
 		tablaSimbolos.set(id2, numero);
 	} 
 	({b==true}? sentencia {rewind(marker);}
@@ -1334,7 +1334,7 @@ imprimir returns [String respuesta=null]
 impr_base returns [String respuesta=null]
 {Object e;}:
 	(n1:CADENA {
-		//Elimina las comillas 
+		//Delete quotes
 		int longitud = (n1.getText()).length();
 		char [] cadena1 = (n1.getText()).toCharArray();
 		String cadena2 = new String();
@@ -1348,10 +1348,10 @@ impr_base returns [String respuesta=null]
 	}
 	|id:IDENT
 	{
-			//Comprobamos que la variable este declarada
+			//Check that variable is declared
 			if(tablaSimbolos.existeSimbolo(id.getText()))
 			{
-				//Contenido de la variable
+				//Variable content
 				String contenido = tablaSimbolos.getContenidoSimbolo(id.getText());
 				
 				if(contenido.compareTo("") == 0)
@@ -1360,7 +1360,7 @@ impr_base returns [String respuesta=null]
 				}
 				else
 				{
-					//Elimina las comillas 
+					//Delete quotes
 					int longitud = contenido.length();
 					char [] cadena1 = contenido.toCharArray();
 					String cadena2 = new String();
@@ -1373,7 +1373,7 @@ impr_base returns [String respuesta=null]
 					respuesta = cadena2;
 				}
 			}
-			else // No está declarado
+			else // Is not declared
 				Processor.println(0,"Linea "+id.getLine()+": la variable no ha sido declarada "+id.getText());
 	} )
 	;	// ANTLR Exception.
