@@ -106,13 +106,15 @@ girar STICKMAN (-3.14/2, 0, 1000);
 $
 
 
----------------------------------------------
-//Aprobaremos la asignatura???? en este código está la respuesta
+//---------------------------------------------
+//Aprobaremos la asignatura en este codigo esta la respuesta
 
-girar BRAZO DER (0, 3.14/2, 1000);
-flexionar BRAZO DER (3.14/1.8, 1000);
-girar BRAZO DER ((-3.14/2), -1, 1000);
-tiempo avanza (1000);
-girar BRAZO IZQ (0, (-3.14/7), 500);
-flexionar BRAZO IZQ (-3.14/1.5, 800);
+
+girar BRAZO DER (0, 3.14/2, 500);
+flexionar BRAZO DER (3.14/1.8, 500);
+girar BRAZO DER ((-3.14/2), -1, 700);
+tiempo avanza (500);
+girar BRAZO IZQ (0, (-3.14/7), 200);
+flexionar BRAZO IZQ (-3.14/1.5, 300);
+
 

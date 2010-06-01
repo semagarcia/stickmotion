@@ -15,12 +15,11 @@ class Anasint extends Parser;
 	
 	{
 		SymbolTable tablaSimbolos= new SymbolTable();
-		//CONSTANT
 		double const_pi = Math.PI;
 		//Exception function
 		void mostrarExcepcion(RecognitionException re)
 		{
-			Processor.println(0,"En línea " + re.getLine() + " funcion:" + re.getMessage());
+			Processor.println(0,"En línea " + re.getLine() + " : " + re.getMessage());
 			reportError(re);
 			try {
     			consume(); //Consumir el token problemático
@@ -44,11 +43,14 @@ class Anasint extends Parser;
 		 }
 
 	simple {String valor; Object valor2;}: declaracion | asignacion | eliminar_var | funcion_sticky | valor=imprimir { Processor.println(-1,valor); } | valor2=expr_incremento; //Esto permitirá usar ; para salir del greedy, ya que ; no se pide aquí
+
+	bucle: sentencia_if | sentencia_while | sentencia_for | sentencia_switch;
+
 	exception
  			catch [RecognitionException re] {
  				mostrarExcepcion(re);
 		}
-	bucle: sentenciaIF | sentenciaWHILE | sentenciaFOR | sentenciaSWITCH;
+	
 
 	//Para declarar variables hay diferentes alternativas:
 	//1. Se declara una variable sin inicializarse.
@@ -56,7 +58,7 @@ class Anasint extends Parser;
 	//3. Se declara más de una variable.
 	// NOTA: NO se permite inicialización de variables mientras se declara más de una.
 
-declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}:
+declaracion {Object x = null; ArrayList lista = new ArrayList();}:
 	(	//Alternativa 1
 		(var1:VAR IDENT FIN_INSTRUCCION) => VAR i1:IDENT
 		{ 
@@ -67,9 +69,10 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 		  	Processor.println(0, "Linea "+i1.getLine()+": Variable \""+i1.getText()+"\" no ha sido declarada, ya existe");
 		}
 		//Alternativa 2
-		|(VAR IDENT OP_ASIG expresionOR) => VAR i3:IDENT OP_ASIG (x=expresionOR) 
+		|(VAR IDENT OP_ASIG expr_or) =>VAR i3:IDENT OP_ASIG (x=expr_or) 
+
 			{			
-				boolean res = tablaSimbolos.put(i3,x);	// modifico el valor en la tabla de simbolos
+				boolean res = tablaSimbolos.put(i3,x);	// introduzco el valor en la tabla de simbolos
 				if(res)
 		  			Processor.println(1, "Linea "+i3.getLine()+": Variable \""+i3.getText()+"\" ha sido declarada con valor "+x);
 		  		else 
@@ -105,28 +108,23 @@ declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}
 		 }
 
 		
-///////////////////// REGLAS PARA LAS ASIGNACIONES DE VARIABLES //////////////////
 
 asignacion 
-	{ String mensaje = new String(); Object respuesta; Object respuesta2;}:
+	{ Object respuesta; Object respuesta2;}:
 
-	i2:IDENT OP_ASIG (respuesta = expresionOR)
-	
+	i2:IDENT OP_ASIG (respuesta = expr_or)
 	{		
 			if(tablaSimbolos.set(i2,respuesta))	
 				Processor.println(1, "Linea "+i2.getLine()+": Asignacion a la variable \""+i2.getText()+"\": "+respuesta);
 			else 
 				Processor.println(0, "Linea "+i2.getLine()+": Asignacion no realizada, no existe la variable \""+i2.getText()+"\"");
 	} ;
+
 	exception
  		catch [RecognitionException re] {
  			mostrarExcepcion(re);
 		 }
-//////////////////////////////////////////////////////////////////////////////////
 
-
-
-/////////////////// EXPRESIONES ARITMETICAS //////////////////////////////////////////////
 
 	
 expr_aritmetica returns[Object resultado = null]
@@ -182,7 +180,6 @@ expr_mod returns [Object resultado = null]
 		//Esto es por si sucede algo así var=-2; El signo - al principio hace que e1 primer operando sea null y el segundo 2
 		if(e1 == null)
 			e1 = 0;
-
 		resultado = e1;
 	}
 	(linea1:OP_SUM e2=expr
@@ -401,14 +398,13 @@ expr_raiz returns [Object resultado = null]
 	exp1=expr_base {
 		//Esto es por si sucede algo así var=-2; El signo - al principio hace que e1 primer operando sea null y el segundo 2
 		if(exp1 == null)
-			exp1 = 0;
-			 
-		resultado = exp1;
+			exp1 = 0; 
+			resultado = exp1;
 		}
 	|
 	( linea:OP_RAIZ exp2=expr_base
 	  {
-	  if(exp2 != null) 				// 2
+	  if(exp2 != null) 
 			{
 				
 			if(exp2 instanceof Boolean)
@@ -485,7 +481,7 @@ expr_base returns [Object resultado = null]:
 		}
 		| resultado = expr_incremento
 		| (PAR_IZQ expr_aritmetica PAR_DER) => PAR_IZQ (resultado = expr_aritmetica) PAR_DER
-		| (PAR_IZQ expresionOR PAR_DER) => PAR_IZQ (resultado = expresionOR) PAR_DER
+		| (PAR_IZQ expr_or PAR_DER) => PAR_IZQ (resultado = expr_or) PAR_DER
 		;
 		exception
  		catch [RecognitionException re] {
@@ -579,16 +575,17 @@ expr_incremento returns [Object resultado = null]:
 		}	;
 
 
-expresionOR returns [Object resultado = null]
+expr_or returns [Object resultado = null]
+
 {Object exp1 = null; Object exp2=null; Object exp3=null;}: 
-	exp1= expresionXOR
+	exp1= expr_xor
 	{
 		resultado = exp1;
 	}
 	(
-	linea:OP_O exp2=expresionXOR
+	linea:OP_O exp2=expr_xor
 	{
-	  if(exp2 != null) 				// 2
+	  if(exp2 != null) 
 			{
 				if(exp2 instanceof Boolean && exp1 instanceof Boolean)	
 				{
@@ -611,15 +608,15 @@ expresionOR returns [Object resultado = null]
  			mostrarExcepcion(re);
 		 }
 
-expresionXOR returns [Object resultado = null]
+expr_xor returns [Object resultado = null]
 {Object exp1 = null; Object exp2=null; Object exp3=null;}: 
-	exp1= expresionAND
+	exp1= expr_and
 	{
 		resultado = exp1;
 	}
-	( linea:OP_OX exp3=expresionAND
+	( linea:OP_OX exp3=expr_and
 	{
-	  if(exp3 != null) 				// 2
+	  if(exp3 != null)
 			{
 				if(exp3 instanceof Boolean && exp1 instanceof Boolean)	
 				{
@@ -640,16 +637,13 @@ expresionXOR returns [Object resultado = null]
 	  } )* 
 	  ;
 
-		
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-expresionAND returns [Object resultado = null]
+expr_and returns [Object resultado = null]
 {Object exp1 = null ; Object exp2 = null;}: 
 
-	exp1=expresionNOT {resultado = exp1;}
-	( linea:OP_Y exp2=expresionNOT
+	exp1=expr_not {resultado = exp1;}
+	( linea:OP_Y exp2=expr_not
 	  {
-	  if(exp2 != null) 				// 2
+	  if(exp2 != null) 
 			{
 				
 				if(exp1 instanceof Boolean && exp2 instanceof Boolean )	
@@ -669,14 +663,14 @@ expresionAND returns [Object resultado = null]
 	  }
 	  )*;
 	 
-expresionNOT returns [Object resultado = null]
+expr_not returns [Object resultado = null]
 {Object exp1 = null ; Object exp2 = null;}: 
 
 	(expr_relacional) => exp1=expr_relacional { resultado = exp1;}
 	|
 	( linea:OP_NO exp2=expr_relacional
 	  {
-	  if(exp2 != null) 				// 2
+	  if(exp2 != null) 
 			{
 				
 			if(exp2 instanceof Integer)
@@ -706,7 +700,6 @@ expresionNOT returns [Object resultado = null]
 	  }
 	  )*;
 
-////////////////// EXPRESIONES RELACIONALES /////////////////////////////////
 
 expr_relacional returns [Object respuesta = null]
 {Object e1; Object e2;}:
@@ -747,7 +740,7 @@ expr_relacional returns [Object respuesta = null]
 		if(((e1 instanceof String == true) && (e2 instanceof String == false))
 			||((e1 instanceof String == false)&&(e2 instanceof String == true)))
 		{
-			Processor.println(0,"Linea "+linea.getLine()+": No se puede realizar expresiones relacionales con datos de distinto tipo");
+			Processor.println(0,"Linea "+linea.getLine()+": No se puede realizar expresiones relacionales con cadenas");
 			respuesta = new Boolean(false);
 		}
 		
@@ -787,7 +780,7 @@ expr_relacional returns [Object respuesta = null]
 		if(((e1 instanceof String == true) && (e2 instanceof String == false))
 			||((e1 instanceof String == false)&&(e2 instanceof String == true)))
 		{
-			Processor.println(0,"Linea "+linea2.getLine()+": No se puede realizar expresiones relacionales con datos de distinto tipo");
+			Processor.println(0,"Linea "+linea2.getLine()+": No se puede realizar expresiones relacionales con cadenas");
 			respuesta = new Boolean(false);
 		}
 	}
@@ -825,7 +818,7 @@ expr_relacional returns [Object respuesta = null]
 		if(((e1 instanceof String == true) && (e2 instanceof String == false))
 			||((e1 instanceof String == false)&&(e2 instanceof String == true)))
 		{
-			Processor.println(0,"Linea "+linea3.getLine()+": No se puede realizar expresiones relacionales con datos de distinto tipo");
+			Processor.println(0,"Linea "+linea3.getLine()+": No se puede realizar expresiones relacionales con cadenas");
 			respuesta = new Boolean(false);
 		}
 	}
@@ -863,15 +856,14 @@ expr_relacional returns [Object respuesta = null]
 		if(((e1 instanceof String == true) && (e2 instanceof String == false))
 			||((e1 instanceof String == false)&&(e2 instanceof String == true)))
 		{
-			Processor.println(0,"Linea "+linea4.getLine()+": No se puede realizar expresiones relacionales con datos de distinto tipo");
+			Processor.println(0,"Linea "+linea4.getLine()+": No se puede realizar expresiones relacionales con cadenas");
 		}
 	}
 	)*;
 
-////////////////////// REGLAS PARA LA EVALUACION DE EXPRESIONES ///////////////////
+evaluar_expr returns [Object respuesta = null]: 
+	respuesta = expr_or {Processor.println(2, "Evaluar expresion: "+ respuesta);};
 
-evaluarExpresion returns [Object respuesta = null]: 
-	respuesta = expresionOR {Processor.println(2, "Evaluar expresion: "+ respuesta);};
 
 
 ////////////////////// SENTENCIAS IF //////////////////////////////////////////////
@@ -879,9 +871,9 @@ evaluarExpresion returns [Object respuesta = null]:
 //2 -> if de la forma si (VERDAD) hola = 1; sino hola=2;
 //3 -> if de la forma si (VERDAD) {hola = 1; } sino hola=2;
 //4 -> if de la forma si (VERDAD) hola = 1; sino { hola=2; }
-	sentenciaIF {Object o; boolean b=false;} : 
-		(IF PAR_IZQ (evaluarExpresion) PAR_DER LLAVE_IZQ) => //1
-		IF id:PAR_IZQ (o=evaluarExpresion) PAR_DER LLAVE_IZQ
+	sentencia_if {Object o; boolean b=false;} : 
+		(IF PAR_IZQ (evaluar_expr) PAR_DER LLAVE_IZQ) => //1
+		IF id:PAR_IZQ (o=evaluar_expr) PAR_DER LLAVE_IZQ
         {
                 if (o.getClass() == Boolean.class)
                            b = ((Boolean)o).booleanValue();
@@ -901,8 +893,8 @@ evaluarExpresion returns [Object respuesta = null]:
         )
         )?
         |
-        (IF PAR_IZQ (evaluarExpresion) PAR_DER) => 			//2
-         id2: IF PAR_IZQ (o=evaluarExpresion) PAR_DER 
+        (IF PAR_IZQ (evaluar_expr) PAR_DER) => 			//2
+         id2: IF PAR_IZQ (o=evaluar_expr) PAR_DER 
         {
                 if (o.getClass() == Boolean.class)
                            b = ((Boolean)o).booleanValue();
@@ -929,10 +921,12 @@ evaluarExpresion returns [Object respuesta = null]:
 		 }
 		
     
-	sentenciaSWITCH {Object resultado; int flag; int acumulador = 0; int contador = 0;} :
-	SWITCH PAR_IZQ (resultado=expresionOR) PAR_DER LLAVE_IZQ
-	(flag = casosSwitch[resultado] {acumulador += flag; contador++;})* (DEFAULT DOBLE_PUNTO {Processor.println(2, "Valor de acumulador: "+acumulador);} LLAVE_IZQ
-	({ acumulador == contador}? (sentencia)* LLAVE_DER //si flag == 0 no se ha ejecutado ningun caso
+
+	sentencia_switch {Object resultado; int flag; int acumulador = 0; int contador = 0;} :
+	SWITCH PAR_IZQ (resultado=expr_or) PAR_DER LLAVE_IZQ
+	(flag = casos_switch[resultado] {acumulador += flag; contador++;})* (DEFAULT DOBLE_PUNTO {Processor.println(2, "Valor de acumulador: "+acumulador);} LLAVE_IZQ
+
+	({ acumulador == contador}? (sentencia)* LLAVE_DER //si flag == contador no se ha ejecutado ningun caso
     |{ acumulador < contador }? (options{greedy=false;}:.)+ LLAVE_DER )
 	END_CASE FIN_INSTRUCCION)? LLAVE_DER
 	;
@@ -942,7 +936,7 @@ evaluarExpresion returns [Object respuesta = null]:
 		 }
 	
 	
-	casosSwitch [Object resultado] returns [int n=0] {Object res_eva; String cadena1 = null; String cadena2 = null;}: CASE (res_eva = expresionOR) 
+	casos_switch [Object resultado] returns [int n=0] {Object res_eva; String cadena1 = null; String cadena2 = null;}: CASE (res_eva = expr_or) 
 	DOBLE_PUNTO LLAVE_IZQ {
 		//Intancias de distintos tipos de datos
 		Object numero = (Integer)2;
@@ -1177,17 +1171,17 @@ fin_interprete:
 
 
 //1 -> while de la forma mientras (VERDAD) { hola = 1; hola = 2; var otra; }
-//2 -> while de la forma mientras (VERDAD) hola = 1; sino hola=2;
+//2 -> while de la forma mientras (VERDAD) hola = 1;
 
-sentenciaWHILE
+sentencia_while
     {
         Boolean b = null; 
         Object expresion = null; 
         int marker = mark();
     } :
 	
-	(B_WHILE PAR_IZQ evaluarExpresion PAR_DER LLAVE_IZQ) =>   //1
-	B_WHILE PAR_IZQ expresion = evaluarExpresion PAR_DER LLAVE_IZQ
+	(B_WHILE PAR_IZQ evaluar_expr PAR_DER LLAVE_IZQ) =>   //1
+	B_WHILE PAR_IZQ expresion = evaluar_expr PAR_DER LLAVE_IZQ
 	{
 		b = ((Boolean)expresion).booleanValue();
 				
@@ -1196,8 +1190,8 @@ sentenciaWHILE
     | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
 	|
 	
-	(B_WHILE PAR_IZQ evaluarExpresion PAR_DER) =>   //2
-	B_WHILE PAR_IZQ expresion = evaluarExpresion PAR_DER
+	(B_WHILE PAR_IZQ evaluar_expr PAR_DER) =>   //2
+	B_WHILE PAR_IZQ expresion = evaluar_expr PAR_DER
 	{
 		b = ((Boolean)expresion).booleanValue();
 				
@@ -1217,7 +1211,7 @@ sentenciaWHILE
 //Alternativa 2: para(identificador;expresion booleana; entero)  intruccion; 
 //NOTA: El valor de identificador queda alterado después de la ejecución del bucle.
 
-sentenciaFOR
+sentencia_for
     {
         Boolean b = null; 
         Boolean hecho = false;
@@ -1226,8 +1220,8 @@ sentenciaFOR
     	int numero = 0;
     } :
     	//1
-	(B_FOR PAR_IZQ IDENT FIN_INSTRUCCION evaluarExpresion FIN_INSTRUCCION ENTERO PAR_DER LLAVE_IZQ) =>
-	B_FOR PAR_IZQ id:IDENT FIN_INSTRUCCION expresion = evaluarExpresion FIN_INSTRUCCION n:ENTERO PAR_DER LLAVE_IZQ
+	(B_FOR PAR_IZQ IDENT FIN_INSTRUCCION evaluar_expr FIN_INSTRUCCION ENTERO PAR_DER LLAVE_IZQ) =>
+	B_FOR PAR_IZQ id:IDENT FIN_INSTRUCCION expresion = evaluar_expr FIN_INSTRUCCION n:ENTERO PAR_DER LLAVE_IZQ
 	{
 		b = ((Boolean)expresion).booleanValue();
 		
@@ -1263,8 +1257,8 @@ sentenciaFOR
 	
 	|
 		//2
-	(B_FOR PAR_IZQ IDENT FIN_INSTRUCCION evaluarExpresion FIN_INSTRUCCION ENTERO PAR_DER) => 
-	B_FOR PAR_IZQ id2:IDENT FIN_INSTRUCCION expresion = evaluarExpresion FIN_INSTRUCCION n2:ENTERO PAR_DER
+	(B_FOR PAR_IZQ IDENT FIN_INSTRUCCION evaluar_expr FIN_INSTRUCCION ENTERO PAR_DER) => 
+	B_FOR PAR_IZQ id2:IDENT FIN_INSTRUCCION expresion = evaluar_expr FIN_INSTRUCCION n2:ENTERO PAR_DER
 	{
 		b = ((Boolean)expresion).booleanValue();
 		
