@@ -14,10 +14,12 @@ import antlr.ANTLRException;
 public abstract class Processor {
 
   private static String output = "";
-  private static int debugMode = 1; // Por defecto 2 (lo muestra todo)
+  private static int debugMode = 1;
 
   /**
    * Main Method for the processor to be run as an standalone program (module)
+   * it will read from the file named "codigo.stk" as a mean of testing the
+   * grammar.
    * 
    * @param args
    *          command line arguments

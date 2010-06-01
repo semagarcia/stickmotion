@@ -76,7 +76,7 @@ public class Scene {
   /**
    * Creates the scene and returns it
    */
-  public BranchGroup createSceneGraph() {
+  private BranchGroup createSceneGraph() {
 
     // creates the objects root
     BranchGroup objRoot = new BranchGroup();
@@ -124,7 +124,7 @@ public class Scene {
    * @param duration
    *          time for the animation to occur
    */
-  public void rotateSMGroup(SMGroup group, float azimuth, float inclination,
+  private void rotateSMGroup(SMGroup group, float azimuth, float inclination,
       long duration) {
     group.addRotationAnim(duration, time, 0, 0, 0, 0, azimuth);
     group.addRotationAnim(duration, time, 0, 0, Math.PI / 2, 0, inclination);
