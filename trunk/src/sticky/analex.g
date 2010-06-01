@@ -17,11 +17,11 @@ class Analex extends Lexer;
 		VAR="var";
 		SUP="sup";
 		
-	    //Bucles
+	    //Loops
 	    B_FOR="para"; 
 	    B_WHILE="mientras";
 	    
-	    //Estructuras condicionales
+	    //Conditionals
 	    IF="si";
 	    ELSE="sino";
 	    SWITCH="opcion";
@@ -29,7 +29,7 @@ class Analex extends Lexer;
 	    END_CASE="fincaso";
 	    DEFAULT="defecto"; 
  
-		//Movimientos Stickman
+		//Stickman's movements
 		GIRAR="girar";
 		FLEXIONAR="flexionar";
 		TIEMPO="tiempo";
@@ -44,50 +44,44 @@ class Analex extends Lexer;
 		IZQ="IZQ";
 		DER="DER";
 		
-		//Impresión por pantalla
+		//Display print
 		IMPRIMIR="mostrar";
 		
-		//Otras variables
+		//Others variables
 		PI = "PI";
 				
 	}
 
-	//Salto de linea
 	protected NL: ('\n' |
 		("\r\n")=>
 			"\r\n" | 
 			'\r')
 		{newline();};
 
-	//Blancos
 	BLANCO: (' '|'\t'|NL) {$setType(Token.SKIP);};
 
-	//Comentarios
+	//Comments
 	COMENTARIO: (COM_LINEA|COM_BLOQUE) {$setType(Token.SKIP);};
 	COM_LINEA: "//" (~('\n'|'\r'))*;
 	COM_BLOQUE: "/*" (options {greedy=false;}: ~('\n'|'\r')|NL)* "*/";
 	
-	//Fin de instruccion
+	//Intruction end
 	FIN_INSTRUCCION: ';';
 	FIN_INTERPRETE: '$';
 	
-	//Parentesis
 	PAR_IZQ: '(';
 	PAR_DER: ')';
 	
-	//Separador
 	SEPARA: ',';
 	VERDADERO : "VERDAD";
 	FALSO : "FALSO";
 	
-	//Dos Puntos
 	DOBLE_PUNTO: ':'; 
 	
-	//Llaves
 	LLAVE_IZQ: '{';
 	LLAVE_DER: '}';
 	
-	//Operadores aritmeticos
+	//Arithmetic operators
 	OP_SUM: '+';
 	OP_RES: '-';
 	OP_MUL: '*';
@@ -98,10 +92,10 @@ class Analex extends Lexer;
 	OP_POT: '^';
 	OP_RAIZ: "raiz";
 	
-	//Operadores de asignacion
+	//Asignments operators
 	OP_ASIG: '=';
 		
-	//Operadores condicionales
+	//Conditionals
 	OP_MAYOR: '>';
 	OP_MENOR: '<';
 	OP_IG: "==";
@@ -112,14 +106,14 @@ class Analex extends Lexer;
 	OP_O : 'O';
 
 
-	//Identificadores
+	//Identifiers
 	protected LETRA: 'a'..'z'|'A'..'Z';
 	protected DIGITO: '0'..'9';
 	IDENT: (LETRA|'_') (LETRA|'_'|DIGITO)*;
 
-	//Numeros
+	//Numbers
 	NUMERO: ( (DIGITO )+ '.' ) => (DIGITO )+ '.' ( DIGITO )* { $setType (REAL); } | ( DIGITO )+ { $setType (ENTERO);};
 			
-	//Cadenas
+	//Strings
 	CADENA: '"' (options {greedy=false;}: ~('\\') | "\\\"")* '"';
 	
