@@ -418,6 +418,7 @@ public class StickMotion extends javax.swing.JFrame {
         "/gui/images/cancel.png")));
     iconStop.setToolTipText("Detiene la interpretación del código");
     iconStop.setFocusable(false);
+    iconStop.setEnabled(false);
     iconStop.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
     iconStop.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
     iconStop.addActionListener(new java.awt.event.ActionListener() {
@@ -895,14 +896,16 @@ public class StickMotion extends javax.swing.JFrame {
    * Method for enabling the "Play" button for interpretation
    */
   public void enablePlay() {
-    iconStop.setEnabled(true);
+    iconInterpreter.setEnabled(true);
+    iconStop.setEnabled(false);
   }
 
   /**
    * Method for disabling the "Play" button for interpretation
    */
   public void disablePlay() {
-    iconStop.setEnabled(false);
+    iconInterpreter.setEnabled(false);
+    iconStop.setEnabled(true);
   }
 
   private void optionFileExitMouseEntered(java.awt.event.MouseEvent evt) {
@@ -1021,6 +1024,7 @@ public class StickMotion extends javax.swing.JFrame {
 
     // habilitar boton stop <-------------------------
 
+    disablePlay();
     myThread = new InterpreterThread(this, editor.getText(), debugMode);
     myThread.start();
   }

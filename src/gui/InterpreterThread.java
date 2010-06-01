@@ -36,6 +36,6 @@ public class InterpreterThread extends Thread {
     _results = sticky.Processor.run(_code, _debugMode);
     _sm.setResults(_results);
     StickMotion.scene.start();
-    _sm.disablePlay();
+    _sm.enablePlay();
   }
 }
