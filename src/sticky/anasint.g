@@ -22,7 +22,7 @@ class Anasint extends Parser;
 			Processor.println(0,"En línea " + re.getLine() + " : " + re.getMessage());
 			reportError(re);
 			try {
-    			consume(); //Consumir el token problemático
+    			consume(); //Consume the token problem
 	    		consumeUntil(FIN_INSTRUCCION);
 			} catch (Exception e) {
 			}
@@ -56,8 +56,7 @@ class Anasint extends Parser;
 	//1. Declare variable without initialization
 	//2. Declare a variable with initialization
 	//3. Declare more than one variable
-	// NOTA: NO se permite inicialización de variables mientras se declara más de una.
-
+	//NOTE: NOT allowed variable initialization while declaring more than one.
 declaracion {Object x = null; ArrayList lista = new ArrayList();}:
 	(	//Option 1
 		(var1:VAR IDENT FIN_INSTRUCCION) => VAR i1:IDENT
@@ -72,17 +71,17 @@ declaracion {Object x = null; ArrayList lista = new ArrayList();}:
 		|(VAR IDENT OP_ASIG expr_or) =>VAR i3:IDENT OP_ASIG (x=expr_or) 
 
 			{			
-				boolean res = tablaSimbolos.put(i3,x);	// introduzco el valor en la tabla de simbolos
+				boolean res = tablaSimbolos.put(i3,x);	//Insert the value in the symboltable
 				if(res)
 		  			Processor.println(1, "Linea "+i3.getLine()+": Variable \""+i3.getText()+"\" ha sido declarada con valor "+x);
 		  		else 
 		  			Processor.println(0, "Linea "+i3.getLine()+": Variable \""+i3.getText()+"\" no ha sido declarada, ya existe");
 		
 			}
-		//Alternativa 3
+		//Option 3
 		|(VAR IDENT (SEPARA IDENT)*) => var4:VAR i4:IDENT (SEPARA i3_alt:IDENT {lista.add(i3_alt);} )* 
 					{
-						// Tenemos que insertar cada identificador encontrado en la tabla de simbolos
+						// We should insert each identifier found in the symbols table
 						boolean res = tablaSimbolos.put(i4);
 						if(res)
 		  					Processor.println(1,"Linea "+i4.getLine()+": Variable \""+i4.getText()+"\" ha sido declarada");
@@ -91,7 +90,7 @@ declaracion {Object x = null; ArrayList lista = new ArrayList();}:
 						Token tok;
 						for(int j=0; j < lista.size(); j++)
 						{
-								tok = (Token)lista.get(j); // obtengo un identificador de la lista
+								tok = (Token)lista.get(j); //Gets a identifier from de list
 								res = tablaSimbolos.put(tok);
 								if(res)
 		  							Processor.println(1, "Linea "+tok.getLine()+": Variable \""+tok.getText()+"\" ha sido declarada");
@@ -131,7 +130,7 @@ expr_aritmetica returns[Object resultado = null]
 {Object e1 = null; Object e2 = null; Object e3 = null;}:
 	e1=expr_mod
 	{
-		//Esto es por si sucede algo así var=-2; El signo - al principio hace que e1 primer operando sea null y el segundo 2
+		//This is in case of var =- 2; The char - at the top makes the first operand null and the second 2
 		if(e1 == null)
 			e1 = 0;
 			
@@ -177,7 +176,7 @@ expr_mod returns [Object resultado = null]
 {Object e1; Object e2; Object e3; Object e4;}: 
 	e1= expr
 	{
-		//Esto es por si sucede algo así var=-2; El signo - al principio hace que e1 primer operando sea null y el segundo 2
+		//This is in case of var =- 2; The char - at the top makes the first operand null and the second 2
 		if(e1 == null)
 			e1 = 0;
 		resultado = e1;
@@ -260,7 +259,7 @@ expr returns [Object resultado = null]
 {Object e1; Object e2; Object e3;}: 
 	
 	e1=expr_mult {
-		//Esto es por si sucede algo así var=-2; El signo - al principio hace que e1 primer operando sea null y el segundo 2
+		//This is in case of var =- 2; The char - at the top makes the first operand null and the second 2
 		if(e1 == null)
 			e1 = 0;
 			
@@ -331,7 +330,7 @@ expr returns [Object resultado = null]
 	  				Processor.println(0,"Linea "+linea2.getLine()+": No se pueden realizar operaciones aritmeticas con valores booleanos");
 	  			else
 	  			{	
-	  				//Si no son flotantes
+	  				//else floats
 	  				double valor1 = new Double(e1.toString()).doubleValue();
 	  				double valor2 = new Double(e3.toString()).doubleValue();
 	  			
@@ -354,7 +353,7 @@ expr_mult returns [Object resultado = null]
 	
 	e1=expr_raiz
 	{
-		//Esto es por si sucede algo así var=-2; El signo - al principio hace que e1 primer operando sea null y el segundo 2
+		//This is in case of var =- 2; The char - at the top makes the first operand null and the second 2
 		if(e1 == null)
 			e1 = 0;
 			
@@ -396,7 +395,7 @@ expr_raiz returns [Object resultado = null]
 {Object exp1 = null ; Object exp2 = null;}: 
 
 	exp1=expr_base {
-		//Esto es por si sucede algo así var=-2; El signo - al principio hace que e1 primer operando sea null y el segundo 2
+		//This is in case of var =- 2; The char - at the top makes the first operand null and the second 2
 		if(exp1 == null)
 			exp1 = 0; 
 			resultado = exp1;
@@ -450,25 +449,25 @@ expr_base returns [Object resultado = null]:
 					Processor.println(0,"Linea "+id.getLine()+": La variable "+id.getText()+" no tiene asignado ningun valor.");	
 				}
 				else {
-				//Si no es una cadena (si lleva " matches devuelve false)
+				//If there is a string (if it takes " 'matches' returns false)
 				if(contenido.matches("(-)?[0-9.]+|true|false"))
 	  				{
-	  				//Si lleva true o false es un booleano
+	  				//If false o true is a boolean
 	  				if(contenido.matches("true|false"))
 	  					{
 	  					resultado = new Boolean(contenido.toString()).booleanValue();
 	  					}
-	  				//Si lleva solo numeros de 0 a 9
+	  				//If takes only numeric values
 	  				else if(contenido.matches("[0-9]+"))
 	  					{
 	  					resultado = new Integer(contenido.toString()).intValue();
 	  					}
-	  				//Y si no es un entero
+	  				//Else is a integer
 	  				else {
 	  					resultado = new Float(contenido.toString()).floatValue();
 	  					}
 	  				}
-	  			else //es una cadena
+	  			else //is a string
 	  			{
 	  				resultado = new String(contenido.toString());
 	  			}
@@ -501,27 +500,27 @@ expr_incremento returns [Object resultado = null]:
 					Processor.println(0,"Linea "+id2.getLine()+": La variable "+id2.getText()+" no tiene asignado ningun valor.");	
 				}
 				else {
-				//Si no es una cadena (si lleva " matches devuelve false)
+				//If there is a string (if it takes " 'matches' returns false)
 				if(contenido.matches("[0-9.]+|true|false"))
 	  				{
-	  				//Si lleva true o false es un booleano
+	  				//If takes true o false is a boolean
 	  				if(contenido.matches("true|false"))
 	  					{
 	  					Processor.println(0,"Linea "+id2.getLine()+": la variable "+id2.getText()+" es un booleano y por tanto no se puede incrementar.");
 	  					}
-	  				//Si lleva solo numeros de 0 a 9
+	  				//If takes only numeric values
 	  				else if(contenido.matches("[0-9]+"))
 	  					{
 	  					resultado = new Integer(contenido.toString()).intValue()+1;
 	  					tablaSimbolos.set(id2,resultado);
 	  					}
-	  				//Y si no es un entero
+	  				//And else is a integer
 	  				else {
 	  					resultado = new Float(contenido.toString()).floatValue()+1;
 	  					tablaSimbolos.set(id2,resultado);
 	  					}
 	  				}
-	  			else //es una cadena
+	  			else //is a string
 	  			{
 	  				Processor.println(0,"Linea "+id2.getLine()+": la variable "+id2.getText()+" es una cadena y por tanto no se puede incrementar.");
 	  			}
@@ -543,27 +542,27 @@ expr_incremento returns [Object resultado = null]:
 					Processor.println(0,"Linea "+id3.getLine()+": La variable "+id3.getText()+" no tiene asignado ningun valor.");	
 				}
 				else {
-				//Si no es una cadena (si lleva " matches devuelve false)
+				//If there is a string (if it takes " 'matches' returns false)
 				if(contenido.matches("[0-9.]+|true|false"))
 	  				{
-	  				//Si lleva true o false es un booleano
+	  				//If takes true or false is a boolean
 	  				if(contenido.matches("true|false"))
 	  					{
 	  					Processor.println(0,"Linea "+id3.getLine()+": la variable "+id3.getText()+" es un booleano y por tanto no se puede decrementar.");
 	  					}
-	  				//Si lleva solo numeros de 0 a 9
+	  				//If takes only numeric values
 	  				else if(contenido.matches("[0-9]+"))
 	  					{
 	  					resultado = new Integer(contenido.toString()).intValue()-1;
 	  					tablaSimbolos.set(id3,resultado);
 	  					}
-	  				//Y si no es un entero
+	  				//And else is a integer
 	  				else {
 	  					resultado = new Float(contenido.toString()).floatValue()-1;
 	  					tablaSimbolos.set(id3,resultado);
 	  					}
 	  				}
-	  			else //es una cadena
+	  			else //Is a string
 	  			{
 	  				Processor.println(0,"Linea "+id3.getLine()+": la variable "+id3.getText()+" es una cadena y por tanto no se puede decrementar.");
 	  			}
@@ -869,11 +868,11 @@ evaluar_expr returns [Object respuesta = null]:
 		 }
 
 
-////////////////////// SENTENCIAS IF //////////////////////////////////////////////
-//1 -> if de la forma si (VERDAD) { hola = 1; } sino { hola = 2; var otra; }
-//2 -> if de la forma si (VERDAD) hola = 1; sino hola=2;
-//3 -> if de la forma si (VERDAD) {hola = 1; } sino hola=2;
-//4 -> if de la forma si (VERDAD) hola = 1; sino { hola=2; }
+///////////////////////////If sentences/////////////////////////////////////
+//1 -> if in the form si (VERDAD) { hola = 1; } sino { hola = 2; var otra; }
+//2 -> if in the form si (VERDAD) hola = 1; sino hola=2;
+//3 -> if in the form si (VERDAD) {hola = 1; } sino hola=2;
+//4 -> if in the form si (VERDAD) hola = 1; sino { hola=2; }
 	sentencia_if {Object o; boolean b=false;} : 
 		(IF PAR_IZQ (evaluar_expr) PAR_DER LLAVE_IZQ) => //1
 		IF id:PAR_IZQ (o=evaluar_expr) PAR_DER LLAVE_IZQ
@@ -929,7 +928,7 @@ evaluar_expr returns [Object respuesta = null]:
 	SWITCH PAR_IZQ (resultado=expr_or) PAR_DER LLAVE_IZQ
 	(flag = casos_switch[resultado] {acumulador += flag; contador++;})* (DEFAULT DOBLE_PUNTO {Processor.println(2, "Valor de acumulador: "+acumulador);} LLAVE_IZQ
 
-	({ acumulador == contador}? (sentencia)* LLAVE_DER //si flag == contador no se ha ejecutado ningun caso
+	({ acumulador == contador}? (sentencia)* LLAVE_DER //if flag is equal to contador has not run any case
     |{ acumulador < contador }? (options{greedy=false;}:.)+ LLAVE_DER )
 	END_CASE FIN_INSTRUCCION)? LLAVE_DER
 	;
@@ -941,13 +940,13 @@ evaluar_expr returns [Object respuesta = null]:
 	
 	casos_switch [Object resultado] returns [int n=0] {Object res_eva; String cadena1 = null; String cadena2 = null;}: CASE (res_eva = expr_or) 
 	DOBLE_PUNTO LLAVE_IZQ {
-		//Intancias de distintos tipos de datos
+		//Instances of differents data types
 		Object numero = (Integer)2;
 		Object bool = (Boolean)true;
 		Object cadena = (String)"cadena";
 		Object flotante = (Double)2.2;
 		
-		//Paso a cadenas los resultados de las dos evaluaciones (Sólo para comparar antes del greedy, para que no de error al obtener el dato de un objeto del que no conocemos su tipo
+		//Convert to string the results of the two evaluations (Only for compare then before of the greedy, in order to avoid the error while obtaining the datatype of an undetermined object
 		if(resultado.getClass() == numero.getClass())
 			cadena1 = String.valueOf(((Integer)resultado).intValue());
 		else if(resultado.getClass() == bool.getClass())
@@ -972,6 +971,143 @@ evaluar_expr returns [Object respuesta = null]:
     |{(cadena2.toString()).compareTo(cadena1.toString()) != 0}? (options{greedy=false;}:.)+ {n=1;} LLAVE_DER )	
 	END_CASE FIN_INSTRUCCION ;
 	
+//1 -> while in the form mientras (VERDAD) { hola = 1; hola = 2; var otra; }
+//2 -> while in the form mientras (VERDAD) hola = 1;
+sentencia_while
+    {
+        Boolean b = null; 
+        Object expresion = null; 
+        int marker = mark();
+    } :
+	
+	(B_WHILE PAR_IZQ evaluar_expr PAR_DER LLAVE_IZQ) =>   //1
+	B_WHILE PAR_IZQ expresion = evaluar_expr PAR_DER LLAVE_IZQ
+	{
+		try {
+			if (expresion != null)
+				b = ((Boolean)expresion).booleanValue();
+			else
+				b = false;
+		}	catch (Exception e) {
+		 Processor.println(0, "En línea " + ": " + e.toString() );
+		}			
+	} 
+	({b==true}? (sentencia)* LLAVE_DER {rewind(marker);}
+    | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
+	|
+	
+	(B_WHILE PAR_IZQ evaluar_expr PAR_DER) =>   //2
+	B_WHILE PAR_IZQ expresion = evaluar_expr PAR_DER
+	{
+		try {
+			if (expresion != null)
+				b = ((Boolean)expresion).booleanValue();
+			else
+				b = false;
+		}	catch (Exception e) {
+		 Processor.println(0, "En línea " + ": " + e.toString() );
+		}		
+				
+	} 
+		({b==true}? sentencia {rewind(marker);}
+        | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION )
+	;
+	exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+		 }
+		
+
+//Recognizes bucles-for in the form:	
+//Option 1: para(identifier;boolean expression; integer) { intruction; intruction2; }
+//Option 2: para(identifier;boolean expression; integer)  intruction; 
+//NOTE: The identificador value is altered after the execution of the loop.
+sentencia_for
+    {
+        Boolean b = null; 
+        Boolean hecho = false;
+        Object expresion = null; 
+        int marker = mark();
+    	int numero = 0;
+    } :
+    	//1
+	(B_FOR PAR_IZQ IDENT FIN_INSTRUCCION evaluar_expr FIN_INSTRUCCION ENTERO PAR_DER LLAVE_IZQ) =>
+	B_FOR PAR_IZQ id:IDENT FIN_INSTRUCCION expresion = evaluar_expr FIN_INSTRUCCION n:ENTERO PAR_DER LLAVE_IZQ
+	{
+		b = ((Boolean)expresion).booleanValue();
+		
+		if(hecho == false) {
+		//Get value from variable id
+		if(tablaSimbolos.existeSimbolo(id.getText()))
+			{
+				String contenido = tablaSimbolos.getContenidoSimbolo(id.getText());
+				
+				if(contenido==null)
+				{
+					Processor.println(0,"Linea "+id.getLine()+": La variable no tiene asignado ningun valor "+id.getText());	
+				}
+				
+				if(contenido.matches("[0-9~.]*"))
+	  				{
+	  				numero = new Integer(contenido.toString()).intValue();
+	  				hecho = true;
+	  				}	
+			}
+			else 
+				Processor.println(0,"Linea "+id.getLine()+": la variable no ha sido declarada "+id.getText());
+			
+			}
+			
+		numero = numero + Integer.parseInt(n.getText());
+			
+		//Saves the value
+		tablaSimbolos.set(id, numero);
+	} 
+	({b==true}? (sentencia)* LLAVE_DER {rewind(marker);}
+    |{b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
+	
+	|
+		//2
+	(B_FOR PAR_IZQ IDENT FIN_INSTRUCCION evaluar_expr FIN_INSTRUCCION ENTERO PAR_DER) => 
+	B_FOR PAR_IZQ id2:IDENT FIN_INSTRUCCION expresion = evaluar_expr FIN_INSTRUCCION n2:ENTERO PAR_DER
+	{
+		b = ((Boolean)expresion).booleanValue();
+		
+		if(hecho == false) {
+		//Get value for id variable
+		if(tablaSimbolos.existeSimbolo(id2.getText()))
+			{
+				String contenido = tablaSimbolos.getContenidoSimbolo(id2.getText());
+				
+				if(contenido==null)
+				{
+					Processor.println(0,"Linea "+id2.getLine()+": La variable no tiene asignado ningun valor "+id2.getText());	
+				}
+				
+				if(contenido.matches("[0-9~.]*"))
+	  				{
+	  				numero = new Integer(contenido.toString()).intValue();
+	  				hecho = true;
+	  				}	
+			}
+			else 
+				Processor.println(0,"Linea "+id2.getLine()+": la variable no ha sido declarada "+id2.getText());
+			
+			}
+			
+		numero = numero + Integer.parseInt(n2.getText());
+			
+		//Saves the value
+		tablaSimbolos.set(id2, numero);
+	} 
+	({b==true}? sentencia {rewind(marker);}
+    | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION) 
+	
+	;
+	exception
+ 		catch [RecognitionException re] {
+ 			mostrarExcepcion(re);
+		 }
 
 eliminar_var {String res;}: SUP id:IDENT
 	{
@@ -1172,147 +1308,6 @@ fin_interprete:
  			mostrarExcepcion(re);
 		 }
 
-
-//1 -> while de la forma mientras (VERDAD) { hola = 1; hola = 2; var otra; }
-//2 -> while de la forma mientras (VERDAD) hola = 1;
-
-sentencia_while
-    {
-        Boolean b = null; 
-        Object expresion = null; 
-        int marker = mark();
-    } :
-	
-	(B_WHILE PAR_IZQ evaluar_expr PAR_DER LLAVE_IZQ) =>   //1
-	B_WHILE PAR_IZQ expresion = evaluar_expr PAR_DER LLAVE_IZQ
-	{
-		try {
-			if (expresion != null)
-				b = ((Boolean)expresion).booleanValue();
-			else
-				b = false;
-		}	catch (Exception e) {
-		 Processor.println(0, "En línea " + ": " + e.toString() );
-		}			
-	} 
-	({b==true}? (sentencia)* LLAVE_DER {rewind(marker);}
-    | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
-	|
-	
-	(B_WHILE PAR_IZQ evaluar_expr PAR_DER) =>   //2
-	B_WHILE PAR_IZQ expresion = evaluar_expr PAR_DER
-	{
-		try {
-			if (expresion != null)
-				b = ((Boolean)expresion).booleanValue();
-			else
-				b = false;
-		}	catch (Exception e) {
-		 Processor.println(0, "En línea " + ": " + e.toString() );
-		}		
-				
-	} 
-		({b==true}? sentencia {rewind(marker);}
-        | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION )
-	;
-	exception
- 		catch [RecognitionException re] {
- 			mostrarExcepcion(re);
-		 }
-		
-
-
-//Permite bucles-for de la forma:	
-//Alternativa 1: para(identificador;expresion booleana; entero) { intruccion; intruccion2; }
-//Alternativa 2: para(identificador;expresion booleana; entero)  intruccion; 
-//NOTA: El valor de identificador queda alterado después de la ejecución del bucle.
-
-sentencia_for
-    {
-        Boolean b = null; 
-        Boolean hecho = false;
-        Object expresion = null; 
-        int marker = mark();
-    	int numero = 0;
-    } :
-    	//1
-	(B_FOR PAR_IZQ IDENT FIN_INSTRUCCION evaluar_expr FIN_INSTRUCCION ENTERO PAR_DER LLAVE_IZQ) =>
-	B_FOR PAR_IZQ id:IDENT FIN_INSTRUCCION expresion = evaluar_expr FIN_INSTRUCCION n:ENTERO PAR_DER LLAVE_IZQ
-	{
-		b = ((Boolean)expresion).booleanValue();
-		
-		if(hecho == false) {
-		//Get value from variable id
-		if(tablaSimbolos.existeSimbolo(id.getText()))
-			{
-				String contenido = tablaSimbolos.getContenidoSimbolo(id.getText());
-				
-				if(contenido==null)
-				{
-					Processor.println(0,"Linea "+id.getLine()+": La variable no tiene asignado ningun valor "+id.getText());	
-				}
-				
-				if(contenido.matches("[0-9~.]*"))
-	  				{
-	  				numero = new Integer(contenido.toString()).intValue();
-	  				hecho = true;
-	  				}	
-			}
-			else 
-				Processor.println(0,"Linea "+id.getLine()+": la variable no ha sido declarada "+id.getText());
-			
-			}
-			
-		numero = numero + Integer.parseInt(n.getText());
-			
-		//Saves the value
-		tablaSimbolos.set(id, numero);
-	} 
-	({b==true}? (sentencia)* LLAVE_DER {rewind(marker);}
-    | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
-	
-	|
-		//2
-	(B_FOR PAR_IZQ IDENT FIN_INSTRUCCION evaluar_expr FIN_INSTRUCCION ENTERO PAR_DER) => 
-	B_FOR PAR_IZQ id2:IDENT FIN_INSTRUCCION expresion = evaluar_expr FIN_INSTRUCCION n2:ENTERO PAR_DER
-	{
-		b = ((Boolean)expresion).booleanValue();
-		
-		if(hecho == false) {
-		//Get value for id variable
-		if(tablaSimbolos.existeSimbolo(id2.getText()))
-			{
-				String contenido = tablaSimbolos.getContenidoSimbolo(id2.getText());
-				
-				if(contenido==null)
-				{
-					Processor.println(0,"Linea "+id2.getLine()+": La variable no tiene asignado ningun valor "+id2.getText());	
-				}
-				
-				if(contenido.matches("[0-9~.]*"))
-	  				{
-	  				numero = new Integer(contenido.toString()).intValue();
-	  				hecho = true;
-	  				}	
-			}
-			else 
-				Processor.println(0,"Linea "+id2.getLine()+": la variable no ha sido declarada "+id2.getText());
-			
-			}
-			
-		numero = numero + Integer.parseInt(n2.getText());
-			
-		//Saves the value
-		tablaSimbolos.set(id2, numero);
-	} 
-	({b==true}? sentencia {rewind(marker);}
-    | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION) 
-	
-	;
-	exception
- 		catch [RecognitionException re] {
- 			mostrarExcepcion(re);
-		 }
 
 imprimir returns [String respuesta=null]
 { String expr1; String expr2;}:
