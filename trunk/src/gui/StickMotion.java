@@ -18,6 +18,8 @@ import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
 
+import sticky.Processor;
+
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
 /**
@@ -1051,6 +1053,8 @@ public class StickMotion extends javax.swing.JFrame {
     if (myThread != null) {
       myThread.stop();
       myThread = null;
+      setResults(Processor.getOutput()
+          + "\n El procesamiento fue cancelado por el usuario.");
       enablePlay();
     }
   }

@@ -125,4 +125,13 @@ public abstract class Processor {
     debugMode = level;
   }
 
+  /**
+   * Method for getting the output of the Processing
+   * 
+   * @return
+   */
+  public static String getOutput() {
+    return output;
+  }
+
 }
