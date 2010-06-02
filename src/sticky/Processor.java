@@ -93,21 +93,21 @@ public abstract class Processor {
    *          Message to show if the given menu level is active
    */
   public static void println(int debugLevel, String str) {
-    // debugLevel<0 -> Vital Information (start/end messages and mostrar())
+    // debugLevel < 0 -> Vital Information (start/end messages and mostrar())
     // debugLevel == 0 -> Error messages
     // debugLevel > 0 -> Debug messages <debugLevel>.
-    if (debugLevel > 0) {
-      if (debugLevel <= debugMode)
-        str = "DEBUG " + debugLevel + ": " + str;
+
+    if (debugLevel < 0) {
+      // This is needed for mostrar() built-in function, so that ERROR and DEBUG
+      // is not printed
       output += str + '\n';
       System.out.println(output);
     } else if (debugLevel == 0) {
       str = "ERROR" + ": " + str;
       output += str + '\n';
       System.out.println(output);
-    } else {
-      // This is needed for mostrar() built-in function, so that ERROR and DEBUG
-      // is not printed
+    } else if (debugLevel <= debugMode) {
+      str = "DEBUG " + debugLevel + ": " + str;
       output += str + '\n';
       System.out.println(output);
     }
