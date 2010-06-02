@@ -35,7 +35,7 @@ class Anasint extends Parser;
 		Processor.println(-1,"...INICIANDO STICKY...");		
 	} 
 	
-	: (sentencia)* fin_interprete; //One or more sentences, and it ends
+	: (sentencia)* fin_interprete; //One or more sentences, and ends
 	sentencia: (simple fi:FIN_INSTRUCCION) | bucle; //Either one simple sentence with ; or loop, that no needs it;
 	exception
  		catch [RecognitionException re] {
@@ -82,7 +82,6 @@ declaracion {Object x = null; ArrayList lista = new ArrayList();}:
 		|(VAR IDENT (SEPARA IDENT)*) => var4:VAR i4:IDENT (SEPARA i3_alt:IDENT {lista.add(i3_alt);} )* 
 					{
 						// We should insert each identifier found in the symbols table
-
 						boolean res = tablaSimbolos.put(i4);
 						if(res)
 		  					Processor.println(1,"Linea "+i4.getLine()+": Variable \""+i4.getText()+"\" ha sido declarada");
@@ -437,7 +436,7 @@ expr_base returns [Object resultado = null]:
 		|n3:VERDADERO {resultado = new Boolean(true);}
 		|n4:FALSO {resultado = new Boolean(false);}
 		|n5:CADENA {resultado = new String( n5.getText()); }
-		|n6:PI { resultado = new Double(const_pi); Processor.println(2,"PI declarada: "+ resultado); } //PI
+		|n6:PI { resultado = new Double(const_pi); Processor.println(1,"PI declarada: "+ resultado); } //PI
 		|(IDENT) => id:IDENT
 		{
 			
@@ -880,19 +879,19 @@ evaluar_expr returns [Object respuesta = null]:
         {
                 if (o.getClass() == Boolean.class)
                            b = ((Boolean)o).booleanValue();
-                else Processor.println(0, "Linea "+id.getLine()+": La expresión de condición de SI debe ser booleana");
+                else Processor.println(0, "Linea "+id.getLine()+":ERROR IF");
         }
         ({b==true}? (sentencia)* LLAVE_DER
-        | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
+        | {b==false}? (options{greedy=false;}:sentencia)* LLAVE_DER)
         
         ((ELSE LLAVE_IZQ) => ELSE LLAVE_IZQ
         ({b==false}? (sentencia)* LLAVE_DER
-        | {b==true}? (options{greedy=false;}:.)+ LLAVE_DER
+        | {b==true}? (options{greedy=false;}:sentencia)* LLAVE_DER
         )
         |
         (ELSE ~LLAVE_IZQ) => ELSE 							//3
         ({b==false}? sentencia
-        | {b==true}? (options{greedy=false;}:.)+ FIN_INSTRUCCION
+        | {b==true}? (options{greedy=false;}:sentencia)* FIN_INSTRUCCION
         )
         )?
         |
@@ -901,20 +900,20 @@ evaluar_expr returns [Object respuesta = null]:
         {
                 if (o.getClass() == Boolean.class)
                            b = ((Boolean)o).booleanValue();
-                else Processor.println(0, "Linea "+id2.getLine()+": La expresión de condición de SI debe ser booleana");
+                else Processor.println(0, "Linea "+id2.getLine()+":ERROR IF");
         }
         ({b==true}? sentencia 
-        | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION)
+        | {b==false}? (options{greedy=false;}:sentencia)* FIN_INSTRUCCION)
         
         (
         (ELSE ~LLAVE_IZQ) => ELSE
         ({b==false}? sentencia
-        | {b==true}? (options{greedy=false;}:.)+ FIN_INSTRUCCION	
+        | {b==true}? (options{greedy=false;}:sentencia)* FIN_INSTRUCCION	
         )
         |
         (ELSE LLAVE_IZQ) => ELSE LLAVE_IZQ					//4
         ({b==false}? (sentencia)* LLAVE_DER
-        | {b==true}? (options{greedy=false;}:.)+ LLAVE_DER
+        | {b==true}? (options{greedy=false;}:sentencia)+ LLAVE_DER
         )
         )?
         ;
@@ -994,7 +993,7 @@ sentencia_while
 		}			
 	} 
 	({b==true}? (sentencia)* LLAVE_DER {rewind(marker);}
-    | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
+    | {b==false}? (options{greedy=false;}:sentencia)* LLAVE_DER) 
 	|
 	
 	(B_WHILE PAR_IZQ evaluar_expr PAR_DER) =>   //2
@@ -1034,8 +1033,12 @@ sentencia_for
     	//1
 	(B_FOR PAR_IZQ IDENT FIN_INSTRUCCION evaluar_expr FIN_INSTRUCCION ENTERO PAR_DER LLAVE_IZQ) =>
 	B_FOR PAR_IZQ id:IDENT FIN_INSTRUCCION expresion = evaluar_expr FIN_INSTRUCCION n:ENTERO PAR_DER LLAVE_IZQ
-	{
-		b = ((Boolean)expresion).booleanValue();
+	{		
+		try {
+			b = ((Boolean)expresion).booleanValue();
+		} catch(Exception e) {
+			Processor.println(0,"Linea "+id.getLine()+": La expresión de condición del PARA debe ser booleana");
+		}
 		
 		if(hecho == false) {
 		//Get value from variable id
@@ -1064,8 +1067,8 @@ sentencia_for
 		//Saves the value
 		tablaSimbolos.set(id, numero);
 	} 
-	({b==true}? (sentencia)* LLAVE_DER {rewind(marker);}
-    |{b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
+	({b==true}? (sentencia)* LLAVE_DER {rewind(marker);} 
+    |{b==false}? (options{greedy=false;}:sentencia)* LLAVE_DER)
 	
 	|
 		//2
@@ -1089,7 +1092,7 @@ sentencia_for
 	  				{
 	  				numero = new Integer(contenido.toString()).intValue();
 	  				hecho = true;
-	  				}	
+	  				}
 			}
 			else 
 				Processor.println(0,"Linea "+id2.getLine()+": la variable no ha sido declarada "+id2.getText());
@@ -1102,7 +1105,7 @@ sentencia_for
 		tablaSimbolos.set(id2, numero);
 	} 
 	({b==true}? sentencia {rewind(marker);}
-    | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION) 
+    | {b==false}? (options{greedy=false;}:.)* FIN_INSTRUCCION) 
 	
 	;
 	exception
@@ -1298,7 +1301,7 @@ f_girar {Object res1; Object res2; Object res3;}:
 	}
 
 fin_interprete:
-	fin:FIN_INTERPRETE
+	fin: FIN_INTERPRETE
 	{
 		consumeUntil(Token.EOF_TYPE);
 		consume();
@@ -1369,7 +1372,7 @@ impr_base returns [String respuesta=null]
 					respuesta = cadena2;
 				}
 			}
-			else // It is not declared
+			else // Is not declared
 				Processor.println(0,"Linea "+id.getLine()+": la variable no ha sido declarada "+id.getText());
 	} )
 	;	// ANTLR Exception.
