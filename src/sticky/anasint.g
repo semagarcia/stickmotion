@@ -35,7 +35,7 @@ class Anasint extends Parser;
 		Processor.println(-1,"...INICIANDO STICKY...");		
 	} 
 	
-	: (sentencia)* fin_interprete; //One or more sentences, and ends
+	: (sentencia)* fin_interprete; //One or more sentences, and it ends
 	sentencia: (simple fi:FIN_INSTRUCCION) | bucle; //Either one simple sentence with ; or loop, that no needs it;
 	exception
  		catch [RecognitionException re] {
@@ -82,6 +82,7 @@ declaracion {Object x = null; ArrayList lista = new ArrayList();}:
 		|(VAR IDENT (SEPARA IDENT)*) => var4:VAR i4:IDENT (SEPARA i3_alt:IDENT {lista.add(i3_alt);} )* 
 					{
 						// We should insert each identifier found in the symbols table
+
 						boolean res = tablaSimbolos.put(i4);
 						if(res)
 		  					Processor.println(1,"Linea "+i4.getLine()+": Variable \""+i4.getText()+"\" ha sido declarada");
@@ -436,7 +437,7 @@ expr_base returns [Object resultado = null]:
 		|n3:VERDADERO {resultado = new Boolean(true);}
 		|n4:FALSO {resultado = new Boolean(false);}
 		|n5:CADENA {resultado = new String( n5.getText()); }
-		|n6:PI { resultado = new Double(const_pi); Processor.println(1,"PI declarada: "+ resultado); } //PI
+		|n6:PI { resultado = new Double(const_pi); Processor.println(2,"PI declarada: "+ resultado); } //PI
 		|(IDENT) => id:IDENT
 		{
 			
@@ -879,7 +880,7 @@ evaluar_expr returns [Object respuesta = null]:
         {
                 if (o.getClass() == Boolean.class)
                            b = ((Boolean)o).booleanValue();
-                else Processor.println(0, "Linea "+id.getLine()+":ERROR IF");
+                else Processor.println(0, "Linea "+id.getLine()+": La expresión de condición de SI debe ser booleana");
         }
         ({b==true}? (sentencia)* LLAVE_DER
         | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
@@ -900,7 +901,7 @@ evaluar_expr returns [Object respuesta = null]:
         {
                 if (o.getClass() == Boolean.class)
                            b = ((Boolean)o).booleanValue();
-                else Processor.println(0, "Linea "+id2.getLine()+":ERROR IF");
+                else Processor.println(0, "Linea "+id2.getLine()+": La expresión de condición de SI debe ser booleana");
         }
         ({b==true}? sentencia 
         | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION)
@@ -1368,7 +1369,7 @@ impr_base returns [String respuesta=null]
 					respuesta = cadena2;
 				}
 			}
-			else // Is not declared
+			else // It is not declared
 				Processor.println(0,"Linea "+id.getLine()+": la variable no ha sido declarada "+id.getText());
 	} )
 	;	// ANTLR Exception.
