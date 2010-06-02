@@ -1,0 +1,58 @@
+////////////////
+var d= 300; // duration for the movements
+
+// Rotate the arms to move sideways
+girar BRAZO DER (PI/2, 0, 50);
+girar BRAZO IZQ (PI/2, 0, 50);
+
+// walk
+var i=0;
+para(i; i < 20; 1) {  
+  girar STICKMAN (PI/6,0,d);
+  mover STICKMAN (0,0.4,0,d);
+  
+  girar PIERNA DER(0,PI/2,d);
+  girar PIERNA IZQ(0,-PI/2,d);
+  flexionar PIERNA DER(PI/3,d);
+  flexionar PIERNA IZQ(PI/3,d);
+  tiempo avanza (d);
+  girar PIERNA DER(0,-PI/2,d);
+  girar PIERNA IZQ(0,PI/2,d);
+  flexionar PIERNA DER(-PI/3,d);
+  flexionar PIERNA IZQ(-PI/3,d);
+  tiempo avanza (d);  
+}
+
+
+// sevillanas
+i=0;
+tiempo establece(0);
+girar BRAZO DER(0,PI, d);
+girar BRAZO IZQ(0,PI, d);
+tiempo avanza (d);
+para(i; i < 10; 1) {
+  si(i > 2) {      
+    // flex forearms
+    flexionar BRAZO DER(-PI / 4, d);
+    flexionar BRAZO IZQ(-PI / 4, d);
+    // next step
+    tiempo avanza (d);
+    // un-Flex forearms
+    flexionar BRAZO DER(PI / 4, d);
+    flexionar BRAZO IZQ(PI / 4, d);
+    tiempo avanza (d);
+ } 
+} 
+
+tiempo establece (1000);
+d=2*d;
+i=0;
+para(i; i < 4; 1) {
+    girar STICKMAN (PI*2,0,d);
+    tiempo avanza (d*6);
+}
+
+$
+
+
+
