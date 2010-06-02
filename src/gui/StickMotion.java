@@ -1061,7 +1061,11 @@ public class StickMotion extends javax.swing.JFrame {
       setResults(Processor.getOutput()
           + "\n El procesamiento fue cancelado por el usuario.");
       // Perform the animations added until now
-      StickMotion.scene.start();
+      try {
+        StickMotion.scene.start();
+      } catch (Error e) { // Catches possible StackOverflow and other Errors
+        System.out.println(e.toString());
+      }
       enablePlay();
     }
   }
