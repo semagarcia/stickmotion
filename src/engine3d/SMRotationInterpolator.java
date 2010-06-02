@@ -8,7 +8,7 @@ import javax.media.j3d.WakeupOnElapsedTime;
 
 /**
  * This class is an extension of the RotationInterpolator class thats wake up on
- * elapsed time indicated by start argument-0.5 seconds
+ * elapsed time indicated by start argument-_waitTime seconds
  */
 public class SMRotationInterpolator extends RotationInterpolator {
   private long _start;

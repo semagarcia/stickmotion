@@ -62,12 +62,6 @@ public class Stickman extends SMGroup {
     addChild(lLeg);
     addChild(head);
 
-    // // Initial position
-    // rArm.setForeAngle(new Vector3f(0, 0, (float) 0.5));
-    // lArm.setForeAngle(new Vector3f(0, 0, (float) -0.5));
-    // rLeg.setForeAngle(new Vector3f(0, 0, (float) -0.2));
-    // lLeg.setForeAngle(new Vector3f(0, 0, (float) 0.2));
-
     updateJoints();
   }
 

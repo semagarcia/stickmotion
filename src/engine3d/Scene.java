@@ -321,7 +321,10 @@ public class Scene {
    *          Value of time to set
    */
   public void setTime(long time) {
-    this.time = time;
+    if (time <= 0)
+      this.time = 0;
+    else
+      this.time = time;
   }
 
 }

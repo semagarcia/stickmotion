@@ -156,7 +156,7 @@ public class SMGroup extends Group {
   }
 
   /**
-   * Adds a PositionInterpolator Behavior to the SMGroup
+   * Adds a SMPositionInterpolator Behavior to the SMGroup
    * 
    * @param duration
    * @param start
@@ -187,8 +187,8 @@ public class SMGroup extends Group {
     tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 
     // Creates an Alpha function
-    Alpha rotationAlpha = new Alpha(1, duration);
-    rotationAlpha.setStartTime(System.currentTimeMillis() + start);
+    Alpha traslationAlpha = new Alpha(1, duration);
+    traslationAlpha.setStartTime(System.currentTimeMillis() + start);
 
     Transform3D rX = new Transform3D();
     Transform3D rY = new Transform3D();
@@ -202,7 +202,7 @@ public class SMGroup extends Group {
 
     // Creates the SMPositionInterpolator
     SMPositionInterpolator translator = new SMPositionInterpolator(
-        rotationAlpha, tg, rX, startPos, endPos, start);
+        traslationAlpha, tg, rX, startPos, endPos, start);
 
     translator.setSchedulingBounds(_bounds);
 

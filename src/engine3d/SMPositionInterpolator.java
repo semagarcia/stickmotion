@@ -8,7 +8,7 @@ import javax.media.j3d.WakeupOnElapsedTime;
 
 /**
  * This class is an extension of the PositionInterpolator class thats wake up on
- * elapsed time indicated by start argument-waitTime seconds
+ * elapsed time indicated by start argument-_waitTime seconds
  */
 public class SMPositionInterpolator extends PositionInterpolator {
   private long _start;
@@ -19,7 +19,7 @@ public class SMPositionInterpolator extends PositionInterpolator {
   /**
    * Constructor that creates the SMPositionInterpolator and sets the start time
    * 
-   * @param rotationAlpha
+   * @param traslationAlpha
    * @param tg
    * @param rX
    * @param startPos
@@ -27,9 +27,9 @@ public class SMPositionInterpolator extends PositionInterpolator {
    * @param start
    * 
    */
-  public SMPositionInterpolator(Alpha rotationAlpha, TransformGroup tg,
+  public SMPositionInterpolator(Alpha traslationAlpha, TransformGroup tg,
       Transform3D rX, float startPos, float endPos, long start) {
-    super(rotationAlpha, tg, rX, startPos, endPos);
+    super(traslationAlpha, tg, rX, startPos, endPos);
 
     _start = start - _waitTime;
 
