@@ -35,7 +35,7 @@ class Anasint extends Parser;
 		Processor.println(-1,"...INICIANDO STICKY...");		
 	} 
 	
-	: (sentencia)* fin_interprete; //One or more sentences, and ends
+	: (sentencia)* fin_interprete; //One or more sentences, and then it ends
 	sentencia: (simple fi:FIN_INSTRUCCION) | bucle; //Either one simple sentence with ; or loop, that no needs it;
 	exception
  		catch [RecognitionException re] {
@@ -436,7 +436,7 @@ expr_base returns [Object resultado = null]:
 		|n3:VERDADERO {resultado = new Boolean(true);}
 		|n4:FALSO {resultado = new Boolean(false);}
 		|n5:CADENA {resultado = new String( n5.getText()); }
-		|n6:PI { resultado = new Double(const_pi); Processor.println(1,"PI declarada: "+ resultado); } //PI
+		|n6:PI { resultado = new Double(const_pi); Processor.println(2,"PI declarada: "+ resultado); } //PI
 		|(IDENT) => id:IDENT
 		{
 			
@@ -562,7 +562,7 @@ expr_incremento returns [Object resultado = null]:
 	  					tablaSimbolos.set(id3,resultado);
 	  					}
 	  				}
-	  			else //Is a string
+	  			else //It's a string
 	  			{
 	  				Processor.println(0,"Linea "+id3.getLine()+": la variable "+id3.getText()+" es una cadena y por tanto no se puede decrementar.");
 	  			}
@@ -879,7 +879,7 @@ evaluar_expr returns [Object respuesta = null]:
         {
                 if (o.getClass() == Boolean.class)
                            b = ((Boolean)o).booleanValue();
-                else Processor.println(0, "Linea "+id.getLine()+":ERROR IF");
+                else Processor.println(0, "Linea "+id.getLine()+": La expresión de condición de SI debe ser booleana");
         }
         ({b==true}? (sentencia)* LLAVE_DER
         | {b==false}? (options{greedy=false;}:sentencia)* LLAVE_DER)
@@ -900,7 +900,7 @@ evaluar_expr returns [Object respuesta = null]:
         {
                 if (o.getClass() == Boolean.class)
                            b = ((Boolean)o).booleanValue();
-                else Processor.println(0, "Linea "+id2.getLine()+":ERROR IF");
+                else Processor.println(0, "Linea "+id2.getLine()+": La expresión de condición de SI debe ser booleana");
         }
         ({b==true}? sentencia 
         | {b==false}? (options{greedy=false;}:sentencia)* FIN_INSTRUCCION)

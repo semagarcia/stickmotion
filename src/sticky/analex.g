@@ -12,7 +12,7 @@ class Analex extends Lexer;
 	tokens {
 		ENTERO= "int";
 		REAL= "real";
-	
+
 		//Variables
 		VAR="var";
 		SUP="sup";
