@@ -882,16 +882,16 @@ evaluar_expr returns [Object respuesta = null]:
                 else Processor.println(0, "Linea "+id.getLine()+": La expresión de condición de SI debe ser booleana");
         }
         ({b==true}? (sentencia)* LLAVE_DER
-        | {b==false}? (options{greedy=false;}:sentencia)* LLAVE_DER)
+        | {b==false}? (options{greedy=false;}:.)* LLAVE_DER)
         
         ((ELSE LLAVE_IZQ) => ELSE LLAVE_IZQ
         ({b==false}? (sentencia)* LLAVE_DER
-        | {b==true}? (options{greedy=false;}:sentencia)* LLAVE_DER
+        | {b==true}? (options{greedy=false;}:.)* LLAVE_DER
         )
         |
         (ELSE ~LLAVE_IZQ) => ELSE 							//3
         ({b==false}? sentencia
-        | {b==true}? (options{greedy=false;}:sentencia)* FIN_INSTRUCCION
+        | {b==true}? (options{greedy=false;}:.)* FIN_INSTRUCCION
         )
         )?
         |
@@ -903,17 +903,17 @@ evaluar_expr returns [Object respuesta = null]:
                 else Processor.println(0, "Linea "+id2.getLine()+": La expresión de condición de SI debe ser booleana");
         }
         ({b==true}? sentencia 
-        | {b==false}? (options{greedy=false;}:sentencia)* FIN_INSTRUCCION)
+        | {b==false}? (options{greedy=false;}:.)* FIN_INSTRUCCION)
         
         (
         (ELSE ~LLAVE_IZQ) => ELSE
         ({b==false}? sentencia
-        | {b==true}? (options{greedy=false;}:sentencia)* FIN_INSTRUCCION	
+        | {b==true}? (options{greedy=false;}:.)* FIN_INSTRUCCION	
         )
         |
         (ELSE LLAVE_IZQ) => ELSE LLAVE_IZQ					//4
         ({b==false}? (sentencia)* LLAVE_DER
-        | {b==true}? (options{greedy=false;}:sentencia)+ LLAVE_DER
+        | {b==true}? (options{greedy=false;}:.)+ LLAVE_DER
         )
         )?
         ;
@@ -993,7 +993,7 @@ sentencia_while
 		}			
 	} 
 	({b==true}? (sentencia)* LLAVE_DER {rewind(marker);}
-    | {b==false}? (options{greedy=false;}:sentencia)* LLAVE_DER) 
+    | {b==false}? (options{greedy=false;}:.)* LLAVE_DER) 
 	|
 	
 	(B_WHILE PAR_IZQ evaluar_expr PAR_DER) =>   //2
@@ -1068,7 +1068,7 @@ sentencia_for
 		tablaSimbolos.set(id, numero);
 	} 
 	({b==true}? (sentencia)* LLAVE_DER {rewind(marker);} 
-    |{b==false}? (options{greedy=false;}:sentencia)* LLAVE_DER)
+    |{b==false}? (options{greedy=false;}:.)* LLAVE_DER)
 	
 	|
 		//2
