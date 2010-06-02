@@ -506,7 +506,7 @@ public class StickMotion extends javax.swing.JFrame {
     menuBarFile.add(optionFileLoad);
 
     optionFileSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(
-        java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
+        java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
     optionFileSave.setText("Guardar...");
     optionFileSave.addMouseListener(new java.awt.event.MouseAdapter() {
       @Override
@@ -569,7 +569,7 @@ public class StickMotion extends javax.swing.JFrame {
     menuBarFile.add(optionFileSeparator2);
 
     optionFileExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(
-        java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
     optionFileExit.setMnemonic('S');
     optionFileExit.setText("Salir");
     optionFileExit.setToolTipText("Salir de la aplicación");
