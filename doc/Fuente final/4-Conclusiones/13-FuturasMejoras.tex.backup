@@ -1,0 +1,17 @@
+\chapter{Futuras Mejoras}
+Aunque se han cumplido los objetivos propuestos al inicio del documento, a lo largo del proceso de desarrollo se han observado
+algunas mejoras que proporcionarían una mayor funcionalidad en el ámbito del sistema.\\
+
+A continuación se clasifican el conjunto de mejoras posibles que se podrían realizar en versiones posteriores de la aplicación:
+\begin{enumerate}
+   \item Inclusión de librerías, es decir, fragmentos de código escritos en lenguaje \textbf{\textit{Sticky}} que implementan funciones concretas 
+         concretas  y específicas, aliviando así la carga de trabajo al usuario y evitando de esta forma el tener que reinventar la rueda
+         con código que ya ha sido desarrollado anteriormente.
+   \item Definición de funciones que fomenten la modularización y reutilización de los diferentes archivos de código.
+   \item Desarrollar una herramienta que permita la elección de idioma de la interfaz.
+   \item Proporcionar al usuario la opción de exportar resultados relacionados con el movimiento realizado por el objeto, tal y
+         como la distancia recorrida, términos matemáticos avanzados, etc.
+   \item Posibilidad de incrustar el sistema en un servidor web para que sea accedido mediante cualquier navegador web, sin 
+         necesidad de poseer el programa localmente.
+   \item Al hacer doble click en la depuración mostrada al ejecutar código, ir a la línea en el código correspondiente.
+\end{enumerate}

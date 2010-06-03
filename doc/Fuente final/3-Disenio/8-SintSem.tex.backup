@@ -1,0 +1,1158 @@
+\chapter{Analizadores sintáctico y semántico}
+El analizador sintáctico generado se implementará a través de la clase \textit{Anasint} que será una subclase de \textit{Parser}
+que es la que implementa los aspectos genéricos de los reconocedores sintácticos. La clase \textit{Anasint} ofrece un método por cada
+símbolo terminal de la gramática, dichos métodos serán los encargados de reconocer el lenguaje asociado a los símbolos correspondientes.\\
+
+   % Se puede añadir un caption sin label: [title=Periquito de los palotes]
+   % O con label: [caption={Useless code},label=useless]
+   \begin{lstlisting}
+      options {
+         k=2; 
+      }      
+      {
+         SymbolTable tablaSimbolos = new SymbolTable();
+         double const_pi = Math.PI;
+         // Exception function
+         void mostrarExcepcion(RecognitionException re)
+         {
+            Processor.println(0,"En linea " + re.getLine() + " : " + re.getMessage());
+            reportError(re);
+            try {
+               consume(); // Consume the token problem
+               consumeUntil(FIN_INSTRUCCION);
+            } catch (Exception e) {
+            }
+         }
+      }
+    \end{lstlisting}
+   Las acciones semánticas, se incrustan en el código, en este caso, en el lenguaje de programación Java. A continuación se explican
+   detalladamente, una a una, las consideraciones sintácticas y semánticas para cada una de las funciones del lenguaje.
+
+
+   \section{Instrucciones}
+   \begin{lstlisting}
+      instrucciones 
+      {
+         Object x = null;
+         Processor.println(-1, "...INICIANDO STICKY...");   
+      }
+      : (sentencia)* fin_interprete;
+   \end{lstlisting}
+
+   \section{Sentencia}
+   Esta regla es la raiz del lenguaje, es la producción S de la gramática. Admite 0 o muchas sentencias. Las instrucciones van seguidas
+   del carácter de fin de interpretación.
+   \begin{lstlisting}
+      sentencia: (simple FIN_INSTRUCCION) | bucle; 
+      // Either one simple sentence with ; or loop, that no needs it;
+      exception
+         catch [RecognitionException re] {
+            mostrarExcepcion(re);
+         }
+   \end{lstlisting}
+
+   \section{Simple}
+   Una instrucción simple puede ser una declaración, una asignación, una instrucción sticky, el incremento o decremento del valor 
+   asignado a un identificador, la eliminación de una variable en la tabla de símbolos o la impresión de un valor por pantalla.
+   \begin{lstlisting}
+      simple {String valor; Object valor2;}:  
+            declaracion    | 
+            asignacion     | 
+            eliminar_var   | 
+            funcion_sticky | 
+            valor = imprimir { Processor.println(-1, valor); } | 
+         valor2 = expr_incremento;
+   \end{lstlisting}
+
+   \section{Bucle}
+   Los bucles y sentencias condicionales aceptadas son:
+   \begin{lstlisting}
+      bucle: sentencia_if | sentencia_while | sentencia_for | sentencia_switch;
+      exception
+         catch [RecognitionException re] {
+            mostrarExcepcion(re);
+         }
+   \end{lstlisting}
+
+   \section{Declaración}
+   Esta regla permite la declaración de variables de tres formas claramente diferenciadas:
+   \begin{enumerate}
+      \item Se declara una variable sin inicializarse.
+      \item Se declara una variable y si se inicializa.
+      \item Se declara más de una variable.
+   \end{enumerate}
+   ¡Ojo! NO se permite la inicialización de variables si se declara más de una.
+   \begin{lstlisting}
+      declaracion {String mensaje;Object x = null; ArrayList lista = new ArrayList();}:
+      ( // Option 1
+         (VAR IDENT FIN_INSTRUCCION) => VAR i1:IDENT
+         { 
+            //... introducción en la tabla de símbolos y control de errores ...
+         }
+         
+         // Option 2
+         |(VAR IDENT OP_ASIG expr_or) =>VAR i3:IDENT OP_ASIG (x=expr_or) 
+            {     
+            // ... introducción en la tabla de símbolos y control de errores
+            }
+         // Option 3
+         |(VAR IDENT (SEPARA IDENT)*) => VAR i4:IDENT (SEPARA i3_alt:IDENT
+                        {lista.add(i3_alt);} )* 
+               {
+               //... inserción en la tabla de símbolos de cada
+               // identificador encontrado y control de errores ...
+               }
+               );
+         exception
+            catch [RecognitionException re] {
+               mostrarExcepcion(re);
+            }
+   \end{lstlisting} 
+   Una excepción se disparará si se encuentra algún token que no proceda.\\
+      
+   \section{Asignación}
+   Esta regla se ocupa de gestionar las asignaciones a realizar sobre variables ya declaradas, mostrando un mensaje de error 
+   si la asignación no se ha realizado porque la variable no existe en la tabla de símbolos.
+   \begin{lstlisting}
+      asignacion { Object respuesta; Object respuesta2;}:
+      i2:IDENT OP_ASIG (respuesta = expr_or)
+      {   
+            if(tablaSimbolos.set(i2,respuesta)) 
+            Processor.println(1, "Linea "+i2.getLine()+": Asignacion a la variable \""+i2.getText()+"\": "+respuesta);
+            else 
+              Processor.println(0, "Linea "+i2.getLine()+": Asignacion no realizada, no existe la variable \""+i2.getText()+"\"");
+      };
+      exception
+         catch [RecognitionException re] {
+            mostrarExcepcion(re);
+         }
+   \end{lstlisting}
+
+   \section{expr\_or}
+   Esta regla recibe un valor desde \textit{expr\_xor}, y si encuentra \textit{OP\_O} y otro valor, realiza la disyunción, 
+   comprobando si la operación es posible porque es acorde a los tipos de datos recibidos desde las reglas hijas. (Para realizar
+   la disyunción ambos tipos de datos deben ser booleanos). En caso de no poderse realizar la operación muestra mensaje de error.\\
+
+   Además, en caso de producirse un error de tipo sintático, una excepción se dispara, informando y gestionando del error, 
+   consumiendo todos los tokens hasta el siguiente fin de instrucción (método de pánico).\\
+   \begin{lstlisting}
+      expr_or returns [Object resultado = null] 
+      {Object exp1 = null; Object exp2 = null; Object exp3 = null;}: 
+      exp1= expr_xor
+      {
+         resultado = exp1;
+      }
+      ( linea:OP_O exp2 = expr_xor
+         {
+         //...Comprueba los tipos de datos, y en caso de que proceda muestra error el resultado...
+         } 
+      )*;
+      exception
+         catch [RecognitionException re] {
+            mostrarExcepcion(re);
+         }
+   \end{lstlisting}
+
+   \section{expr\_xor}
+   Esta regla recibe un valor desde \textit{expr\_and}, y si encuentra \textit{OP\_OX} y otro valor, realiza la disyunción 
+   exclusiva, comprobando si la operación es posible porque es acorde a los tipos de datos recibidos desde las reglas hijas. 
+   (Para realizar la disyunción exclusiva ambos tipos de datos deben ser booleanos).\\
+  
+   Si la operación lógica no se puede realizar, se muestra un mensaje de error.
+   \begin{lstlisting}
+      expr_xor returns [Object resultado = null]
+      {Object exp1 = null; Object exp2 = null; Object exp3 = null;}: 
+      exp1= expr_and
+      {
+         resultado = exp1;
+      }
+      ( linea:OP_OX exp3 = expr_and
+         {
+         //...Comprueba los tipos, y en caso de que proceda muestra error resultado...
+         } 
+      )*;
+   \end{lstlisting}
+
+   \section{expr\_and}
+   Esta regla recibe un valor desde \textit{expr\_not}, y si encuentra \textit{OP\_Y} y otro valor, realiza la conjunción, 
+   comprobando si la operación es posible porque es acorde a los tipos de datos recibidos desde las reglas hijas. (Para 
+   realizar la conjunción ambos tipos de datos deben ser booleanos).\\
+  
+   Si las operación no se puede realizar se muestra mensaje de error.
+   \begin{lstlisting}
+      expr_and returns [Object resultado = null]
+      {Object exp1 = null ; Object exp2 = null;}: 
+
+      exp1=expr_not {resultado = exp1;}
+      ( linea:OP_Y exp2 = expr_not
+         {
+         //...Comprueba los tipos, y en caso de que proceda muestra error o el resultado...
+         }
+      )*;
+   \end{lstlisting}
+
+   \section{expr\_not}
+   Esta regla responde a la negación de expresiones booleanas. Muestra error si la operación no se puede realizar.
+   \begin{lstlisting}
+      expr_not returns [Object resultado = null]
+      {Object exp1 = null ; Object exp2 = null;}: 
+
+      (expr_relacional) => exp1=expr_relacional { resultado = exp1;}
+      |
+      ( linea:OP_NO exp2 = expr_relacional
+         {
+         //...Comprueba los tipos, y en caso de que proceda muestra error o
+         //el resultado, para evitar negar una variable que no sea booleana...
+         }
+      )*;
+   \end{lstlisting}
+
+   \section{expr\_relacional}
+   Esta regla es la encargada de evaluar las expresiones relacionales. La regla recibe un valor (independientemente del
+   tipo), y lo transmite hacia reglas padre.\\
+
+   Si además recibe un operador relacional (\textit{OP\_MAYOR, OP\_MENOR, OP\_IG, OP\_DIST}) y un valor, comprueba que ambos 
+   sean numéricos (realizando las conversiones necesarias entre tipos Java), y obtiene un booleano como resultado de la expresión 
+   relacional, transmitiéndolo hacia la raíz en el árbol gramatical.\\
+
+   Si se intenta realizar operaciones relacionales con cadenas de caracteres se muestra un mensaje de error.
+   \begin{lstlisting}
+      expr_relacional returns [Object respuesta = null] {Object e1; Object e2;}:
+      e1 = expr_aritmetica {
+         respuesta = e1;
+      }
+      (linea:OP_MAYOR e2 = expr_aritmetica
+      {
+         if(e1 instanceof Integer && e2 instanceof Integer)
+         {
+            int num1 = new Integer(e1.toString()).intValue();
+            int num2 = new Integer(e2.toString()).intValue();
+            respuesta = new Boolean(num1>num2);
+         }
+         
+         if(e1 instanceof Integer && e2 instanceof Double)
+         {
+            int num1 = new Integer(e1.toString()).intValue();
+            double num2 = new Double(e2.toString()).doubleValue();
+            respuesta = new Boolean(num1>num2);
+         }
+         
+         if(e1 instanceof Double && e2 instanceof Double)
+         {
+            double num1 = new Double(e1.toString()).doubleValue();
+            int num2 = new Integer(e2.toString()).intValue();
+            respuesta = new Boolean(num1>num2);
+         }
+         
+         if(e1 instanceof Double && e2 instanceof Double)
+         {
+            double num1 = new Double(e1.toString()).doubleValue();
+            double num2 = new Double(e2.toString()).doubleValue();
+            respuesta = new Boolean(num1>num2);
+         }
+         
+         
+      if(((e1 instanceof String == true) && (e2 instanceof String == false))
+      ||((e1 instanceof String == false)&&(e2 instanceof String == true)))
+         {
+            Processor.println(0,"Linea "+linea.getLine()+": No se puede 
+            realizar expresiones relacionales con cadenas");
+            respuesta = new Boolean(false);
+         }
+         
+            
+      }
+      |linea2:OP_MENOR e2 = expr_aritmetica
+      {
+      // Igual que para el operador mayor
+      } 
+      |linea3:OP_IG e2 = expr_aritmetica
+      {
+      // Igual que para el operador mayor
+      }
+      |linea4:OP_DIST e2 = expr_aritmetica
+      {
+      // Igual que para el operador mayor
+      }
+      )*;
+   \end{lstlisting}
+
+   \section{expr\_aritmetica}
+   Esta regla es la encargada de evaluar las expresiones aritmética. La regla recibe un valor (independientemente del tipo),
+   y lo transmite hacia reglas padre.\\
+
+   Si además recibe el operador de módulo (\textit{OP\_MOD}) y un valor, comprueba que ambos sean numéricos (realizando las conversiones
+   necesarias entre tipos Java), y obtiene un número (real o entero) como resultado de la expresión aritmética, transmitiéndolo
+   hacia la raíz en el árbol gramatical.\\
+
+   En caso de intentar realizar operaciones aritméticas con cadenas de caracteres o expresiones booleanos se muestra un mensaje de 
+   error. Además, en caso de error de tipo sintáctico, una excepción se dispara capturando y gestionando dicho error.
+   \begin{lstlisting}
+      expr_aritmetica returns[Object resultado = null]
+      {Object e1 = null; Object e2 = null; Object e3 = null;}:
+      e1 = expr_mod
+      {
+         // This is in case of var =- 2; The char - at the top makes 
+         // the first operand null and the second 2
+         if(e1 == null)
+            e1 = 0;
+            
+         resultado = e1;
+      }
+      ( linea1:OP_MOD e2 = expr_mod
+      {
+         if(e1 instanceof Integer && e2 instanceof Integer)
+         {
+            int valor1 = new Integer(e1.toString()).intValue();
+            int valor2 = new Integer(e2.toString()).intValue();
+            
+            resultado = new Integer(valor1%valor2);
+         }
+         
+         if((e1 instanceof Double || e2 instanceof Double) &&
+            !(e1 instanceof String || e2 instanceof String || 
+            e1 instanceof Boolean || e2 instanceof Boolean))
+         {
+            double valor1 = new Double(e1.toString()).doubleValue();
+            double valor2 = new Double(e2.toString()).doubleValue();
+            
+            resultado = new Double(valor1 % valor2);
+         }
+         
+         if(e1 instanceof String || e2 instanceof String)
+         {
+            Processor.println(0,"Linea "+linea1.getLine()
+            +": No se pueden realizar operaciones aritmeticas 
+            con cadenas de caracteres");
+         }
+         
+         if(e1 instanceof Boolean || e2 instanceof Boolean)
+         {
+            Processor.println(0,"Linea "+linea1.getLine() +": No se pueden realizar operaciones aritmeticas con valores booleanos");
+         }
+         
+      })*;
+      exception
+         catch [RecognitionException re] {
+            mostrarExcepcion(re);
+         }
+   \end{lstlisting}
+
+   \section{expr\_mod}
+   Esta regla es la encargada de evaluar las expresiones módulo. La regla recibe un valor (independientemente del tipo),
+   y lo transmite hacia reglas padre. \\
+
+   Si además recibe los operadores aritméticos (\textit{OP\_SUM} u \textit{OP\_RES}) y un valor, comprueba que ambos sean numéricos 
+   (realizando las conversiones necesarias entre tipos Java), y obtiene un número (real o entero) como resultado de la expresión aritmética,
+   transmitiéndolo hacia la raíz en el árbol gramatical.\\
+
+   Si se intenta realizar sumas o restas con valores no numéricos se muestra un mensaje de error en el interfaz del intérprete.
+   \begin{lstlisting}
+      expr_mod returns [Object resultado = null]
+      {Object e1; Object e2; Object e3; Object e4;}: 
+      e1 = expr
+      {
+         // This is in case of var =- 2; The char - at the top makes 
+         // the first operand null and the second 2
+         if(e1 == null)
+            e1 = 0;
+         resultado = e1;
+      }
+      ( linea1:OP_SUM e2 = expr
+      {
+         if(e1 instanceof Integer && e2 instanceof Integer) {
+            int valor1 = new Integer(e1.toString()).intValue();
+            int valor2 = new Integer(e2.toString()).intValue();
+            
+            resultado = new Integer(valor1+valor2);
+            
+            e1=resultado;
+         } else {
+            if(e1 instanceof String || e2 instanceof String) {
+               if(e1 instanceof String && e2 instanceof String) {
+                  String valor1 = new String(e1.toString());
+                  String valor2 = new String(e2.toString());
+                  resultado = new String(valor1+valor2);
+               } else {
+                  Processor.println(0,"Linea "+linea1.getLine()+":
+                     No se pueden realizar operaciones aritmeticas
+                     con cadenas de caracteres");
+               }
+            } else {
+               if(e1 instanceof Boolean || e2 instanceof Boolean)
+                  Processor.println(0,"Linea "+linea1.getLine()+":
+                     No se pueden realizar operaciones aritmeticas
+                     con valores booleanos");
+               else {
+                  double valor1 = new Double(e1.toString()).doubleValue();
+                  double valor2 = new Double(e2.toString()).doubleValue();
+                  resultado = new Double(valor1+valor2);
+                  e1 = resultado;
+               }
+            }
+         } 
+      }
+      | linea2:OP_RES e3 = expr
+      {
+      // Se comprueban los tipos de datos como en la suma para realizar la 
+      // operación de sustracción.
+      }
+      )*;
+   \end{lstlisting}
+
+   \section{expr}
+   Esta regla es la encargada de evaluar las expresiones de multiplicación o división. La regla recibe un valor 
+   (independientemente del tipo), y lo transmite hacia reglas padre. \\
+   Si además recibe los operadores aritméticos (\textit{OP\_MUL} u \textit{OP\_DIV}) y otro valor, comprueba que ambos sean 
+   numéricos (realizando las conversiones necesarias entre tipos Java), y obtiene un número (real o entero) como resultado de la
+   expresión aritmética, transmitiéndolo hacia la raíz en el árbol gramatical.\\
+   
+   Si se intentan realizar multiplicaciones o divisiones con valores no numéricos se muestra un mensaje de error en el 
+   interfaz del intérprete.
+   \begin{lstlisting}
+      expr returns [Object resultado = null]
+      {Object e1; Object e2; Object e3;}: 
+      
+      e1 = expr_mult {
+         // This is in case of var =- 2; The char - at the top makes 
+         // the first operand null and the second 2
+         if(e1 == null)
+            e1 = 0;
+            
+         resultado = e1;
+         }
+
+      ( linea1:OP_MUL e2 = expr_mult
+         {            
+         if(e1 instanceof Integer && e2 instanceof Integer) {
+            int valor1 = new Integer(e1.toString()).intValue();
+            int valor2 = new Integer(e2.toString()).intValue();
+            
+            resultado = new Integer(valor1*valor2);
+            
+            e1=resultado;
+         }
+            
+         if((e1 instanceof Double || e2 instanceof Double) && 
+            !(e1 instanceof String || e2 instanceof String || 
+            e1 instanceof Boolean || e2 instanceof Boolean)) {
+            double valor1 = new Double(e1.toString()).doubleValue();
+            double valor2 = new Double(e2.toString()).doubleValue();
+            
+            resultado = new Double(valor1*valor2);
+            
+            e1=resultado;
+         }
+            
+         if(e1 instanceof String || e2 instanceof String) {
+            Processor.println(0,"Linea "+linea1.getLine()+": No se
+               pueden realizar operaciones aritmeticas con cadenas de
+               caracteres");
+         }
+            
+         if(e1 instanceof Boolean || e2 instanceof Boolean) {
+            Processor.println(0,"Linea "+linea1.getLine()+": No se
+               pueden realizar operaciones aritmeticas con valores
+               booleanos");
+            }
+         }
+         | linea2:OP_DIV e3 = expr_mult
+         {
+            // Comprueba los tipos de datos como en la multiplicación para realizar 
+            // la división 
+         }
+         )*;
+   \end{lstlisting}
+
+   \section{expr\_mult}
+   Esta regla es la encargada de evaluar la expresión de potencia. La regla recibe un valor (independientemente del tipo), y
+   lo transmite hacia reglas padre.\\
+
+   Si además recibe el operador (\textit{OP\_POT}) y otro valor, comprueba que ambos sean numéricos (realizando las conversiones necesarias
+   entre tipos Java), y obtiene un número (real o entero) como resultado de la expresión, transmitiéndolo hacia la raíz en el árbol
+   gramatical. 
+   \begin{lstlisting}
+      expr_mult returns [Object resultado = null] {Object e1; Object e2;}:
+      e1 = expr_raiz
+      {
+         if(e1 == null)
+            e1 = 0;
+            
+         resultado = e1; 
+      }
+      (linea1:OP_POT e2 = expr_raiz
+      {
+         // Comprueba los tipos de e1 y e2 para realizar la potencia 
+      }
+      )*;
+   \end{lstlisting}
+
+   \section{expr\_raiz}
+   Esta regla es la encargada de evaluar la expresión de raiz cuadrada. La regla recibe un valor (independientemente del tipo), 
+   y lo transmite hacia reglas padre. \\
+
+   Si además recibe el operador (\textit{OP\_RAIZ}) y otro valor, comprueba que ambos sean numéricos (realizando las conversiones necesarias
+   entre tipos Java), y obtiene un número (real o entero) como resultado de la expresión raiz, transmitiéndolo hacia la raíz en el
+   árbol gramatical. 
+   \begin{lstlisting}
+      expr_raiz returns [Object resultado = null]
+      {Object exp1 = null ; Object exp2 = null;}: 
+
+      exp1 = expr_base {
+         // This is in case of var =- 2; The char - at the top makes 
+         // the first operand null and the second 2
+         if(exp1 == null)
+            exp1 = 0; 
+            resultado = exp1;
+         }
+      |
+      ( linea:OP_RAIZ exp2 = expr_base
+         {
+         // Comprueba el tipo exp2 y en caso de ser numérico, realiza la raiz 
+         // cuadrada del mismo. Si no muestra error.
+         }
+         )* ;
+   \end{lstlisting}
+
+   \section{expr\_base}
+   La siguiente regla es la expresión base de la sección de la gramática descrita en el analizador sintáctico. Una expresión
+   base puede ser un entero, un número real, un valor ``verdadero'', un valor ``falso'', una cadena, una constante \textit{PI}, un identificador
+   correspondiente a una variable, una expresión de incremento o decremento, una expresión aritmética entre paréntesis o una 
+   expresión OR (raiz de todas las operaciones booleanas, aritméticas, relacionales o aritméticas) entre paréntesis.\\
+
+   Si se utiliza un identificador que no está declarado en la tabla de símbolos se muestra mensaje de error. Además, una excepción
+   se dispara si se encuentra un error durante el análisis sintáctico, informando y resolviéndose este error, consumiendo todo 
+   hasta el siguiente fin de instrucción (método de pánico).
+   \begin{lstlisting}
+      expr_base returns [Object resultado = null]: 
+         n1:ENTERO {resultado = new Integer(n1.getText());}
+         | n2:REAL {resultado = new Double(n2.getText());}
+         | n3:VERDADERO {resultado = new Boolean(true);}
+         | n4:FALSO {resultado = new Boolean(false);}
+         | n5:CADENA {resultado = new String( n5.getText()); }
+         | n6:PI { resultado = new Double(const_pi); 
+               Processor.println(1,"PI declarada: "+ resultado); }
+         | (IDENT) => id:IDENT
+         {
+      
+         // Rescata el valor de la variable y lo devuelve. En caso de no 
+         // existir muestra error
+      
+         }
+         | resultado = expr_incremento
+         | (PAR_IZQ expr_aritmetica PAR_DER) => PAR_IZQ (resultado =
+                        expr_aritmetica) PAR_DER
+         | (PAR_IZQ expr_or PAR_DER) => PAR_IZQ (resultado = expr_or) PAR_DER
+         ;
+      exception
+         catch [RecognitionException re] {
+            mostrarExcepcion(re);
+         }
+   \end{lstlisting}
+
+   \section{expr\_incremento}
+   Esta regla de la gramática es la responsable de reconocer las expresiones de incremento o decremento sobre los 
+   identificadores declarados. \\
+
+   Si el identificador referenciado no se corresponde con ninguna variable declarada en la tabla de símbolos se 
+   muestra un mensaje de error, informando de este hecho.
+   \begin{lstlisting}
+      expr_incremento returns [Object resultado = null]:
+      (IDENT OP_INC) => id2:IDENT OP_INC
+         {
+            if(tablaSimbolos.existeSimbolo(id2.getText()))
+            {
+            String contenido = tablaSimbolos.getContenidoSimbolo(id2.getText());
+            
+            if(contenido.compareTo("") == 0) {
+            Processor.println(0,"Linea "+id2.getLine()+": 
+               La variable "+id2.getText()+" no tiene asignado 
+               ningun valor.");  
+            } else {
+            // If there is a string (if it takes " 'matches' returns false)
+            if(contenido.matches("[0-9.]+|true|false")) {
+               //If false o true is a boolean
+               if(contenido.matches("true|false")) {
+                  Processor.println(0,"Linea "+
+                  id2.getLine()+": la variable "+
+                  id2.getText()+" es un booleano y por 
+                  tanto no se puede incrementar.");
+               } // If takes only numeric values
+                else if(contenido.matches("[0-9]+")) {
+                  resultado = new
+                  Integer(contenido.toString()).intValue()+1;
+                  tablaSimbolos.set(id2,resultado);
+               } // Else is a integer
+                else {
+                  resultado = new
+                  Float(contenido.toString()).floatValue()+1;
+                  tablaSimbolos.set(id2,resultado);
+                }
+               } else { //is a string
+               Processor.println(0,"Linea "+id2.getLine()+":
+                  la variable "+id2.getText()+" es una cadena y 
+                  por tanto no se puede incrementar.");
+               }
+            }
+         } else 
+            Processor.println(0,"Linea "+id2.getLine()+":
+            la variable "+id2.getText()+" no ha sido declarada.");
+         }
+         | (IDENT OP_DEC) => id3:IDENT OP_DEC
+         {
+         
+         // Al igual que para el incremento, rescata la variable, la
+         // incrementa, guarda su valor y lo devuelve. Si el identificador
+         // no existe muestra error...    
+         };
+   \end{lstlisting}
+
+   \section{sentencia\_if}
+   La siguiente regla de la gramática implementa las sentencia ``if'', de las cuatro siguientes formas, según se usen con o sin corchetes: 
+   \begin{enumerate}
+      \item if de la forma: si (VERDAD) { sent = 1; } sino { sent = 2; var sentSent; }
+      \item if de la forma: si (VERDAD) sent = 1; sino sent = 2;
+      \item if de la forma: si (VERDAD) {sent = 1; } sino sent = 2;
+      \item if de la forma: si (VERDAD) sent = 1; sino { sent = 2; }
+   \end{enumerate}
+   Una excepción se dispara si se produce un error en el análisis sintáctico, informando y gestionando el error, consumiendo todos los 
+   tokens siguientes hasta el fin de instrucción.
+   \begin{lstlisting}
+      sentencia_if {Object o; boolean b = false;} : 
+         (IF PAR_IZQ (evaluar_expr) PAR_DER LLAVE_IZQ) => //1
+         IF id:PAR_IZQ (o=evaluar_expr) PAR_DER LLAVE_IZQ
+            {
+               if (o.getClass() == Boolean.class)
+                  b = ((Boolean)o).booleanValue();
+               else 
+                  Processor.println(0, "Linea "+id.getLine()+":ERROR IF");
+            }
+            ({b==true}? (sentencia)* LLAVE_DER
+            | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
+            
+            ((ELSE LLAVE_IZQ) => ELSE LLAVE_IZQ
+            ({b==false}? (sentencia)* LLAVE_DER
+            | {b==true}? (options{greedy=false;}:.)+ LLAVE_DER
+            )
+            |
+            (ELSE ~LLAVE_IZQ) => ELSE               //3
+            ({b==false}? sentencia
+            | {b==true}? (options{greedy=false;}:.)+ FIN_INSTRUCCION
+            )
+            )?
+            |
+            (IF PAR_IZQ (evaluar_expr) PAR_DER) =>          //2
+               id2: IF PAR_IZQ (o=evaluar_expr) PAR_DER 
+            {
+                     if (o.getClass() == Boolean.class)
+                                 b = ((Boolean)o).booleanValue();
+                     else Processor.println(0, "Linea "+id2.getLine()+":ERROR IF");
+            }
+            ({b==true}? sentencia 
+            | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION)
+            
+            (
+            (ELSE ~LLAVE_IZQ) => ELSE
+            ({b==false}? sentencia
+            | {b==true}? (options{greedy=false;}:.)+ FIN_INSTRUCCION  
+            )
+            |
+            (ELSE LLAVE_IZQ) => ELSE LLAVE_IZQ          //4
+            ({b==false}? (sentencia)* LLAVE_DER
+            | {b==true}? (options{greedy=false;}:.)+ LLAVE_DER
+            )
+            )?
+            ;
+      exception
+         catch [RecognitionException re] {
+            mostrarExcepcion(re);
+         }
+   \end{lstlisting}
+
+   \section{sentencia\_switch}
+   La regla que a continuación se expone implementa las operaciones de bifurcación de casos, de tipo ``switch''. El valor que
+   toma el acumulador se va incrementando a medida que se encuentran casos cuya expresión no se satisfacen.\\
+
+   Si al llegar al token DEFAULT no ha ejecutado ningún caso, se reconocen las sentencias de la opción por defecto. De otra 
+   manera las cláusulas encerradas entre llaves se obvian. 
+   \begin{lstlisting}
+      sentencia_switch 
+      {Object resultado; int flag; int acumulador = 0; int contador = 0;} :
+      
+      SWITCH PAR_IZQ (resultado=expr_or) PAR_DER LLAVE_IZQ
+      (flag = casos_switch[resultado] {acumulador += flag; contador++;})*  (DEFAULT DOBLE_PUNTO 
+         {Processor.println(2, "Valor de acumulador:"+acumulador);} 
+         LLAVE_IZQ
+      ({ acumulador == contador}? (sentencia)* LLAVE_DER 
+      //if flag is equal to contador has not run any case
+         |{ acumulador < contador }? (options{greedy=false;}:.)+ LLAVE_DER )
+      END_CASE FIN_INSTRUCCION)? LLAVE_DER ;
+      exception
+         catch [RecognitionException re] {
+            mostrarExcepcion(re);
+         }
+   \end{lstlisting}
+
+   \section{casos\_switch}
+   Esta regla recibe como parámetro de entrada el resultado de la expresión condicional de la regla sentencia\_switch,
+   y lo compara con otra expresión. Si no son equivalentes se obvian todas las cláusulas hasta llegar a la llave de cierre,
+   y se devuelve 1 para indicar que el caso no se ha satisfecho.\\
+
+   Esto permite a la regla padre ``sentencia\_switch'' saber si tiene que ejecutar las sentencias de la opción por defecto o no.
+   \begin{lstlisting}
+      casos_switch [Object resultado] returns [int n=0] 
+      {Object res_eva; String cadena1 = null; String cadena2 = null;}: 
+      CASE (res_eva = expr_or) DOBLE_PUNTO LLAVE_IZQ 
+      {
+      
+      // ... 
+      // Introduce en cadena1 el objeto resultado recibido como parámetro de 
+      // entrada de la regla.
+      // Introduce en cadena2 el resultado de la expresión res\_eva
+      // ...  
+      
+      }
+      
+      ({(cadena2.toString()).compareTo(cadena1.toString()) == 0}? 
+      (sentencia)* {n=0;} LLAVE_DER
+
+            |{(cadena2.toString()).compareTo(cadena1.toString()) != 0}? 
+      (options{greedy=false;}:.)+ {n=1;} LLAVE_DER )  
+      END_CASE FIN_INSTRUCCION ;
+   \end{lstlisting}
+
+   \section{sentencia\_while}
+   La regla mostrada a continuación implementa los bucles ``mientras''. Estos, pueden ser reconocidos de dos formas diferentes,
+   atendiendo a que lleven paréntesis o no:
+   \begin{enumerate}
+      \item while de la forma: mientras (VERDAD) { sent = 1; sent = 2; var sentSent; }
+      \item while de la forma: mientras (VERDAD) sent = 1;
+   \end{enumerate}
+   Una excepción es encargada de capturar los errores que se produzcan en el análisis sintáctico, consumiendo los tokens
+   problemáticos hasta encontrar el siguiente fin de instrucción (método de pánico).
+   \begin{lstlisting}
+      sentencia_while
+         {
+            Boolean b = null; 
+            Object expresion = null; 
+            int marker = mark();
+         } :
+      
+      (B_WHILE PAR_IZQ evaluar_expr PAR_DER LLAVE_IZQ) =>   //1
+      B_WHILE PAR_IZQ expresion = evaluar_expr PAR_DER LLAVE_IZQ
+      {
+         b = ((Boolean)expresion).booleanValue();
+            
+      } 
+      ({b==true}? (sentencia)* LLAVE_DER {rewind(marker);}
+         | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
+      |
+      
+      (B_WHILE PAR_IZQ evaluar_expr PAR_DER) =>        //2
+      B_WHILE PAR_IZQ expresion = evaluar_expr PAR_DER
+      {
+         b = ((Boolean)expresion).booleanValue();
+            
+      } 
+         ({b==true}? sentencia {rewind(marker);}
+            | {b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION )
+      ;
+      exception
+         catch [RecognitionException re] {
+            mostrarExcepcion(re);
+         }
+   \end{lstlisting}
+
+   \section{sentencia\_for}
+   La siguiente regla reconoce los bucles ``para'' de dos formas diferentes, según se utilicen corchetes para aglutinar varias
+   sentencias o no:
+   \begin{enumerate}
+      \item Alternativa 1: para(identificador; expresion booleana; entero) { sent; sent2; }
+      \item Alternativa 2: para(identificador; expresion booleana; entero) sent; 
+   \end{enumerate}
+  \textbf{NOTA}: El valor de identificador queda alterado después de la ejecución del bucle.\\
+  Una excepción ANTLR es la encargada de capturar los errores sintácticos durante el análisis,  y gestionarlo.
+   \begin{lstlisting}
+      sentencia_for
+         {
+            Boolean b = null; 
+            Boolean hecho = false;
+            Object expresion = null; 
+            int marker = mark();
+            int numero = 0;
+         } :
+                           //1
+      (B_FOR PAR_IZQ 
+         IDENT FIN_INSTRUCCION 
+         evaluar_expr FIN_INSTRUCCION 
+         ENTERO PAR_DER LLAVE_IZQ) =>
+      
+         B_FOR PAR_IZQ id:IDENT FIN_INSTRUCCION 
+         expresion = evaluar_expr FIN_INSTRUCCION 
+         n:ENTERO PAR_DER LLAVE_IZQ
+      {
+         b = ((Boolean)expresion).booleanValue();
+         
+         if(hecho == false) {
+         //Get value from variable id
+         if(tablaSimbolos.existeSimbolo(id.getText())) {
+            String contenido = 
+               tablaSimbolos.getContenidoSimbolo(id.getText());
+            
+            if(contenido==null) {
+               Processor.println(0,"Linea "+id.getLine()+
+                  ": La variable no tiene asignado ningun valor "
+                  +id.getText()); 
+            }
+            
+            if(contenido.matches("[0-9~.]*")) {
+               numero = new Integer(contenido.toString()).intValue();
+               hecho = true;
+            } 
+         } else 
+            Processor.println(0,"Linea "+id.getLine()+
+               ": la variable no ha sido declarada "+id.getText());
+         }   
+         numero = numero + Integer.parseInt(n.getText());  
+         // Saves the value
+         tablaSimbolos.set(id, numero);
+      } 
+      ({b==true}? (sentencia)* LLAVE_DER {rewind(marker);}
+         | {b==false}? (options{greedy=false;}:.)+ LLAVE_DER) 
+         |
+                        //2
+      (B_FOR PAR_IZQ IDENT FIN_INSTRUCCION 
+      evaluar_expr FIN_INSTRUCCION 
+      ENTERO PAR_DER) => 
+      
+      B_FOR PAR_IZQ id2:IDENT FIN_INSTRUCCION 
+      expresion = evaluar_expr FIN_INSTRUCCION 
+      n2:ENTERO PAR_DER
+      {
+         b = ((Boolean)expresion).booleanValue();
+         
+         if(hecho == false) {
+         // Get value from variable id2
+         if(tablaSimbolos.existeSimbolo(id2.getText())) {
+            String contenido =
+               tablaSimbolos.getContenidoSimbolo(id2.getText());
+               if(contenido==null) {
+                  Processor.println(0,"Linea "+id2.getLine()+
+                     ": La variable no tiene asignado ningun valor "+
+                     id2.getText()); 
+               }
+            
+               if(contenido.matches("[0-9~.]*")) {
+                  numero = new Integer(contenido.toString()).intValue();
+                  hecho = true;
+               } 
+            } else 
+               Processor.println(0,"Linea "+id2.getLine()+
+                  ": la variable no ha sido declarada "+id2.getText());
+         }   
+         numero = numero + Integer.parseInt(n2.getText());
+            
+         //Saves the value
+         tablaSimbolos.set(id2, numero);
+      } 
+      ({b==true}? sentencia {rewind(marker);}
+         |{b==false}? (options{greedy=false;}:.)+ FIN_INSTRUCCION) 
+      ;
+      exception
+         catch [RecognitionException re] {
+            mostrarExcepcion(re);
+         }
+   \end{lstlisting}
+
+   \section{eliminar\_var}
+   La siguiente regla es utilizada para la eliminación de variables declaradas. En caso de no existir tal variable se muestra
+   un mensaje de error.
+   \begin{lstlisting}
+      eliminar_var {String res;}: SUP id:IDENT
+      {
+         res=tablaSimbolos.delSimbolo(id);
+         if(res.compareTo(id.getText()) == 0)
+            Processor.println(1, "Linea "+
+               id.getLine()+": Variable \""+
+               id.getText()+"\" ha sido eliminada");
+         else 
+            Processor.println(0, "Linea "+
+               id.getLine()+": Variable \""+
+               id.getText()+"\" no ha sido eliminada, no existe");
+      };
+   \end{lstlisting}
+
+   \section{funcion\_sticky}
+   La siguiente regla distingue entre aquellas que se actúan directamente sobre \textbf{\textit{Stickman}} o sobre el control del tiempo
+   de la escena.
+   \begin{lstlisting}
+      funcion_sticky: f_tiempo | f_mover | f_flexionar | f_girar;
+   \end{lstlisting}
+
+   \section{f\_tiempo}
+   La regla mostrada a continuación es la responsable de reconocer las instrucciones para el control del tiempo en la escena.\\
+   \begin{itemize}
+      \item Establecer el tiempo inicial de la escena.
+      \item Avanzar algunos milisegundos en la escena.\\
+   \end{itemize}
+   Una excepción es la encargada de capturar los errores sintácticos, mostrar error y consumir los tokens hasta el final de instrucción.
+   \begin{lstlisting}
+      f_tiempo {Object res1;}: TIEMPO (est:ESTABLECE|AVANZA) PAR_IZQ  res1=expr_aritmetica PAR_DER
+      {
+      // Convert to correct format in order to call the function
+      String cadena1 = res1.toString();
+      float res1_float = Float.parseFloat(cadena1);
+      int res1_int = Math.round(res1_float);
+
+      Processor.println(1,"Entrando tiempo sticky. "+"res1_int: "+ res1_int);
+
+      //If option is ESTABLECE, function "tiempo establece" is called.
+      if(est != null) {
+         Processor.println(1,"FSticky -> tiempo establece.");
+         gui.StickMotion.scene.setTime(res1_int);
+      }// Else "tiempo avanza" is called.
+      else {
+         Processor.println(1,"FSticky -> tiempo avanza.");
+         gui.StickMotion.scene.addTime(res1_int);
+         }
+      };
+      exception
+         catch [RecognitionException re] {
+            mostrarExcepcion(re);
+         }
+   \end{lstlisting}
+
+   \section{f\_mover}
+   La siguiente regla ha sido implementada para mover a Stickman por la escena, en coordenadas \textbf{\textit{x, y, z}}. La instrucción 
+   precisa además un cuarto parámetro, el tiempo empleado en desarrollar el movimiento especificado. \\
+
+   Una excepción es la encargada de capturar los errores sintácticos durante el análisis, mostrar error y consumir los tokens hasta el
+   final de instrucción.
+%    \begin{lstlisting}
+%       f_mover {Object res1; Object res2; Object res3; Object res4;}: 
+%          mover:MOVER STICKMAN PAR_IZQ
+%          res1=expr_aritmetica SEPARA
+%          res2=expr_aritmetica SEPARA
+%          res3=expr_aritmetica SEPARA
+%          res4=expr_aritmetica PAR_DER 
+%          {
+%          Processor.println(1,"Entrando mover sticky.");
+%       
+%          // Convert to correct format in order to call the function
+%          // Exception in Java.
+%          try {
+%             String cadena1 = res1.toString(); 
+%             float res1_float = Float.parseFloat(cadena1);
+%             String cadena2 = res2.toString(); 
+%             float res2_float = Float.parseFloat(cadena2);
+%             String cadena3 = res3.toString(); 
+%             float res3_float = Float.parseFloat(cadena3);
+%             String cadena4 = res4.toString(); 
+%             float res4_float = Float.parseFloat(cadena4);
+%             int res4_int = Math.round(res4_float);
+%       
+%             gui.StickMotion.scene.moveStickman(res1_float, 
+%                         res2_float, 
+%                         res3_float, 
+%                         res4_int);
+%       }catch (NumberFormatException nfe) {
+%          Processor.println(0, "En linea " + mover.getLine() + ": 
+%          El parámetro debe ser un número." );
+%       } 
+%       catch (Exception e) {
+%          Processor.println(0, "En línea " + mover.getLine() + ": 
+%          " + e.toString() );
+%          }
+%       };// Exception in ANTLR.
+%       exception
+%          catch [RecognitionException re] {
+%             mostrarExcepcion(re);
+%       }
+%    \end{lstlisting}
+
+   \section{f\_flexionar}
+   La regla especificada a continuación permite flexionar brazo o pierna, ya sea derecho/a o izquierdo/a. Los argumentos que
+   necesita tal acción son dos expresiones aritméticas separadas entre comas y encerradas entre paréntesis, que se corresponden con:
+   \begin{itemize}
+      \item Sentido de giro, en radianes.
+      \item Tiempo en milisegundos en el cual se prolongará el movimiento.
+   \end{itemize}
+   Una excepción ANTLR es la encargada de capturar los errores sintácticos durante el análisis, y gestionarlo.
+   \begin{lstlisting}
+      f_flexionar {Object res1; Object res2;}: 
+         FLEXIONAR (BRAZO | PIERNA) (der:DER | IZQ) 
+         PAR_IZQ res1=expr_aritmetica SEPARA res2=expr_aritmetica PAR_DER
+      {
+      Processor.println(1,"Entrando flexionar sticky.");
+      
+      // Convert to correct format in order to call the function
+      String cadena1 = res1.toString(); 
+      float res1_float = Float.parseFloat(cadena1);
+      String cadena2 = res2.toString(); 
+      float res2_float = Float.parseFloat(cadena2);
+      int res2_int = Math.round(res2_float);
+
+      //if BRAZO is selected, stiky's amr is moved, else PIERNA has 
+      //been written and it will be moved.
+      if(brazo != null) {
+         //if DER is chosen, right arm is moved
+         if (der != null) {
+            Processor.println(1,"FSticky --> Brazo Derecho "+
+            res1_float+"rad / "+res2_int+" secs.");
+            gui.StickMotion.scene.flexRArm(res1_float, res2_int);
+         }
+         else {
+            Processor.println(1,"FSticky --> Brazo Izquierdo "+
+            res1_float+"rad / "+res2_int+" secs.");
+            gui.StickMotion.scene.flexLArm(res1_float, res2_int);
+         }
+      }
+      else {
+         //if DER is chosen, right leg is moved
+         if (der != null) {
+            Processor.println(1,"FSticky --> Pierna Derecha "+
+            res1_float+" / "+res2_int+" secs.");
+            gui.StickMotion.scene.flexRLeg(res1_float, res2_int);
+         }
+         else {
+            Processor.println(1,"FSticky --> Pierna Izquierda "+
+            res1_float+" / "+res2_int+" secs.");
+            gui.StickMotion.scene.flexLLeg(res1_float, res2_int);
+         }
+      }
+      };
+      exception
+         catch [RecognitionException re] {
+            mostrarExcepcion(re);
+      }
+   \end{lstlisting}
+
+   \section{f\_girar}
+   La siguiente regla permite el movimiento de rotación de las extremidades de Stickman, de todo el tronco o sólo de la cabeza.
+   Se necesitan tres parámetros:
+   \begin{itemize}
+      \item Acimut (o sentido de giro sobre el plano horizontal).
+      \item Sentido de giro en el plano vertical.
+      \item Tiempo empleado en realizar la acción.
+   \end{itemize}
+   Una excepción ANTLR es la encargada de capturar los errores sintácticos durante el análisis,  y gestionarlo.
+   \begin{lstlisting}
+      f_girar {Object res1; Object res2; Object res3;}: 
+         girar:GIRAR (stick:STICKMAN | cab:CABEZA | bra:BRAZO | PIERNA) 
+               (der:DER | IZQ)?
+         PAR_IZQ res1=expr_aritmetica 
+         SEPARA res2=expr_aritmetica 
+         SEPARA res3=expr_aritmetica 
+         PAR_DER
+         
+      {
+      try {
+         // Convert to correct format in order to call the function
+         String cadena1 = res1.toString(); 
+         float res1_float = Float.parseFloat(cadena1);
+         String cadena2 = res2.toString(); 
+         float res2_float = Float.parseFloat(cadena2);
+         String cadena3 = res3.toString(); 
+         float res3_float = Float.parseFloat(cadena3);
+         int res3_int = Math.round(res3_float);
+
+         Processor.println(1,"Entrando girar sticky.");      
+
+         if(stick != null) {
+         Processor.println(1,"Gira Stickman 
+         ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
+         gui.StickMotion.scene.rotateStickman( res1_float, 
+                        res2_float, 
+                        res3_int);
+         } else if(cab != null) {
+         Processor.println(1,"Gira Cabeza 
+         ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
+         gui.StickMotion.scene.rotateHead(res1_float, res2_float, res3_int);
+      } else if(bra != null)
+         if( der != null ) {
+            Processor.println(1,"Gira Brazo Derecho 
+            ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
+            gui.StickMotion.scene.rotateRArm( res1_float, 
+                        res2_float, 
+                        res3_int);
+         } else {
+            Processor.println(1,"Gira Brazo Izquierdo 
+            ("+res1_float+","+res2_float+")rad / "+res3_int+" secs.");
+            gui.StickMotion.scene.rotateLArm( res1_float, 
+                        res2_float, 
+                        res3_int);
+         } else 
+            if( der != null ) {
+            Processor.println(1,"Gira Pierna Derecha 
+            ("+res1_float+","+res2_float+")rad / "+res3_int+"
+               secs.");
+            gui.StickMotion.scene.rotateRLeg( res1_float, 
+                        res2_float,
+                        res3_int);
+            } else {
+            Processor.println(1,"Gira Pierna Izquierda 
+            ("+res1_float+","+res2_float+")rad / "+res3_int+"
+            secs.");
+            gui.StickMotion.scene.rotateLLeg( res1_float,
+                        res2_float,
+                        res3_int);
+            }
+      }catch (NumberFormatException nfe) {
+         Processor.println(0, "En linea " + girar.getLine() + ": El 
+               parametro debe ser un numero." );
+      } 
+      catch (Exception e) {
+         Processor.println(0, "En linea " + girar.getLine() + ": " +
+               e.toString() );
+      }
+      };
+      exception
+         catch [RecognitionException re] {
+            mostrarExcepcion(re);
+      }
+   \end{lstlisting}
+
+   \section{imprimir}
+   La siguiente regla permite imprimir por pantalla cadenas y valores de identificadores, así como su concatenación. Una excepción
+   ANTLR es la encargada de capturar los errores sintácticos durante el análisis, y gestionarlo.
+   \begin{lstlisting}
+      imprimir returns [String respuesta=null]
+      { String expr1; String expr2;}:
+      
+      IMPRIMIR PAR_IZQ
+      expr1 = impr_base { respuesta = expr1;}
+      
+      (OP_SUM expr2 = impr_base
+      {
+         respuesta = new String(expr1+expr2);
+         expr1 = respuesta;
+      })* PAR_DER
+      ; // ANTLR Exception.
+      exception
+         catch [RecognitionException re] {
+            mostrarExcepcion(re);
+      }
+   \end{lstlisting}
+
+   \section{impr\_base}
+   Esta regla define las expresiones base que son sujetas de ser impresas por la primitiva ``mostrar'', es decir, cadenas y valores
+   almacenados en variables. Si la variable referenciada no existe en la tabla de símbolos se muestra un error en la ventana de 
+   resultados de interpretación de la interfaz.
+   \begin{lstlisting}
+      impr_base returns [String respuesta=null]
+      {Object e;}:
+      (n1:CADENA 
+      {
+         // Elimina las comillas
+      }
+      |id:IDENT
+      {
+         // Rescata el valor de la variable si ha sido declarada. En caso 
+         //contrario muestra mensaje de error...
+      } )
+      ;
+      exception
+         catch [RecognitionException re] {
+            mostrarExcepcion(re);
+         }
+   \end{lstlisting}
