@@ -23,19 +23,77 @@ Dividiremos las pruebas en dos tipos:
 Tal y como indica el título de este apartado, se realizarán pruebas sobre los distintos elementos de la interfaz, las cuáles se irán describiendo
 en las diferentes secciones presentadas a continuación.
 
-\subsection{Opciones de la barra de menú}
-A continuación se detallarán las pruebas en relación a la barra de menús de la aplicación, así como los errores encontrados y las soluciones 
-aportadas. Se contemplan los siguientes casos:
+\subsection{Visualización de opciones}
+A continuación se detallarán las pruebas en relación a la correcta visualización de los distintos elementos de la interfaz, así como los errores 
+encontrados y las soluciones aportadas. Se contemplan los siguientes casos:
 
 \begin{itemize}
-  \item Visualización de los distintos apartados y subapartados (si procede).
-  
+  \item Visualización de los distintos apartados y subapartados (si procede) de la barra de menú.
+  \item Visualización de los distintos iconos que forman la barra de herramientas.
+  \item Actualización de la información de la barra de estados.
+  \item Visualización de información al dejar el cursor sobre un botón.
+  \item Coloreado de palabras reservadas del lenguaje Sticky.
 \end{itemize}
 
+Se ha comprobado que, al hacer click en cualquier elemento principal del menú, se muestra el listado de acciones disponibles para cada sección.
+Además, al pasar el ratón por dichas opciones, se puede observar como cambia la información de la barra de estado.
 
+Por otra parte, podemos observar como aparece cierta información al dejar el ratón sobre cualquier botón de la barra de herramientas, la cuál
+es coherente con respecto a la imagen mostrada.
 
-\section{Pruebas de ejecución}
+Finalmente, también se ha comprobado que al escribir palabras reservadas de nuestro lenguaje, como pueden ser "mientras", "var" o "mover", se
+muestran en azul, color elegido para dicho fin.
 
+\subsubsection*{Problemas encontrados}
+
+\begin{enumerate}
+  \item La ventana de la aplicación se salía de los márgenes dependiendo del equipo en el que se estuviese usando.
+  \item Se han encontrado palabras reservadas del lenguaje que no se definían como tal, es decir, no se mostraban en azul.
+\end{enumerate}
+
+\subsubsection*{Soluciones aplicadas}
+
+\begin{enumerate}
+  \item Se ha reajustado la ventana a una resolución óptima.
+  \item Se han enumerado el conjunto de palabras que no se mostraban correctamente y se ha modificado el código oportuno.
+\end{enumerate}
+
+\subsection{Ejecución de opciones}
+En este apartado se han puesto a prueba los diferentes elementos de la barra de menú y los botones de la barra de herramientas. En esta ocasión
+se han tenido en cuenta los siguientes casos:
+
+\begin{itemize}
+  \item Funcionamiento de botones de la barra de herramientas.
+  \item Ejecución de las distintas opciones de la barra de menús.
+  \item Comprobación de funcionamiento de los atajos de teclado.
+\end{itemize}
+
+En primer lugar, atendiendo a las opciones del menú podemos afirmar que funcionan a la perfección, tanto al hacer click en las mismas como al
+usar los atajos de teclado proporcionados, los cuáles aparecen mostrados justo en el lado derecho de la opción. Por lo tando, si tomamos como ejemplo la opción 
+de deshacer código, similar a la de cualquier editor, se ejecutará tanto al realizar la acción "Edición -> Deshacer" como al pulsar "Control+Z".
+Además, se ha comprobado que los botones, uno a uno, realizan su cometido de forma correcta y rápida.
+
+\subsubsection*{Problemas encontrados}
+
+\begin{enumerate}
+  \item Nos hemos encontrado con opciones, tanto el la barra de menús como de herramientas, que no realizaban las acciones que se les requería.
+	Por ejemplo, al elegir un nivel de depuración 0, no mostraba únicamente los errores producidos, sino que también mostraba otra información
+	adicional que correspondía a otro nivel.
+  \item En ocasiones, al ejecutar codigo inestable, no se informaba del error en el resultado de la interpretación. Un ejemplo ha sido al intentar
+	hacer una conversión de un String a un Double o Integer en el lenguaje Sticky.
+  \item Botones que realizaban s función únicamente de forma parcial. Por ejemplo, el botón que permite interpretar el código sólo realizaba su
+	tarea la primera vez que se presionaba.
+\end{enumerate}
+
+\subsubsection*{Soluciones aplicadas}
+
+\begin{enumerate}
+  \item Se ha localizado el origen del error y se ha vuelto a codificar. Finalmente, se comprobaba que realmente la acción requerida era la acción
+	que se realizaba.
+  \item En este caso se ha analizado el código y se han capturado las excepciones necesarias para que el error sea mostrado en el apartado de la 
+	interfaz "Resultado interpretación".
+  \item Tomando el ejemplo anterior, se comprobó la codificación y ahora la ventana de animación se reinicia al interpretar un nuevo codigo.
+\end{enumerate}
 
 \end{document}
 
