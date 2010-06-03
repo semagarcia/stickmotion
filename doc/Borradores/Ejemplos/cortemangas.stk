@@ -1,0 +1,14 @@
+//Aprobaremos la asignatura en este codigo esta la respuesta
+
+
+girar BRAZO DER (0, 3.14/5, 500);
+flexionar BRAZO DER (3.14/1.8, 500);
+girar BRAZO DER ((-3.14/2), 0, 700);
+tiempo avanza (500);
+girar BRAZO IZQ (0, (-3.14/6), 200);
+flexionar BRAZO IZQ (-3.14/1.6, 300);
+
+
+girar STICKMAN (3.14/2 , 0 , 1000);
+    
+$
