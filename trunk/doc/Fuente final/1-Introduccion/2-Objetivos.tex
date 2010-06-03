@@ -1,77 +1,55 @@
 \chapter{Objetivos}
-Bla, bla, bla...
 
+En este capítulo se describirán los objetivos que se pretenden conseguir en el desarrollo de la aplicación que nos ocupa. Para ello, se distinguirán dos bloques de objetivos en los que nos centraremos. El primero se referirá al sistema de animación que se pretende obtener, mientras que el segundo se referirá a la gramática que se pretende usar para controlar este sistema, sobre la cual nos basaremos para la realización de este trabajo de la asignatura Procesadores de Lenguaje.
 
-   \section{Generales}
+\section{Objetivos del sistema de animación}
 
-   \section{3D -> Discutir} % ---------------------------------------------------------------------
+A continuación se describirán los objetivos que se pretenden satisfacer en cuanto al sistema en el que estará representado el stickman y las animaciones que se pretenden realizar sobre él. \\
 
-   \section{De la gramática}
+\subsection{Estructura del modelo 3D del stickman}
+
+\begin{itemize}
+\item El stickman pretende ser la representación sencilla del cuerpo de una persona, por lo que inicialmente posee sus mismas características y articulaciones principales:  \\
+
+  \begin{itemize}
+  \item Dos hombros que permiten la rotación de los brazos.
+  \item Dos brazos que permiten la flexión por la articulación del codo.
+  \item Dos piernas que permiten la flexión por la articulación de la rodilla.
+  \item La cadera que permite la rotación de las piernas.
+  \item Un centro de gravedad o CDG, situado a la mitad aproximadamente del tronco.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Animaciones a realizar por el stickman}
+
+\begin{itemize}
+\item El stickman podrá realizar una serie de movimientos que pueden dotarlo de una funcionalidad suficiente para realizar la mayoría de acciones que se le puedan ocurrir al usuario: \\
+
+\begin{itemize}
+         \item \textit{Cabeza}: puede rotar sobre sí misma.
+         \item \textit{Hombros}: permiten movimientos en cualquier ángulo el espacio 3D (360º grados de azimuth y 180º de inclinación posibles) para mover completamente los brazos en cualquier dirección y sentido.
+         \item \textit{Piernas}: permiten movimientos en cualquier ángulo el espacio 3D (360º grados de azimuth y 180º de inclinación posibles) para mover completamente las piernas en cualquier dirección y sentido.
+         \item \textit{Cuerpo}: permite movimientos en cualquier ángulo el espacio 3D (360º grados de azimuth y 180º de inclinación posibles) para mover completamente el cuerpo del stickman en cualquier dirección y sentido.
+         \item \textit{Codos}: permiten movimientos de flexión de los brazos, con un ángulo de 0 a 360º.
+         \item \textit{Rodillas}: permiten movimientos de flexión de los brazos, con un ángulo de 0 a 360º.\\
+\end{itemize}
+
+\item Además, el stickman podrá realizar movimientos de desplazamiento en las 3 coordenadas del espacio tridimensional (x, y, z).
+
+\item Para los movimientos descritos anteriormente la aplicación cuenta con una serie de funciones que permitirán rotar cualquier miembro del stickman, así como posicionarlo en cualquier lugar de la ventana de animación. 
+\item Será posible además, para cada movimiento, especificar un tiempo de inicio y una duración en la que se llevará a cabo la animación de este. \\
+\end{itemize}
+
+   \section{Objetivos de la gramática}
    A continuación se describen los objetivos de la gramática para el reconocimiento del lenguaje Sticky que se va a desarrollar: 
    \begin{itemize}
-      \item Todas las instrucciones del lenguaje llevarán el carácter fín de instrucción (’;’). 
-      \item Los operadores aritméticos reconocidos son: +, -, *, /, ++, –, %, ^, raiz(x). 
-      \item El lenguaje será sensible a las mayúsculas y minúsculas.
-      \item Tipado dinámico de datos: 
-            \begin{itemize}
-               \item Definición de variables: var nombreVariable. 
-               \item Destrucción de variables: sup nombreVariable. 
-               \item Tipos de variables soportadas: booleanos, enteros, reales y cadenas. 
-            \end{itemize}
-      \item Comentarios: monolínea (’//’) y multilínea (’/*’ y ’*/’). 
-      \item Asignaciones: símbolo igual (’=’). 
-      \item Operadores condicionales: ’<’, ’>’, ’<=’, ’>=’, ’==’ y ’!=’. 
-      \item Operadores lógicos: ’Y’, ’O’, ’OX’, ’NO’, ’!’. 
-      \item Los bloques de código irán encerrados entre llaves (’{’ y ’}’).
-      \item Construcción de bucles: 
-            \begin{itemize}
-               \item Bucle for (para):
-                     \begin{itemize}
-                        \item para (inicio; fin; incremento) { sentencias } 
-                        \item para (inicio; fin; incremento) sentencia 
-                     \end{itemize}
-               \item Bucle while (mientras):
-                     \begin{itemize}
-                        \item mientras (expresión o variable) { sentencias } 
-                        \item mientras (expresión o variable) sentencia 
-                     \end{itemize}
-            \end{itemize}
-      \item Estructuras condicionales:
-            \begin{itemize}
-               \item if (si):
-                     \begin{itemize}
-                        \item si (condición) 
-                        \item si (condición) { sentencias } 
-                     \end{itemize}
-               \item if-else (si-sino):
-                     \begin{itemize}
-                        \item si (condición) sentencia sino sentencia 
-                        \item si (condición) { sentencias } sino sentencia 
-                        \item si (condición) sentencia sino { sentencias } 
-                        \item si (condición) { sentencias } sino { sentencias } 
-                     \end{itemize}
-            \end{itemize}
-      \item Switch:
-%             \begin{itemize}
-%                opcion (expresión o variable) { 
-%                   caso expresión1: { sentencias } fincaso; 
-%                   caso expresión2: { sentencias } fincaso; 
-%                      ... 
-%                   defecto: { sentencias } fincaso; 
-%                } 
-%             \end{itemize}
-      \item Movimientos propios de \textit{StickMan}:
-            \begin{itemize}
-               \item girar CABEZA (angulo, angulo, tiempo);
-               \item girar [BRAZO | PIERNA] [IZQ | DER] (angulo, angulo, tiempo);
-               \item girar STICKMAN (angulo, tiempo);
-               \item flexionar [BRAZO | PIERNA] [IZQ | DER] (angulo, tiempo);
-               \item mover STICKMAN (x, y, z, tiempo);
-            \end{itemize} 
-      \item Funciones temporales:
-            \begin{itemize}
-               \item tiempo [ESTABLECE | AVANZA] (tiempo);
-            \end{itemize}
+     \item Se seguirá un estilo de sintaxis similar al empleado en C, usando llaves para englobar los bloques de código y paréntesis para distinguir las condiciones de las sentencias de control de flujo y condiciones de salida de los bucles.
+     \item No obstante, se empleará el idioma español para definir los tokens del léxico.
+     \item Las variables emplearán tipado dinámico. Usando como tipos posibles de valores: entero, real, booleano y cadena.
+     \item El lenguaje deberá ser capaz de manejar operaciones aritmeticas y relacionales con los valores numéricos y lógicas con los valores booleanos, la suma de dos valores de tipo cadena dará lugar a la concatenación de estas.
+     \item El procesador de la gramática deberá ser robusto, y ser capaz de recuperarse de los errores siempre que sea posible.
+     \item La información de los errores dados deberá ser descriptiva.
+     \item Deberán existir instrucciones suficientes en la gramática para permitir la animación del stickman descrita anteriormente.
    \end{itemize}
 
 
