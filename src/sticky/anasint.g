@@ -291,7 +291,6 @@ expr returns [Object resultado = null]
 	  	
 	  	else
 	  	{
-			System.out.println(e1+ " " +e2);
 	  		double valor1 = new Double(e1.toString()).doubleValue();
 	  		double valor2 = new Double(e2.toString()).doubleValue();
 	  		resultado = new Double(valor1*valor2);
