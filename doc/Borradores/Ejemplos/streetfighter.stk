@@ -1,0 +1,59 @@
+//---------------------------------------------
+// STREET FIGHTER
+/* 
+    Street Fighter Ryu
+    Shoryuken y patada giratoria ( a lo Chuck Norris ).
+*/
+
+var t =  1000;
+
+girar STICKMAN (2, 0, t);
+tiempo avanza (t);
+mover STICKMAN (0, 1, 0, t/2);
+tiempo avanza (t/2);
+girar STICKMAN (2*PI, 0, t);
+mover STICKMAN (0,0.5,-1.5,t);
+girar BRAZO IZQ (0,-3,t);
+flexionar BRAZO DER (PI/2, t);
+flexionar BRAZO IZQ (-PI/5, t);
+flexionar PIERNA IZQ(PI/3,t);
+flexionar PIERNA DER(PI/2,t);
+mostrar ("SHORYUKEN !!");
+tiempo avanza (t);
+mover STICKMAN (-1,0,1.5,t);
+girar BRAZO IZQ (0,3,t);
+flexionar BRAZO DER (-PI/2, t);
+flexionar BRAZO IZQ (PI/5, t);
+flexionar PIERNA IZQ(-PI/3,t);
+flexionar PIERNA DER(-PI/2,t);
+tiempo avanza (t);
+girar PIERNA DER (0, PI/2, t);
+mover STICKMAN (0, -3, 0, t);
+girar STICKMAN (4*PI, 0 , t);
+tiempo avanza (t);
+girar STICKMAN (PI*4, 0, t);
+mover STICKMAN (2, 0 , 0, t);
+tiempo avanza (t);
+girar STICKMAN (PI/2, 0, t);
+girar PIERNA DER (0, -PI/2, t);
+tiempo avanza (t);
+mover STICKMAN (0,-5,0, t);
+flexionar PIERNA DER(-PI/3,t);
+girar PIERNA IZQ (0, PI/2, t);
+girar BRAZO IZQ (0, PI/2, t);
+girar BRAZO DER (0, PI/2, t);
+flexionar BRAZO DER (PI/2, t);
+tiempo avanza (t);
+girar STICKMAN (-PI/3, 0, t/3);
+mover STICKMAN (1,0,0, t/3);
+tiempo avanza (t/3);
+girar STICKMAN (PI/3.5, 0, t/3);
+mover STICKMAN (0,1,0, t/3 );
+tiempo avanza (t/3);
+mover STICKMAN (0,-2.5,0.5, t/3);
+
+
+$
+
+
+
