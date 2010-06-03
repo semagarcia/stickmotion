@@ -2,7 +2,7 @@
 
    \section{Contexto del problema}
    La finalidad del software que se va a desarrollar es que sea capaz de ejecutar una serie de órdenes que introduzca el usuario. Estas ordenes
-   permitiran mover y articular la representación de un humanoide. Éste debe poseer ciertos conocimientos de programación para que le sea más 
+   permitiran mover y articular la representación de un humanoide (stickman). Éste debe poseer ciertos conocimientos de programación para que le sea más 
    fácil la utilización adecuada de sentencias, bucles, interfaz, etc.\\
 
    La aplicación sólo reconoce y acepta sentencias desarrolladas para el lenguaje de programación \textbf{\textit{Sticky}}, el cual se abordará
@@ -14,38 +14,6 @@
    dependerá de otra aplicación, módulo o similar. De esta forma se hace sencillo su movilidad entre diversas máquinas y entre diversos sistemas
    operativos, pues al estar desarrollada en Java permite una máxima compatibilidad, aumentando de esta forma el número potencial de usuarios que
    utilicen esta herramienta.\\
-
-
-   \section{Descripción de StickMan}
-   A continuación se detallan algunos aspectos que caracterizarán a nuestro StickMan.\\
-
-      \subsection{¿Cómo está formado?}
-      El stickman pretende ser la representación sencilla del cuerpo de una persona, por lo que inicialmente posee sus mismas características y 
-      articulaciones principales: 
-      \begin{itemize}
-         \item Dos hombros que permiten la rotación de los brazos. 
-         \item Dos brazos que permiten la flexión por la articulación del codo. 
-         \item Dos piernas que permiten la flexión por la articulación de la rodilla. 
-         \item La cadera que permite la rotación de las piernas. 
-         \item Un \textit{centro de gravedad} o CDG, situado a la mitad aproximadamente del tronco.\\
-      \end{itemize}
-
-
-      \subsection{¿Qué puede hacer?}
-      Stickman podrá realizar una serie de movimientos que pueden dotarlo de una funcionalidad suficiente para realizar la mayoría de acciones 
-      que se le ocurran al usuario: 
-      \begin{itemize}
-         \item \textit{Cabeza}: puede rotar sobre sí misma.
-         \item \textit{Hombros}: permiten movimientos de hasta 360º para mover completamente los brazos en cualquier dirección y sentido. 
-         \item \textit{Piernas}: permiten movimientos de hasta 360º para mover completamente las piernas en cualquier dirección y sentido.
-         \item \textit{Codos}: permiten movimientos de flexión, de 0 a 360º.
-         \item \textit{Rodillas}: permiten movimientos de flexión de 0 a 360º.\\
-      \end{itemize}
-
-
-      \subsection{¿Cómo lo puede hacer?}
-      Para los movimientos descritos en el apartado anterior la aplicación cuenta con una serie de funciones que permitirán rotar cualquier 
-      miembro del stickman, así como posicionarlo en cualquier lugar de la ventana de animación.\\
 
    \section{Descripción de la aplicación}
    La aplicación, de escritorio como se ha mencionado anteriormente, consiste en una interfaz gráfica que tiene dos partes claramente diferenciadas: 

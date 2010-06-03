@@ -76,33 +76,155 @@ describirán a continuación. \\
 
       \subsection{Procesador del lenguaje Sticky}
       \begin{itemize}
-         \item \textbf{RF6:} Se seguirán las construcciones gramaticales, control de flujo y operaciones especificadas por la descripción
-               del lenguaje \textbf{\textit{Sticky}}.
-         \item \textbf{RF7:} Se ofrecerá una salida amigable en cuanto al reporte de errores, permitiendo en lo posible, la recuperación
-               tras los mismos para continuar evaluando el resto del código.
-         \item \textbf{RF8:} Para facilitar la depuración, se ofrecerá un nivel regulable de detalle de la salida esperada, de forma que
-               se muestren distintos mensajes de depuración o \textit{``DEBUG''} si el usuario desea un mayor detalle sobre las operaciones
-               que el procesador está realizando.
+      \item \textbf{RF07:} Se seguirán las construcciones gramaticales, control de flujo y operaciones especificadas por la descripción del lenguaje Sticky definidas en los objetivos.
+      \item \textbf{RF08}
+      \item \textbf{RF09:} Se ofrecerá una salida amigable en cuanto al reporte de errores, permitiendo en lo posible, la recuperación tras los mismos para continuar evaluando el resto del código.
+      \item \textbf{RF10:} Para facilitar la depuración, se ofrecerá un nivel regulable de detalle de la salida esperada, de forma que se muestren distintos mensajes de depuración o ``DEBUG'' si el usuario desea un mayor detalle sobre las operaciones que el procesador está realizando.
+      \item \textbf{RF11:} El lenguaje será sensible a las mayúsculas.
+      \item \textbf{RF12:} Todas las instrucciones del lenguaje llevarán al final el carácter fín de instrucción (`;').
+      \item \textbf{RF13:} Los operadores de la gramática seguirán las siguiente pautas.
+        
+        \begin{itemize}
+        \item Pueden emplearse paréntesis: \texttt{(} y  \texttt{)}, para determinar el orden de evaluación de las operaciones.
+        \item Orden de precedencia: primero se realizarían los operadores aritméticos, luego los relacionales y para terminar los operadores lógicos.
+        \item Operadores aritméticos en orden de precedencia.
+          
+          \begin{itemize}
+          \item Incremento: \texttt{<variable>++}
+          \item Decremento:  \texttt{<variable>--}
+          \item Exponenciación: \texttt{<base>} \texttt{\ensuremath{\wedge}} \texttt{<exponente>}
+          \item Raíz: \texttt{raiz(<número>)}
+          \item Producto: \texttt{<factor>} \texttt{*} \texttt{<factor>}
+          \item División: \texttt{<dividendo>} \texttt{/} \texttt{<divisor>}
+          \item Suma: \texttt{<sumando>} \texttt{+} \texttt{<sumando>}
+          \item Resta: \texttt{<minuendo>} \texttt{-} \texttt{<sustraendo>}
+          \end{itemize}
+          
+        \item Operadores relacionales.
+          
+          \begin{itemize}
+          \item Igual a:  \texttt{<número> == <número>}
+          \item Distinto de: \texttt{<número> != <número>}
+          \item Mayor que: \texttt{<número>} \texttt{>=} \texttt{<número>}
+          \item Menor que: \texttt{<número>} \texttt{<=} \texttt{<número>}
+          \end{itemize}
+          
+        \item Operadores lógicos en orden de precedencia.
+          
+          \begin{itemize}
+          \item Negación: \texttt{NO <booleano>} ; ó también:  \texttt{!<booleano>}
+          \item Disyunción exclusiva: \texttt{<booleano>} \texttt{OX} \texttt{<booleano>}
+          \item Conjunción: \texttt{<booleano>} \texttt{Y} \texttt{<booleano>}
+          \item Disyunción: \texttt{<booleano>} \texttt{O} \texttt{<booleano>}
+          \end{itemize}
+          
+        \end{itemize}
+        
+      \item \textbf{RF14:} Los comentarios de la gramática podrán realizarse de dos formas distintas, pudiendo ser una sola linea o abarcar un bloque de lineas.
+        
+        \begin{itemize}
+        \item Monolínea: \texttt{// texto}
+        \item Multilínea: \texttt{/* texto */}
+        \end{itemize}
+        
+      \item \textbf{RF15:} El tipado de las variables será dinámico, siguiendo la siguiente sintaxis.
+        
+        \begin{itemize}
+        \item Definición de variables: \texttt{var <nombreVariable>}.
+        \item Destrucción de variables: \texttt{sup <nombreVariable>}.
+        \item Asignaciones a variables: \texttt{<nombreVariable>} \texttt{=} \texttt{<valor>}.
+        \end{itemize}
+        
+      \item \textbf{RF16:} Existirán los tipos de datos: booleanos, enteros, reales y cadenas.
+      \item \textbf{RF17:} La sintaxis de las sentencias de control de flujo será el siguiente.
+        
+        \begin{itemize}
+        \item Bucle for:
+          
+          \begin{itemize}
+          \item \texttt{para (inicio; fin; incremento) \{ sentencias \}}
+          \item \texttt{para (inicio; fin; incremento) sentencia}
+          \end{itemize}
+          
+        \item Bucle while:
+          
+          \begin{itemize}
+          \item \texttt{mientras (expresión o variable) \{ sentencias \}}
+          \item \texttt{mientras (expresión o variable) sentencia}
+          \end{itemize}
+          
+        \item Estructuras condicionales:
+          
+          \begin{itemize}
+          \item if:
+            
+            \begin{itemize}
+            \item \texttt{si (condición) \{ sentencias \}}
+            \item \texttt{si (condición)}
+            \end{itemize}
+            
+          \end{itemize}
+          
+        \item if-else:
+          
+          \begin{itemize}
+          \item \texttt{si (condición) \{ sentencias \} sino \{ sentencias \}}
+          \item \texttt{si (condición) sentencia sino \{ sentencias \}}
+          \item \texttt{si (condición) \{ sentencias \} sino sentencia}
+          \item \texttt{si (condición) sentencia sino sentencia}
+          \end{itemize}
+          
+        \item switch:
+          
+          \begin{itemize}
+          \item \texttt{opcion (expresión o variable) \{}
+            \texttt{caso expresión: \{ sentencias \} fincaso;}
+            \texttt{...}
+            \texttt{defecto: \{ sentencias \} fincaso;}
+            \texttt{\}}
+          \end{itemize}
+          
+        \end{itemize}
+        
+      \item \textbf{RF18:} Existirán las siguientes instrucciones de la gramática para el
+        
+        \begin{itemize}
+        \item Movimientos del Stickman:
+          
+          \begin{itemize}
+          \item Rotación de cabeza: \texttt{girar CABEZA (angulo, angulo, tiempo)}
+          \item Rotación de extremidades: \texttt{girar [BRAZO | PIERNA] [IZQ | DER] (angulo, angulo, tiempo)}
+          \item Rotación del stickman: \texttt{girar STICKMAN (angulo, tiempo)}
+          \item Flexión de extremidades: \texttt{flexionar [BRAZO | PIERNA] [IZQ | DER] (angulo, tiempo)}
+          \item Desplazamiento de stickman: \texttt{mover STICKMAN (x, y, z, tiempo)}
+          \end{itemize}
+          
+        \item Funciones temporales
+          
+          \begin{itemize}
+          \item \texttt{tiempo [ESTABLECE | AVANZA] (tiempo)}
+          \end{itemize}
+          
+        \end{itemize}
+        
       \end{itemize}
-
+      
       \subsection{Interfaz gráfica y editor}
-      \begin{itemize}
-         \item \textbf{RF9:} El sistema debe permitir la creación de nuevos documentos con código \textbf{\textit{Sticky}}.
-         \item \textbf{RF10:} El sistema debe permitir la carga de archivos de código Sticky (extensión .stk) en la interfaz del editor.
-         \item \textbf{RF11:} El sistema debe permitir almacenar el código Sticky insertado en el editor en un archivo en disco.
-         \item \textbf{RF12:} El sistema debe permitir deshacer cambios sobre el código en el editor.
-         \item \textbf{RF13:} El sistema debe permitir rehacer cambios sobre el código en el editor.
-         \item \textbf{RF14:} El sistema debe permitir copiar, cortar y pegar porciones de código en el editor.
-         \item \textbf{RF15:} El sistema debe permitir iniciar la interpretación del código contenido en el editor.
-         \item \textbf{RF16:} El sistema debe permitir detener una interpretación en curso.
-         \item \textbf{RF17:} El sistema debe permitir limpiar el editor de código.
-         \item \textbf{RF18:} El sistema debe generar código cuando el usuario lo desee. El código que debe poder generar son el condicional
-               \textit{``si``} y los bucles \textit{''mientras``} y \textit{''para``}.
-         \item \textbf{RF19:} El sistema debe permitir editar el código Sticky por teclado desde la propia interfaz del editor.
-         \item \textbf{RF20:} La interfaz debe mostrar mostrar la escena 3D del Stickman en animación.
-         \item \textbf{RF21:} El sistema debe permitir, en el editor, resaltar la sintaxis propia del lenguaje \textbf{\textit{Sticky}}.
-      \end{itemize}
 
+      \begin{itemize}
+      \item \textbf{RF19:} El sistema debe permitir la creación de nuevos documentos con código Sticky.
+      \item \textbf{RF20:} El sistema debe permitir la carga de archivos de código Sticky (extensión .stk) en la interfaz del editor.
+      \item \textbf{RF21:} El sistema debe permitir almacenar el código Sticky insertado en el editor en un archivo en disco.
+      \item \textbf{RF22:} El sistema debe permitir deshacer cambios sobre el código en el editor.
+      \item \textbf{RF23:} El sistema debe permitir rehacer cambios sobre el código en el editor.
+      \item \textbf{RF24:} El sistema debe permitir copiar, cortar y pegar porciones de código en el editor.
+      \item \textbf{RF25:} El sistema debe permitir iniciar la interpretación del código contenido en el editor.
+      \item \textbf{RF26:} El sistema debe permitir detener una interpretación en curso.
+      \item \textbf{RF27:} El sistema debe permitir limpiar el editor de código.
+      \item \textbf{RF28:} El sistema debe generar código cuando el usuario lo desee. El código que debe poder generar son el condicional \texttt{si} y los bucles \texttt{mientras} y \texttt{para}.
+      \item \textbf{RF29:} El sistema debe permitir editar el código Sticky por teclado desde la propia interfaz del editor.
+      \item \textbf{RF30:} La interfaz debe mostrar mostrar la escena 3D del Stickman en animación.
+      \end{itemize}
    
    \section{Requisitos no funcionales}
    Para poder llevar a cabo todos los objetivos correctamente nuestra aplicación deberá cumplir con la siguiente serie de requisitos no funcionales:
