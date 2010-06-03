@@ -3,6 +3,38 @@ El analizador sintáctico generado se implementará a través de la clase \texti
 que es la que implementa los aspectos genéricos de los reconocedores sintácticos. La clase \textit{Anasint} ofrece un método por cada
 símbolo terminal de la gramática, dichos métodos serán los encargados de reconocer el lenguaje asociado a los símbolos correspondientes.\\
 
+La clase \textit{Anasint} es generada por ANTLR a partir del archivo \textit{anasint.g}, que describe el conjunto de reglas gramaticales junto con las acciones java a realizar para cada sentencia. Además, se emplea una tabla de símbolos para almacenar información relativa a las variables que se empleen. 
+
+   \section{Tabla de símbolos}
+
+   \begin{figure} [H] \begin{center}
+   \includegraphics[width=0.7\textwidth]{./imagenes/DiagramaPaquetesSymbolTable}\label{paqueteSymbolTable}
+   \caption{Diagrama de clases para la \textbf{tabla de símbolos}.}
+   \end{center} \end{figure}
+
+   Cuando se declara una variable, se crea un objeto del tipo Símbolo que almacena toda la información relacionada con la variable. La 
+   información que se almacena de cada variable es la siguientes: 
+   \begin{itemize}
+      \item Nombre.
+      \item Contenido.\\
+   \end{itemize}
+   Realmente la tabla de símbolos es un array que contiene objetos del tipo Símbolo. Este array contiene todas las variables utilizadas 
+   por el lenguaje.\\
+
+   Cada vez que una variable previamente declarada se modifica, la tabla de símbolos es actualizada con el nuevo valor de la variable. No
+   importa que cambie el tipo de dato almacenado, ya que el tipado es dinámico y admite cambios en el tipo de la variable en tiempo de ejecución.\\
+
+      \subsection{Clase Symbol}
+      El archivo \textit{Symbol.java} contiene una clase denominada \textbf{\textit{Symbol}}. Esta clase representa a todos y cada uno de los símbolos que  
+      componen la tabla de símbolos de nuestro analizador. Es decir por cada variable que se declare en nuestro código, habrá un símbolo
+      en nuestra tabla de símbolos. Esta clase también implementa los métodos para la asignación de propiedades al símbolo: nombre y contenido. 
+
+      \subsection{Clase SymbolTable}
+      El archivo \textit{SymbolTable.java} contiene una clase denominada \textbf{\textit{SymbolTable}}. Esta clase representa la tabla de símbolos de nuestro 
+      analizador, que estará compuesta por instancias de la clase Symbol. Esta clase también implementa métodos para la manipulación de
+      la tabla, inserción, borrado y búsqueda. 
+
+
    % Se puede añadir un caption sin label: [title=Periquito de los palotes]
    % O con label: [caption={Useless code},label=useless]
    \begin{lstlisting}
