@@ -1,0 +1,164 @@
+\chapter{Analizador léxico}
+En ANTLR no se utilizan expresiones regulares y autómatas finitos para especificar e implementar, respectivamente, analizadores
+léxicos. En su lugar se aprovechan la misma notación y el mismo tipo de reconocedores utilizados en la generación de analizadores
+sintácticos: gramáticas EBNF y reconocedores recursivos descendentes. Con esta decisión se gana en homogeneidad a nivel de notación,
+aunque en algunas ocasiones se echan de menos algunas facilidades propias de las expresiones regulares, fundamentalmente el hecho de 
+no tener que preocuparse de que los patrones léxicos tengan prefijos comunes, problema que en los reconocedores descendentes está 
+siempre presente. \\
+
+El analizador léxico se compone de 4 partes: 
+\begin{itemize}
+   \item \textbf{\textit{Zona de cabecera}}: indica los paquetes que se van a necesitar para contruir el archivo y de los cuáles son
+         dependientes. 
+   \item \textbf{\textit{Zona de opciones}}: donde se activan algunas características del analizador léxico. 
+   \item \textbf{\textit{Zona de tokens}}: donde se definirán las palabras reservadas del lenguaje así como también los tokens 
+         utilizados para ciertas reglas predictivas. 
+   \item \textbf{\textit{Zona de reglas}}: donde se definen los tokens que reconocerá el intérprete.
+\end{itemize}
+
+A continuación abordaremos con mayor nivel de detalle estas secciones.\\
+
+   \section{Zona de cabecera}
+   \begin{lstlisting}
+      header {
+            package sticky;
+      }
+   \end{lstlisting}
+
+
+   \section{Zona de opciones}
+   En esta zona se presentan una serie de opciones globales destinadas a particularizar el lexer.\\
+   \begin{lstlisting}
+      options {
+         k=2;
+         importVocab=Anasint;
+         exportVocab=Analex;
+      }
+   \end{lstlisting}
+   Se han utilizado las siguientes opciones fundamentales: 
+   \begin{itemize}
+      \item \textbf{\textit{k}}: número de token \textit{lookahead}. Alterar su número permite decidir alternativas con más información (más tokens).
+      \item \textbf{\textit{importVocab}}: indica que va a importar el vocabulario y tokens definidos en el analizador \textit{Anasint}.
+      \item \textbf{\textit{exportVocab}}: indica que todos los símbolos y tokens definidos aquí van a ser exportados. 
+   \end{itemize}
+
+
+   \section{Zona de tokens}
+   ANTLR permite especificar palabras reservadas en la sección tokens. Se han definido los siguientes tokens:
+   \begin{lstlisting}
+      tokens {
+         ENTERO= "int";
+         REAL= "real";
+      
+         //Variables
+         VAR="var";
+         SUP="sup";
+         
+         //Loops
+         B_FOR="para"; 
+         B_WHILE="mientras";
+         
+         //Conditional Structures
+         IF="si";
+         ELSE="sino";
+         SWITCH="opcion";
+         CASE="caso";
+         END_CASE="fincaso";
+         DEFAULT="defecto"; 
+      
+         //Stickman's movements
+         GIRAR="girar";
+         FLEXIONAR="flexionar";
+         TIEMPO="tiempo";
+         AVANZAR="avanzar";
+         MOVER="mover";
+         ESTABLECE="establece";
+         AVANZA="avanza";
+         CABEZA="CABEZA";
+         BRAZO="BRAZO";
+         PIERNA="PIERNA";
+         STICKMAN="STICKMAN";
+         IZQ="IZQ";
+         DER="DER";
+         
+         //Display print
+         IMPRIMIR="mostrar";
+         
+         //Others variables
+         PI = "PI";
+      }
+   \end{lstlisting}
+
+
+   \section{Zona de reglas}
+   Las reglas léxicas constituyen la parte esencial del analizador léxico y están destinadas a definir tokens como secuencias de
+   caracteres desde el flujo de entrada.\\ 
+  
+   Las reglas léxicas presentan la forma token: patrón y se implementan en el analizador resultante como métodos. Se han definido
+   las siguientes reglas: 
+   \begin{lstlisting}[mathescape=false]
+      protected NL: ('\n' |
+         ("\r\n")=>
+            "\r\n" |
+            '\r')
+         {newline();};
+
+      BLANCO: (' '|'\t'|NL) {$setType(Token.SKIP);};
+
+      //Comments
+      COMENTARIO: (COM_LINEA|COM_BLOQUE) {$setType(Token.SKIP);};
+      COM_LINEA: "//" (~('\n'|'\r'))*;
+      COM_BLOQUE: "/*" (options {greedy=false;}: ~('\n'|'\r')|NL)* "*/";
+
+      //Instruction end
+      FIN_INSTRUCCION: ';';
+      FIN_INTERPRETE: '$';
+      
+      PAR_IZQ: '(';
+      PAR_DER: ')';
+      SEPARA: ',';
+      VERDADERO : "VERDAD";
+      FALSO : "FALSO";
+
+      DOBLE_PUNTO: ':'; 
+      
+      LLAVE_IZQ: '{';
+      LLAVE_DER: '}';
+      
+      //Arithmetic operators
+      OP_SUM: '+';
+      OP_RES: '-';
+      OP_MUL: '*';
+      OP_DIV: '/';
+      OP_INC: "++";
+      OP_DEC: "--";
+      OP_MOD: '%';
+      OP_POT: '^';
+      OP_RAIZ: "raiz";
+      
+      //Assignment Operators
+      OP_ASIG: '=';
+         
+      //Conditionals
+      OP_MAYOR: '>';
+      OP_MENOR: '<';
+      OP_IG: "==";
+      OP_DIST: "!=";
+      OP_OX : "OX";
+      OP_NO : "NO"; 
+      OP_Y : 'Y';
+      OP_O : 'O';
+
+
+      //Identifiers
+      protected LETRA: 'a'..'z'|'A'..'Z';
+      protected DIGITO: '0'..'9';
+      IDENT: (LETRA|'_') (LETRA|'_'|DIGITO)*;
+
+      //Numbers
+      NUMERO: ( (DIGITO )+ '.' ) => (DIGITO )+ '.' ( DIGITO )* { $setType (REAL); } | ( DIGITO )+ { $setType (ENTERO);};
+            
+      //Strings
+      CADENA: '"' (options {greedy=false;}: ~('\\') | "\\\"")* '"';
+   \end{lstlisting}
+

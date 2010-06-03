@@ -1,0 +1,314 @@
+\chapter{Gramática}
+Una gramática ("G") desde el punto de vista de un autómata, es un conjunto finito de reglas que describen toda la secuencia de
+símbolos pertenecientes a un lenguaje específico L.\\
+
+Una gramática es una estructura algebraica formada por cuatro elementos fundamentales: 
+\begin{center}
+   G = { N$_{T}$, T$_{T}$, S, P } 
+\end{center}
+donde:\\
+\begin{itemize}
+   \item \textbf{\textit{N$_{T}$}} es el conjunto de símbolos no terminales.
+   \item \textbf{\textit{V$_{T}$}} es el conjunto de símbolos terminales. 
+   \item \textbf{\textit{S}} es el símbolo inicial de la gramática. 
+   \item \textbf{\textit{P}} es el conjunto de reglas de producción. 
+\end{itemize}
+
+   \section{Símbolos terminales}
+   Lo símbolos terminales (V$_{T}$) son aquellos no derivables. Los símbolos terminales se definen en el analizador léxico, siendo en este
+   caso los definidos en la zona de tokens, los operadores definidos en la zona de reglas, letras, dígitos, cadenas, llaves, paréntesis y otros.\\
+      \begin{minipage}{0.5\textwidth}
+         % Con mathescape=false haremos que se obvie el signo del dólar
+         \begin{lstlisting}[mathescape=false]
+         ENTERO -> "int"
+         REAL -> "real"
+         VAR -> "var"
+         SUP -> "sup"
+         B_FOR -> "para"
+         B_WHILE -> "mientras"
+         IF -> "si"
+         ELSE -> "sino"
+         SWITCH -> "opcion"
+         CASE -> "caso"
+         END_CASE -> "fincaso"
+         DEFAULT -> "defecto"
+         GIRAR -> "girar";
+         FLEXIONAR -> "flexionar"
+         TIEMPO -> "tiempo";
+         AVANZAR -> "avanzar"
+         MOVER -> "mover"
+         ESTABLECE -> "establece"
+         AVANZA -> "avanza"
+         CABEZA -> "CABEZA"
+         BRAZO -> "BRAZO"
+         PIERNA -> "PIERNA"
+         STICKMAN -> "STICKMAN"
+         IZQ -> "IZQ"
+         DER -> "DER"
+         IMPRIMIR -> "mostrar"
+         PI -> "PI"
+         NL -> ('\n' | ("\r\n")
+         COM_LINEA -> "//" (~('\n'|'\r'))*
+         FIN_INSTRUCCION -> ';'
+         FIN_INTERPRETE -> '$'
+         \end{lstlisting} 
+      \end{minipage}\hfill
+      \begin{minipage}{0.4\textwidth}
+         \begin{lstlisting}[firstnumber=31]
+         PAR_IZQ -> '('
+         PAR_DER -> ')'
+         SEPARA -> ','
+         VERDADERO -> "VERDAD"
+         FALSO -> "FALSO"
+         DOBLE_PUNTO -> ':'
+         LLAVE_IZQ -> '{'
+         LLAVE_DER -> '}'
+         OP_SUM -> '+'
+         OP_RES -> '-'
+         OP_MUL -> '*'
+         OP_DIV -> '/'
+         OP_INC -> "++"
+         OP_DEC -> "--"
+         OP_MOD -> '%'
+         OP_POT -> '^'
+         OP_RAIZ -> "raiz"
+         OP_ASIG -> '='
+         OP_MAYOR -> '>'
+         OP_MENOR -> '<'
+         OP_IG -> "=="
+         OP_DIST: "!="
+         OP_OX -> "OX"
+         OP_NO -> "NO" 
+         OP_Y -> 'Y'
+         OP_O -> 'O'
+         LETRA -> 'a'..'z'|'A'..'Z'
+         DIGITO -> '0'..'9'  
+         CADENA -> '"' ~('\\') | "\\\")* '"'
+         \end{lstlisting} % 
+      \end{minipage}
+
+
+   \section{Símbolos no terminales}
+   Los símbolos no terminales (V$_{N}$) son aquellos que se pueden derivar mediante reglas, hasta obtener un conjunto de símbolos terminales.
+   En nuestro intérprete, definimos símbolos no terminales tanto en el analizador léxico como en el sintáctico.\\
+
+   En el analizador léxico se definen los siguientes símbolos no terminales:\\
+      \begin{lstlisting}
+         BLANCO
+         COMENTARIO
+         COM_BLOQUE
+         IDENT
+         NUMERO
+      \end{lstlisting}
+   Pero la gran mayoría de símbolos no terminales se implementan en el análizador sintático. Como ya se ha comentado anteriormente, el analizador
+   sintáctico ha sido implementado en el archivo \textit{anasint.g} mediante la clase \textbf{\textit{Anasint}} que hereda de la clase
+   \textbf{\textit{Parser}} de ANTLR.\\
+
+   El analizador sintáctico hará uso en sus reglas de símbolos terminales y no terminales. Los símbolos terminales son los reconocidos por el
+   analizador léxico, que son comunicados al analizador sintáctico para ejecutar sus reglas. Los símbolos no terminales son aquellos que componen
+   y etiquetan las reglas del analizador sintáctico.\\
+
+   El analizador sintáctico se encargará de implementar las acciones sintácticas del intérprete. A continuación, en los sucesivos puntos, se
+   describirán las distintas funciones empleadas por el analizador. En el analizador sintáctico se definen los siguientes símbolos no terminales:\\
+      \begin{lstlisting}
+         instrucciones
+         sentencia
+         simple
+         bucle
+         declaracion
+         asignacion
+         expr_or
+         expr_xor
+         expr_and
+         expr_not
+         expr_relacional
+         expr_aritmetica
+         expr_mod
+         expr
+         expr_mult
+         expr_raiz
+         expr_base
+         expr_incremento
+         evaluar_expr
+         sentencia_if
+         sentencia_switch
+         casos_switch
+         eliminar_var
+         funcion_sticky
+         f_tiempo
+         f_mover
+         f_flexionar
+         f_girar
+         fin_interprete
+         sentencia_while
+         sentencia_for
+         imprimir
+         impr_base
+      \end{lstlisting}
+
+
+   \section{Reglas de producción}
+   Las reglas de producción se encargan de derivar los símbolos no terminales. Se muestran a continuación las reglas de producción de la
+   gramática desarrollada:
+      % Haciendo escapechar=\$ hacemos que se interpreten los signos dolar como código Látex
+       \begin{lstlisting}[escapechar=\$]
+         BLANCO $\rightarrow$ (' '|'\t'|NL)
+
+         COMENTARIO $\rightarrow$ (COM_LINEA|COM_BLOQUE)
+
+         COM_BLOQUE $\rightarrow$ "/*" ~('\n'|'\r')|NL)* "*/"
+
+         IDENT $\rightarrow$ (LETRA|'_') (LETRA|'_'|DIGITO)*
+
+         NUMERO $\rightarrow$ ((DIGITO )+ '.' ) => (DIGITO)+ '.' (DIGITO)* | (DIGITO)+
+
+         instrucciones $\rightarrow$ (sentencia)* FIN_INSTRUCCION
+
+         sentencia $\rightarrow$ (simple FIN_INSTRUCCION) | bucle
+
+         simple $\rightarrow$ declaracion | asignacion | eliminar_var | funcion_sticky | imprimir | expr_incremento
+         
+         bucle $\rightarrow$ sentencia_if | sentencia_while | sentencia_for | sentencia_switch;
+
+         declaracion $\rightarrow$ (VAR IDENT | VAR IDENT OP_ASIG | 
+          VAR IDENT (SEPARA IDENT) *)
+    
+         asignacion $\rightarrow$ IDENT OP_ASIG expr_or
+         
+         expr_aritmetica $\rightarrow$ expr_mod (OP_MOD expr_mod)*
+         
+         expr_mod $\rightarrow$ expr (OP_SUM expr | OP_RES expr)*
+         
+         expr $\rightarrow$ expr_mult (OP_MUL expr_mult | OP_DIV expr_mult)*
+         
+         expr_mult $\rightarrow$ expr_raiz (OP_POT expr_raiz)*
+         
+         expr_raiz $\rightarrow$ expr_base (OP_RAIZ expr_base)*
+         
+         expr_base $\rightarrow$ ENTERO | REAL | VERDADERO | FALSO | CADENA | PI | 
+               IDENT | expr_incremento | 
+               (PAR_IZQ expr_aritmetica PAR_DER) | 
+               (PAR_IZQ expr_or PAR_DER)
+         
+         expr_incremento $\rightarrow$ (IDENT OP_INC) | (IDENT OP_DEC)
+         
+         expr_or $\rightarrow$ expr_xor (OP_O expr_xor)*
+         
+         expr_xor $\rightarrow$ expr_and (OP_OX expr_and)*
+         
+         expr_and $\rightarrow$ expr_not (OP_Y expr_not)*
+         
+         expr_not $\rightarrow$  expr_relacional (OP_NO expr_relacional)*
+         
+         expr_relacional $\rightarrow$ expr_aritmetica 
+               (OP_MAYOR expr_aritmetica |                    OP_MENOR expr_aritmetica |
+                  OP_IG expr_aritmetica  |
+                  OP_DIST expr_aritmetica )
+         
+         evaluar_expr $\rightarrow$  expr_or
+         
+         sentencia_if $\rightarrow$  (IF PAR_IZQ evaluar_expr PAR_DER LLAVE_IZQ) 
+                  ((sentencia)*|Ɛ) LLAVE_DER
+      
+                  ((ELSE LLAVE_IZQ
+                  ((sentencia)*|Ɛ) LLAVE_DER)
+               |
+                  (ELSE ~LLAVE_IZQ
+                  (sentencia | Ɛ))
+                  )?
+               |
+               (IF PAR_IZQ evaluar_expr PAR_DER)
+                  (sentencia | Ɛ)
+         
+                  ((ELSE ~LLAVE_IZQ
+                     (sentencia | Ɛ))          
+                  |
+                     (ELSE LLAVE_IZQ
+                        ((sentencia)* | Ɛ) 
+                     LLAVE_DER)
+                        )?
+    
+         sentencia_switch $\rightarrow$ SWITCH PAR_IZQ expr_or PAR_DER                     LLAVE_IZQ (casos_switch)*
+                  (DEFAULT DOBLE_PUNTO LLAVE_IZQ
+                  ((sentencia)* | Ɛ ) LLAVE_DER 
+                  END_CASE FIN_INSTRUCCION)? LLAVE_DER
+
+            casos_switch $\rightarrow$ CASE expr_or DOBLE_PUNTO LLAVE_IZQ 
+                  ((sentencia)* | Ɛ ) LLAVE_DER
+                  END_CASE FIN_INSTRUCCION
+
+         eliminar_var $\rightarrow$ SUP IDENT
+         
+         funcion_sticky $\rightarrow$ f_tiempo | f_mover | f_flexionar | f_girar
+         
+         f_tiempo $\rightarrow$ TIEMPO (ESTABLECE | AVANZA) 
+            PAR_IZQ expr_aritmetica PAR_DER
+         
+         f_mover $\rightarrow$ MOVER STICKMAN PAR_IZQ
+            expr_aritmetica SEPARA
+            expr_aritmetica SEPARA
+            expr_aritmetica SEPARA
+            expr_aritmetica PAR_DER 
+         
+         f_flexionar $\rightarrow$ FLEXIONAR (brazo:BRAZO | PIERNA) (DER | IZQ) 
+               PAR_IZQ expr_aritmetica 
+               SEPARA expr_aritmetica 
+               PAR_DER
+         
+         f_girar $\rightarrow$ GIRAR (STICKMAN | CABEZA | BRAZO | PIERNA) (DER | IZQ)?
+               PAR_IZQ expr_aritmetica 
+               SEPARA expr_aritmetica 
+               SEPARA expr_aritmetica 
+               PAR_DER
+         
+         fin_interprete $\rightarrow$ FIN_INTERPRETE
+         
+         sentencia_while $\rightarrow$ ((B_WHILE PAR_IZQ evaluar_expr PAR_DER LLAVE_IZQ) 
+                  ((sentencia)* | Ɛ)  LLAVE_DER)
+                  |
+               ((B_WHILE PAR_IZQ evaluar_expr PAR_DER)
+                  (sentencia | Ɛ))
+
+         sentencia_for $\rightarrow$ (B_FOR 
+               PAR_IZQ 
+               IDENT 
+               FIN_INSTRUCCION evaluar_expr 
+               FIN_INSTRUCCION ENTERO 
+               PAR_DER 
+               LLAVE_IZQ
+               ((sentencia)* | Ɛ ) 
+               LLAVE_DER)
+               |  
+               (B_FOR 
+               PAR_IZQ IDENT 
+               FIN_INSTRUCCION evaluar_expr 
+               FIN_INSTRUCCION ENTERO 
+               PAR_DER
+               (sentencia | Ɛ) )
+
+         imprimir $\rightarrow$ IMPRIMIR PAR_IZQ impr_base
+            (OP_SUM impr_base)* PAR_DER
+         
+         impr_base $\rightarrow$ (CADENA | IDENT)
+       \end{lstlisting}
+
+
+
+   \section{Acciones semánticas}
+   Las acciones semánticas correspondientes a la derivación de cada símbolo no terminal, así como la implementación de todas las
+   funciones que reconocerá el intérprete, serán especificadas en el capítulo 9, donde se describe el analizador sintáctico y semántico. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

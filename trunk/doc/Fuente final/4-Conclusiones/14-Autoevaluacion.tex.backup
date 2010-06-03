@@ -1,0 +1,66 @@
+\chapter{Autoevaluación}
+El objetivo fundamental de este apartado es el de valorar, criticar y reflexionar el comportamiento del grupo de trabajo con 
+respecto a la estrategia seguida en el proceso de aprendizaje y desarrollo del sistema, además de facilitar al docente la compresión
+del proceso anterior en relación a las dificultades acontecidas y los objetivos conseguidos. \\
+
+En primer lugar, se hará evidencia de los \textbf{esfuerzos realizados} con respecto a los conocimientos. Para ello, se responderán a 
+una serie de cuestiones que a continuación se enumeran.
+
+   \section{¿Qué conocimientos había del desarrollo de la aplicación?}
+   Todos los miembros conocíamos el paradigma de programación orientado a objetos (POO), estudiado en la asignatura de Estructuras de Datos y
+   de la Información en la Universidad de Córdoba, por lo que la adaptación a Java ha sido rápida. Con respecto al uso de ANTLR, conocíamos
+   el uso de analizadores léxicos como Lex combinado con Yacc, el cuál es el encargado de realizar el análisis sintáctico. De la misma forma
+   que en el caso anterior, el aprendizaje de las herramientas se realizó en la asignatura de Teoría de Autómatas y Lenguajes Formales.\\
+
+   Con respecto a las herramientas de desarrollo 2D o 3D, conocíamos la existencia de Java2D, Java3D o VRML, pero ningún miembro del grupo
+   tenía experiencia previa con dichos lenguajes. No obstante, hemos estudiado cada uno de los tres para valorar cual se adecuaba más a nuestras
+   intenciones, eligiendo, como se comenta anteriormente en éste mismo documento, la API de Java 3D, lo cual conllevó a un estudio en más 
+   profundidad del mismo para poder utilizarlo eficientemente y sin errores.
+
+
+   \section{¿Cómo lo hemos aprendido?}
+   Con respecto a ANTLR, además de realizarse un seguimiento en varias clases prácticas de la asignatura, se han consultado tanto los
+   manuales proporcionados para su comprensión como información adicional de la web. Debido a que se realiza un uso extenso del mismo,
+   el aprendizaje ha sido costoso, a pesar de haber manejado otras herramientas con un fin parecido.\\
+
+   En el caso de Java y Java3D se han consultado referencias web, libros, la propia API, pequeños de desarrollos de prueba y ejemplos que
+   nos proporcionó el profesor de la asignatura. En el caso de Java, el aprendizaje ha sido bastante rápido comparado con los demás elementos
+   debido al uso anterior del lenguaje C++. En cambio, el uso Java3D ha requerido gran parte de tiempo debido al desconocimiento del mismo. 
+
+
+   \section{¿Qué sabemos ahora, una vez acabado la aplicación?}
+   Una vez contestadas las preguntas anteriores, podemos afirmar que se ha logrado la compresión de las herramientas anteriores (Java, 
+   ANTLR, Java3D), lo cuál nos puede ayudar a progresar más rápidamente en futuras asignaturas o a poseer mayores conocimientos a la hora 
+   de introducirnos en el duro y competitivo mercado laboral. Para ello, la organización temporal y la división de la carga de trabajo entre
+   los diferentes miembros del grupo ha sido esencial, lo cual ha hecho que fomentemos un espíritu de cooperación entre nosotros, así como un
+   estupendo ambiente de trabajo.\\[1.5cm]
+
+   Por otra parte, se analizará el \textbf{trabajo en grupo} realizado para cumplir los objetivos del desarrollo de este sistema. Los integrantes
+   del grupo establecimos reuniones semanales, las cuales contemplaban dos días de la semana, para dar a conocer a los demás integrantes
+   la situación en la que se encontraba el trabajo individual realizado y la explicación del mismo si fuese necesario.\\
+
+   Es necesario remarcar la distribución de trabajo realizada. En un principio, el hecho de no tener amplia experiencia con grupos de 
+   trabajos con un elevado número de personas nos hizo pensar que la carga de trabajo individual no iba a ser proporcional, es decir,
+   que unos miembros podrían realizar un mayor esfuerzo que otros. Gracias a \textit{SVN} y a \textit{GoogleCode}, esta repartición de tareas ha sido
+   mucho más fácil y cómoda, ya que hemos podido ver los resultados de cada uno, tanto a la hora de codificar como de documentar, de forma 
+   instantánea y sin solapar el trabajo de otro compañero. Además, SVN dispone de un log que indica las actualizaciones que ha realizado
+   cada miembro del grupo, por lo que también hemos podido controlar el trabajo realizado por cada uno y comprobar que se ha hecho en la 
+   fecha estimada en nuestras reuniones semanales.\\
+
+   Finalmente, realizaremos una \textbf{evaluación de nuestro desempeño} en el trabajo considerando los siguientes indicadores cumplidos:
+   \begin{itemize}
+      \item La comunicación fue dinámica, activa y agradable, participando todos con sus aportaciones. Cuando alguien hablaba todos le escuchaban,
+            asimilando la información.
+      \item Las decisiones se tomaron por consenso con la participación de todos los miembros del grupo y como resultado de la aportación
+            creativa de todos.
+      \item Todos los miembros del grupo se autocontrolaron y se autodirigen.
+      \item Como en cualquier trabajo en grupo, han aparecido numerosas discrepancias entra los miembros. Cuando éstas se presentaron, se
+            analizaron objetivamente exponiendo argumentos razonables para optar por la mejor alternativa.
+      \item En alguna ocasión el grupo se detuvo a analizar cómo estaban trabajando, detectando errores y acordando mejoras de acción.
+      \item El ambiente de trabajo ha sido óptimo, fomentando la participación y el compromiso. 
+      \item Durante el desarrollo de la aplicación, en ocasiones nos hemos visto obligados a rediseñar ciertas partes debido a malas 
+            decisiones tomadas al inicio, aunque éstas fueron resultas adecuadamente.
+   \end{itemize}
+
+Debido a los puntos anteriores y siguiendo una escala de 0 a 5, la puntuación final dada al trabajo realizado es de 5. Cabe destacar que, 
+además, se ha tenido en cuenta que hemos sido un grupo bastante numeroso y que se ha realizado un trabajo completo y original.

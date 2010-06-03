@@ -1,0 +1,97 @@
+\chapter{Objetivos}
+Bla, bla, bla...
+
+
+   \section{Generales}
+
+   \section{3D -> Discutir} % ---------------------------------------------------------------------
+
+   \section{De la gramática}
+   A continuación se describen los objetivos de la gramática para el reconocimiento del lenguaje Sticky que se va a desarrollar: 
+   \begin{itemize}
+      \item Todas las instrucciones del lenguaje llevarán el carácter fín de instrucción (’;’). 
+      \item Los operadores aritméticos reconocidos son: +, -, *, /, ++, –, %, ^, raiz(x). 
+      \item El lenguaje será sensible a las mayúsculas y minúsculas.
+      \item Tipado dinámico de datos: 
+            \begin{itemize}
+               \item Definición de variables: var nombreVariable. 
+               \item Destrucción de variables: sup nombreVariable. 
+               \item Tipos de variables soportadas: booleanos, enteros, reales y cadenas. 
+            \end{itemize}
+      \item Comentarios: monolínea (’//’) y multilínea (’/*’ y ’*/’). 
+      \item Asignaciones: símbolo igual (’=’). 
+      \item Operadores condicionales: ’<’, ’>’, ’<=’, ’>=’, ’==’ y ’!=’. 
+      \item Operadores lógicos: ’Y’, ’O’, ’OX’, ’NO’, ’!’. 
+      \item Los bloques de código irán encerrados entre llaves (’{’ y ’}’).
+      \item Construcción de bucles: 
+            \begin{itemize}
+               \item Bucle for (para):
+                     \begin{itemize}
+                        \item para (inicio; fin; incremento) { sentencias } 
+                        \item para (inicio; fin; incremento) sentencia 
+                     \end{itemize}
+               \item Bucle while (mientras):
+                     \begin{itemize}
+                        \item mientras (expresión o variable) { sentencias } 
+                        \item mientras (expresión o variable) sentencia 
+                     \end{itemize}
+            \end{itemize}
+      \item Estructuras condicionales:
+            \begin{itemize}
+               \item if (si):
+                     \begin{itemize}
+                        \item si (condición) 
+                        \item si (condición) { sentencias } 
+                     \end{itemize}
+               \item if-else (si-sino):
+                     \begin{itemize}
+                        \item si (condición) sentencia sino sentencia 
+                        \item si (condición) { sentencias } sino sentencia 
+                        \item si (condición) sentencia sino { sentencias } 
+                        \item si (condición) { sentencias } sino { sentencias } 
+                     \end{itemize}
+            \end{itemize}
+      \item Switch:
+%             \begin{itemize}
+%                opcion (expresión o variable) { 
+%                   caso expresión1: { sentencias } fincaso; 
+%                   caso expresión2: { sentencias } fincaso; 
+%                      ... 
+%                   defecto: { sentencias } fincaso; 
+%                } 
+%             \end{itemize}
+      \item Movimientos propios de \textit{StickMan}:
+            \begin{itemize}
+               \item girar CABEZA (angulo, angulo, tiempo);
+               \item girar [BRAZO | PIERNA] [IZQ | DER] (angulo, angulo, tiempo);
+               \item girar STICKMAN (angulo, tiempo);
+               \item flexionar [BRAZO | PIERNA] [IZQ | DER] (angulo, tiempo);
+               \item mover STICKMAN (x, y, z, tiempo);
+            \end{itemize} 
+      \item Funciones temporales:
+            \begin{itemize}
+               \item tiempo [ESTABLECE | AVANZA] (tiempo);
+            \end{itemize}
+   \end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
