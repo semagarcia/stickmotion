@@ -1,5 +1,6 @@
-//Aprobaremos la asignatura en este codigo esta la respuesta
-
+//---------------------------------------------
+// CORTE DE MANGAS
+// Aprobaremos la asignatura: en este codigo esta la respuesta.
 
 girar BRAZO DER (0, 3.14/5, 500);
 flexionar BRAZO DER (3.14/1.8, 500);
