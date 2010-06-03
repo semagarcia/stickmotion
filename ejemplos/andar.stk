@@ -1,0 +1,196 @@
+//Posiciona a Steve a la izquierda de la pantalla mirando hacia la derecha.
+mover STICKMAN (-2,0,0,200);
+girar STICKMAN (PI/2,0,200);
+tiempo avanza (200);
+//-------------------------------------------------------------------
+
+
+//Andar hacia la derecha
+var t=500;
+var angulo=PI/8;
+var angulo2=PI/4;
+var iteraciones=2;
+var i=0;
+
+para(i; i<iteraciones; 1) {
+
+//Primer pasito------------------------------------------
+    girar STICKMAN (0,0.05,t);
+    
+    //Encoge la pierna izquierda
+    girar PIERNA IZQ (0,angulo,t);
+    flexionar PIERNA IZQ (angulo,t);
+    mover STICKMAN (0,0.5,0.05,t);
+
+    //Avanza la pierna derecha
+    flexionar PIERNA DER (angulo,t);
+    girar PIERNA DER (0,-angulo2,t);
+
+    //Inclina a Steve hacia adelante
+    girar STICKMAN (0,-0.1,t);
+
+    //Mueve los brazos
+    girar BRAZO DER (0,0.1,t);
+    girar BRAZO IZQ (0,-0.1,t);
+
+
+    tiempo avanza (t);
+
+    //Apoya la pierna derecha
+    mover STICKMAN (0,0.5,-0.05,t);
+    flexionar PIERNA DER (-angulo,t);
+    girar PIERNA DER (0,angulo2,t);
+
+    //Estira la pierna izquierda
+    girar PIERNA IZQ (0,-angulo,t);
+    flexionar PIERNA IZQ (-angulo,t);
+
+    //Inclina a Steve hacia su posicion inicial
+    girar STICKMAN (0,0.05,t);
+
+    
+    //Mueve los brazos
+    girar BRAZO DER (0,-0.1,t);
+    girar BRAZO IZQ (0,0.1,t);
+    
+    tiempo avanza(t);
+//-------------------------------------------------------
+
+//Segundo pasito-----------------------------------------
+    girar STICKMAN (0,0.05,t);
+    
+    //Encoge la pierna izquierda
+    girar PIERNA DER (0,angulo,t);
+    flexionar PIERNA DER (angulo,t);
+    mover STICKMAN (0,0.5,0.05,t);
+
+    //Avanza la pierna derecha
+    flexionar PIERNA IZQ (angulo,t);
+    girar PIERNA IZQ (0,-angulo2,t);
+
+    //Inclina a Steve hacia adelante
+    girar STICKMAN (0,-0.1,t);
+
+    //Mueve los brazos
+    girar BRAZO DER (0,-0.1,t);
+    girar BRAZO IZQ (0,0.1,t);
+
+    tiempo avanza (t);
+
+
+    //Apoya la pierna derecha
+    mover STICKMAN (0,0.5,-0.05,t);
+    flexionar PIERNA IZQ (-angulo,t);
+    girar PIERNA IZQ (0,angulo2,t);
+
+    //Estira la pierna izquierda
+    girar PIERNA DER (0,-angulo,t);
+    flexionar PIERNA DER (-angulo,t);
+
+    //Inclina a Steve hacia su posicion inicial
+    girar STICKMAN (0,0.05,t);
+    
+    //Mueve los brazos
+    girar BRAZO DER (0,0.1,t);
+    girar BRAZO IZQ (0,-0.1,t);
+
+    tiempo avanza(t);
+//-------------------------------------------------------
+
+}
+
+//Se mueve hacia la izquierda
+girar STICKMAN (PI,0,200);
+tiempo avanza (200);
+i=0;
+
+para(i; i<iteraciones; 1) {
+
+//Primer pasito------------------------------------------
+    girar STICKMAN (0,0.05,t);
+    
+    //Encoge la pierna izquierda
+    girar PIERNA IZQ (0,angulo,t);
+    flexionar PIERNA IZQ (angulo,t);
+    mover STICKMAN (0,0.5,0.05,t);
+
+    //Avanza la pierna derecha
+    flexionar PIERNA DER (angulo,t);
+    girar PIERNA DER (0,-angulo2,t);
+
+    //Inclina a Steve hacia adelante
+    girar STICKMAN (0,-0.1,t);
+
+    //Mueve los brazos
+    girar BRAZO DER (0,0.1,t);
+    girar BRAZO IZQ (0,-0.1,t);
+
+
+    tiempo avanza (t);
+
+    //Apoya la pierna derecha
+    mover STICKMAN (0,0.5,-0.05,t);
+    flexionar PIERNA DER (-angulo,t);
+    girar PIERNA DER (0,angulo2,t);
+
+    //Estira la pierna izquierda
+    girar PIERNA IZQ (0,-angulo,t);
+    flexionar PIERNA IZQ (-angulo,t);
+
+    //Inclina a Steve hacia su posicion inicial
+    girar STICKMAN (0,0.05,t);
+
+    
+    //Mueve los brazos
+    girar BRAZO DER (0,-0.1,t);
+    girar BRAZO IZQ (0,0.1,t);
+    
+    tiempo avanza(t);
+//-------------------------------------------------------
+
+//Segundo pasito-----------------------------------------
+    girar STICKMAN (0,0.05,t);
+    
+    //Encoge la pierna izquierda
+    girar PIERNA DER (0,angulo,t);
+    flexionar PIERNA DER (angulo,t);
+    mover STICKMAN (0,0.5,0.05,t);
+
+    //Avanza la pierna derecha
+    flexionar PIERNA IZQ (angulo,t);
+    girar PIERNA IZQ (0,-angulo2,t);
+
+    //Inclina a Steve hacia adelante
+    girar STICKMAN (0,-0.1,t);
+
+    //Mueve los brazos
+    girar BRAZO DER (0,-0.1,t);
+    girar BRAZO IZQ (0,0.1,t);
+
+    tiempo avanza (t);
+
+
+    //Apoya la pierna derecha
+    mover STICKMAN (0,0.5,-0.05,t);
+    flexionar PIERNA IZQ (-angulo,t);
+    girar PIERNA IZQ (0,angulo2,t);
+
+    //Estira la pierna izquierda
+    girar PIERNA DER (0,-angulo,t);
+    flexionar PIERNA DER (-angulo,t);
+
+    //Inclina a Steve hacia su posicion inicial
+    girar STICKMAN (0,0.05,t);
+    
+    //Mueve los brazos
+    girar BRAZO DER (0,0.1,t);
+    girar BRAZO IZQ (0,-0.1,t);
+
+    tiempo avanza(t);
+//-------------------------------------------------------
+
+}
+
+//-------------------------------------------------------------------
+
+$
