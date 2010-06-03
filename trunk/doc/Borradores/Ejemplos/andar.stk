@@ -1,0 +1,43 @@
+/*
+    Stickman anda hacia adelante
+*/
+//Se pone de lado
+mover STICKMAN (-2, 0, 0, 0);
+girar STICKMAN (PI/2, 0, 0);
+//Se mueve hacia la derecha durante 4 segundos
+mover STICKMAN (0, 4, 0, 2000);
+
+//Realizando 2 pasos completos hacia adelante
+var contador = 1;
+mientras(contador!=0) {
+    
+    //Vuela adelante pierna izquierda, pierna derecha atras
+    flexionar PIERNA IZQ (PI/8, 700);
+    girar PIERNA IZQ (0, -PI/4, 700);
+    flexionar PIERNA DER (PI/8, 700);
+    girar PIERNA DER (0, (PI/4), 700);
+    
+    //Midstance
+    tiempo avanza (700);
+    flexionar PIERNA IZQ (-PI/8, 700);
+    girar PIERNA IZQ (0, PI/4, 700);
+    flexionar PIERNA DER (-PI/8, 700);
+    girar PIERNA DER (0, (-PI/4), 700);
+ 
+    //Vuela atras pierna derecha, piernaizquierda adelante
+    flexionar PIERNA DER (PI/8, 700);
+    girar PIERNA DER (0, -PI/4, 700);
+    flexionar PIERNA IZQ (PI/8, 700);
+    girar PIERNA IZQ (0, (PI/4), 700);
+    
+    //Midstance
+    tiempo avanza (700);
+    flexionar PIERNA DER (-PI/8, 700);
+    girar PIERNA DER (0, (PI/4), 700);
+    flexionar PIERNA IZQ ((-PI/8), 700);
+    girar PIERNA IZQ (0, (-PI/4), 700);
+    tiempo avanza (700);
+   
+    contador--;
+    }
+$

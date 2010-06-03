@@ -1,0 +1,33 @@
+//MICHAEL JACKSON MOONWALK
+/* 
+    Michael Jackson "Moonwalk"
+    Tipico baile con pasos hacia atras del mitico Rey del Pop.
+    El giro es en espiral.
+*/
+
+//Stickman va girando hacia atras en espiral
+girar STICKMAN (PI*2, 0, 8000);
+mover STICKMAN (2, 0, 0, 8000);
+
+//Realizando 4 pasos Moonwalk completos con cada pierna hacia atras
+var contador = 4;
+mientras(contador!=0) {
+    
+    flexionar PIERNA IZQ (PI/6, 700);
+    girar PIERNA IZQ (0, -PI/4, 700);
+    
+    tiempo avanza (700);
+    flexionar PIERNA IZQ ((-PI/6), 700);
+    girar PIERNA IZQ (0, (PI/4), 700);
+    flexionar PIERNA DER (PI/6, 700);
+    girar PIERNA DER (0, (-PI/4), 700);
+
+
+    tiempo avanza (700);
+    flexionar PIERNA DER (-PI/6, 700);
+    girar PIERNA DER (0, (PI/4), 700);
+       tiempo avanza (700);
+    contador--;
+    }
+
+$

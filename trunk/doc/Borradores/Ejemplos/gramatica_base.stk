@@ -1,0 +1,184 @@
+/*
+
+Fichero codigo.stk => Codigo Sticky
+- Declaracion de variables, incremento e impresion
+- Prueba de precedencia de operaciones y operador XO
+- Prueba de algunos errores
+- Prueba de raiz cuadrada y potencia
+- Prueba de valores negativos
+- Prueba de primitiva mostrar
+- Pruebas de "si" (todas las posibilidad de corchetes)
+- Pruebas de "mientras" (con o sin corchetes)
+- Prueba de "opcion" (switch) 
+- Ejemplos STICKMAN
+
+*/
+
+
+//Declaracion de variables, incremento e impresion
+var pepe= 2;
+pepe++;
+mostrar("Este es el valor de la variable pepe: "+pepe);
+var pepe = VERDAD;
+pepe = FALSO Y (VERDAD O VERDAD);
+pepe = FALSO Y VERDAD O VERDAD;
+
+//Prueba de precedencia de operaciones y operador NO
+var david = 2;
+var prueba = NO david + 2 == 2+2 Y (FALSO O VERDAD);
+var prueba2 = NO VERDAD Y FALSO; //Tiene prioridad el NO
+sup prueba2;
+
+//Prueba de precedencia de operaciones y operador XO
+prueba = VERDAD OX (FALSO O VERDAD);
+pepe = 2;
+
+//Prueba de algunos errores
+var otra = pepe/0;
+otra = VERDAD + 3;
+otra = 3+2 Y 4>2;
+var cadena = "mi cadena";
+cadena = cadena +2;
+
+//Prueba de raiz cuadrada y potencia
+var hola; 
+hola = raiz 6 + 3;
+hola = raiz(6+3);
+hola = 2^(-4);
+hola = raiz (7^1+2);
+hola = raiz 7^1+2;
+
+
+//Prueba de valores negativos
+var davide = -2-2;
+var otra_nueva = -23 ;
+var mult = -2*2;
+var div =-2/(-2); //necesario poner el parentesis entre / y -. Esto es porque -2 = 0-2, y por la precedencia de operacion intenta hacer -2/0 y luego -2.
+var mult2= 3*(-2); //Solo es necesario poner parentesis cuando al - le precede un operador.
+var variable = -2;
+var div2 = -2/variable; //Aqui no es necesario parentesis
+
+//Prueba de primitiva mostrar
+mostrar("Este es el resultado de la variable \"favid\": "+favid);
+mostrar("Este es el resultado de la variable davide: "+davide+" otra_nueva: "+otra_nueva);
+
+//Pruebas de IF
+//si-sino con corchetes en ambos
+si(NO VERDAD OX VERDAD Y VERDAD) {
+	davide = 4;
+}
+sino {
+	davide = 2;
+}
+
+si(NO VERDAD OX VERDAD Y FALSO) {
+	davide = 4;
+}
+sino {
+	davide = 2;
+}
+
+//si-sino con corchetes solo en si
+si(NO VERDAD OX VERDAD Y VERDAD) 
+	otra_nueva = 4;
+sino {
+	otra_nueva = 2;
+}
+
+si(NO VERDAD OX VERDAD Y FALSO) 
+	otra_nueva = 4;
+sino {
+	otra_nueva = 2;
+}
+
+//si-sino con corchetes solo en sino
+si(NO VERDAD OX VERDAD Y VERDAD) {
+	variable = 4;
+	}
+sino 
+	variable = 2;
+
+
+si(NO VERDAD OX VERDAD Y FALSO) {
+	variable = 4;
+	}
+sino 
+	variable = 2;
+
+//si-sino sin corchetes
+si(NO VERDAD OX VERDAD Y VERDAD) {
+	hola = 4;
+	}
+sino 
+	hola = 2;
+
+
+si(NO VERDAD OX VERDAD Y FALSO) {
+	variable = 4;
+	}
+sino 
+	hola = 2;
+	
+//si sin else con corchetes
+si(NO VERDAD OX VERDAD Y VERDAD) {
+	otra = 4;
+	}
+
+//si sin else sin corchetes
+si(NO VERDAD OX VERDAD Y VERDAD)
+	otra = 4;
+
+//Pruebas de "mientras" con y sin corchetes
+var contador=1;
+mientras(contador < 10){
+	otra++;
+	mostrar("Valor de otra: "+otra);
+	contador++;
+}
+
+contador=1;
+mientras(contador < 10)
+	contador++;
+
+var variable2 = 3;
+
+si(variable2++ != 3)
+	mostrar("hola: "+variable2);
+
+//Prueba de bucle "para" con y sin corchetes
+var bucle = 1;
+para(bucle;bucle < 10;2) 
+	mostrar("Este es el valor de bucle: "+bucle);
+
+bucle = 1;
+para(bucle;bucle < 10;2)  {
+	mostrar("Este es el valor de bucle: "+bucle);
+	}
+
+//Prueba de switch (con corchetes en todo, tal como indica la gramatica, pero con "defecto" optativo) 
+pepe = "nada de nada";
+
+opcion (pepe) {
+    caso 2: {
+        mostrar("Caso 2");
+        }fincaso;
+    caso 3: {
+        mostrar("Caso 3");
+        }fincaso;
+    caso VERDAD: {
+        mostrar("Caso 4");
+        }fincaso;
+    
+    caso "HOLA": {
+        mostrar("Caso 5");
+        }fincaso;
+    
+    defecto: {
+        mostrar("pepito");
+        } fincaso;
+    
+    }
+
+
+
+
