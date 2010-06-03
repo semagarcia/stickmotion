@@ -902,7 +902,7 @@ public class StickMotion extends javax.swing.JFrame {
 
   @SuppressWarnings("deprecation")
   private void optionFileStopMouseEntered(java.awt.event.MouseEvent evt) { // When
-    myThread.stop();
+    currentStatusLabel.setText("Detiene la ejecución del intérprete");
   }
 
   /**
