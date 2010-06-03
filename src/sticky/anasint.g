@@ -269,35 +269,37 @@ expr returns [Object resultado = null]
 	( linea1:OP_MUL e2=expr_mult
 	  {
 	  	
-	  	if(e1 instanceof Integer && e2 instanceof Integer)
-	  	{
-	  		int valor1 = new Integer(e1.toString()).intValue();
-	  		int valor2 = new Integer(e2.toString()).intValue();
-	  		
-	  		resultado = new Integer(valor1*valor2);
-	  		
-	  		e1=resultado;
-	  	}
-	  	
-	  	if((e1 instanceof Double || e2 instanceof Double) && !(e1 instanceof String || e2 instanceof String || e1 instanceof Boolean || e2 instanceof Boolean))
-	  	{
-	  		double valor1 = new Double(e1.toString()).doubleValue();
-	  		double valor2 = new Double(e2.toString()).doubleValue();
-	  		
-	  		resultado = new Double(valor1*valor2);
-	  		
-	  		e1=resultado;
-	  	}
-	  	
 	  	if(e1 instanceof String || e2 instanceof String)
 	  	{
 	  			Processor.println(0,"Linea "+linea1.getLine()+": No se pueden realizar operaciones aritmeticas con cadenas de caracteres");
 	  	}
 	  	
-	  	if(e1 instanceof Boolean || e2 instanceof Boolean)
+	  	else if(e1 instanceof Boolean || e2 instanceof Boolean)
 	  	{
 	  			Processor.println(0,"Linea "+linea1.getLine()+": No se pueden realizar operaciones aritmeticas con valores booleanos");
 	  	}
+	  	
+	  	else if(e1 instanceof Integer && e2 instanceof Integer)
+	  	{
+	  		int valor1 = new Integer(e1.toString()).intValue();
+	  		int valor2 = new Integer(e2.toString()).intValue();
+	  		
+	  		resultado = new Integer(valor1*valor2);
+	  		 
+	  		e1=resultado;
+	  	}
+	  	
+	  	else
+	  	{
+			System.out.println(e1+ " " +e2);
+	  		double valor1 = new Double(e1.toString()).doubleValue();
+	  		double valor2 = new Double(e2.toString()).doubleValue();
+	  		resultado = new Double(valor1*valor2);
+	  		
+	  		e1=resultado;
+	  	}
+	  	
+	  	
 	  }
 	  | linea2:OP_DIV e3 = expr_mult
 	  {
@@ -432,7 +434,7 @@ expr_raiz returns [Object resultado = null]
 
 expr_base returns [Object resultado = null]: 
 		n1:ENTERO {resultado = new Integer(n1.getText());}
-		|n2:REAL {resultado = new Double(n2.getText());}
+		|n2:REAL {resultado = new Double(n2.getText()); } 
 		|n3:VERDADERO {resultado = new Boolean(true);}
 		|n4:FALSO {resultado = new Boolean(false);}
 		|n5:CADENA {resultado = new String( n5.getText()); }
