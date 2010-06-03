@@ -1,14 +1,13 @@
 //EJEMPLO HOLA
 
-girar BRAZO DER (1, (2.60), 1500);
-girar BRAZO DER (2.60, 0, 1500);
+girar BRAZO DER (1, 2.3, 1500);
+girar BRAZO DER (2.60, 0, 500);
 
 tiempo avanza (1500);
-flexionar BRAZO DER (3.14/6, 200);
 var contador = 0;
 var neg = (-3.14/2.5);
 var pos = -neg;
-mientras(contador < 2) {
+mientras(contador < 10) {
 tiempo avanza (350);
 
 si (contador%2 == 0)
@@ -20,3 +19,4 @@ contador++;
 }
 
 $
+

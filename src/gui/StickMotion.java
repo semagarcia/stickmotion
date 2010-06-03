@@ -6,6 +6,7 @@ package gui;
 
 import java.awt.GraphicsConfiguration;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -1005,6 +1006,7 @@ public class StickMotion extends javax.swing.JFrame {
    */
   private void optionFileSaveAsActionPerformed(java.awt.event.ActionEvent evt) {
     javax.swing.JFileChooser saveAs = new javax.swing.JFileChooser();
+    saveAs.setCurrentDirectory(new File("."));
     int opc = saveAs.showSaveDialog(this); // Show the dialog
 
     // Check if the "Ok" button was pressed
@@ -1133,6 +1135,7 @@ public class StickMotion extends javax.swing.JFrame {
    */
   private void optionFileLoadActionPerformed(java.awt.event.ActionEvent evt) {
     javax.swing.JFileChooser openAs = new javax.swing.JFileChooser();
+    openAs.setCurrentDirectory(new File("."));
     openAs.setFileSelectionMode(javax.swing.JFileChooser.FILES_AND_DIRECTORIES);
     // openAs.setAcceptAllFileFilterUsed(true);
     int opc = openAs.showOpenDialog(this); // The dialog is shown
