@@ -132,6 +132,7 @@ public class StickMotion extends javax.swing.JFrame {
     optionLoopFor = new javax.swing.JMenuItem();
     subStickyCondition = new javax.swing.JMenu();
     optionCondIf = new javax.swing.JMenuItem();
+    optionCondSwitch = new javax.swing.JMenuItem();
     optionStickySeparator = new javax.swing.JPopupMenu.Separator();
     optionDebug = new javax.swing.JMenuItem();
     menuBarHelp = new javax.swing.JMenu();
@@ -732,7 +733,7 @@ public class StickMotion extends javax.swing.JFrame {
 
     menuBarSticky.add(subStickyLoops);
 
-    subStickyCondition.setText("Condición");
+    subStickyCondition.setText("Estructuras de Control");
     subStickyCondition.addMouseListener(new java.awt.event.MouseAdapter() {
       @Override
       public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -749,6 +750,16 @@ public class StickMotion extends javax.swing.JFrame {
       }
     });
     subStickyCondition.add(optionCondIf);
+
+    optionCondSwitch.setAccelerator(javax.swing.KeyStroke.getKeyStroke(
+        java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
+    optionCondSwitch.setText("Opcion(...)");
+    optionCondSwitch.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        optionCondSwitchActionPerformed(evt);
+      }
+    });
+    subStickyCondition.add(optionCondSwitch);
 
     optionDebug.setAccelerator(javax.swing.KeyStroke.getKeyStroke(
         java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.ALT_MASK));
@@ -1288,7 +1299,8 @@ public class StickMotion extends javax.swing.JFrame {
   private void optionLoopForActionPerformed(java.awt.event.ActionEvent evt) {
     String var = JOptionPane
         .showInputDialog("¿Qué variable deseas para iterar?");
-
+    if (var == null)
+      var = "";
     Caret pos = editor.getCaret();
     String para = "para(" + var + "; " + var + "; " + var + ") {\n\n}\n";
     try {
@@ -1301,11 +1313,35 @@ public class StickMotion extends javax.swing.JFrame {
   /**
    * Inserts in the editor the code for the "if" condition
    */
+  private void optionCondSwitchActionPerformed(java.awt.event.ActionEvent evt) {
+    // Let's show the dialog box conveniently "casting-ized"
+    String c = (String) JOptionPane.showInputDialog(null,
+        "Introduzca el número de casos",
+        "Insercción de estructura condicional", JOptionPane.QUESTION_MESSAGE,
+        null, null, 1);
+
+    String content = "opcion() {";
+    for (int k = 0; k < Integer.parseInt(c); k++)
+      content += "\n\t// Caso \n\tcaso : {\n\n\t} fincaso;\n";
+    content += "\n\t//Caso por defecto\n\tdefecto: {\n\n\t} fincaso;\n }";
+
+    // Now let's insert the completed "if" construction in the right place
+    Caret pos = editor.getCaret();
+    try {
+      editor.getDocument().insertString(pos.getDot(), content, null);
+    } catch (BadLocationException ex) {
+      Logger.getLogger(StickMotion.class.getName()).log(Level.SEVERE, null, ex);
+    }
+  }
+
+  /**
+   * Inserts in the editor the code for the "if" condition
+   */
   private void optionCondIfActionPerformed(java.awt.event.ActionEvent evt) {
-    String[] options = { "if", "if - else", "if{} - else{}" };
+    String[] options = { "si", "si - sino", "si{} - sino{}" };
     // Let's show the dialog box conveniently "casting-ized"
     String opc = (String) JOptionPane.showInputDialog(null,
-        "Seleccione el tipo de construcción if",
+        "Seleccione el tipo de construcción si",
         "Insercción de estructura condicional", JOptionPane.QUESTION_MESSAGE,
         null, options, // possible options (array)
         options[2]); // default option
@@ -1328,6 +1364,9 @@ public class StickMotion extends javax.swing.JFrame {
     }
   }
 
+  /**
+   * Ask to the user for the level of debug
+   */
   private void optionDebugModeActionPerformed(java.awt.event.ActionEvent evt) {
     String[] debug = { "0 - Sólo errores", "1 - Información básica",
         "2 - Información auxiliar" };
@@ -1470,7 +1509,6 @@ public class StickMotion extends javax.swing.JFrame {
   private javax.swing.JMenu menuBarFile;
   private javax.swing.JMenu menuBarHelp;
   private javax.swing.JMenu menuBarSticky;
-  private javax.swing.JMenuItem optionCondIf;
   private javax.swing.JMenuItem optionEditClear;
   private javax.swing.JMenuItem optionEditCopy;
   private javax.swing.JMenuItem optionEditCut;
@@ -1494,6 +1532,8 @@ public class StickMotion extends javax.swing.JFrame {
   private javax.swing.JMenuItem optionHelpSticky;
   private javax.swing.JMenuItem optionLoopFor;
   private javax.swing.JMenuItem optionLoopWhile;
+  private javax.swing.JMenuItem optionCondIf;
+  private javax.swing.JMenuItem optionCondSwitch;
   private javax.swing.JMenuItem optionDebug;
   private javax.swing.JPanel optionPanelResults;
   private javax.swing.JPopupMenu.Separator optionStickySeparator;
