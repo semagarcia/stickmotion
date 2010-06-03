@@ -1,4 +1,4 @@
-////////////////
+//////////////// Breakdance
 var d= 300; // duration for the movements
 
 // Rotate the arms to move sideways
@@ -33,8 +33,7 @@ tiempo establece(2000);
 girar BRAZO DER(0,PI/2, d);
 girar BRAZO IZQ(0,PI, d);
 tiempo avanza (d);
-para(i; i < 0; 1) {
-  si(i > 2) {      
+para(i; i < 0; 1) {    
     // flex forearms
     flexionar BRAZO DER(PI / 4, d);
     flexionar BRAZO IZQ(PI / 4, d);
@@ -44,16 +43,14 @@ para(i; i < 0; 1) {
     flexionar BRAZO DER(-PI / 4, d);
     flexionar BRAZO IZQ(-PI / 4, d);
     tiempo avanza (d);
- } 
+
 } 
 
 
 // Fly
 tiempo establece (3000);
 i=0;
-para(i; i < 20; 1) {
-  mover STICKMAN (0,0,0.1 d);
-}
+
 
 girar STICKMAN (0,PI,d);
 tiempo avanza (d*6);
