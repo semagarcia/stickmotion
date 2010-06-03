@@ -255,12 +255,13 @@ contador++;
     Stickman anda hacia adelante
 */
 //Se pone de lado
+mover STICKMAN (-2, 0, 0, 0);
 girar STICKMAN (PI/2, 0, 0);
 //Se mueve hacia la derecha durante 4 segundos
-mover STICKMAN (0, 2, 0, 4000);
+mover STICKMAN (0, 4, 0, 2000);
 
 //Realizando 2 pasos completos hacia adelante
-var contador = 2;
+var contador = 1;
 mientras(contador!=0) {
     
     //Vuela adelante pierna izquierda, pierna derecha atras
@@ -292,8 +293,6 @@ mientras(contador!=0) {
    
     contador--;
     }
-
-
 //---------------------------------------------
 
 
